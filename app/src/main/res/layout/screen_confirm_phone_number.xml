@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/inter_bold"
+        android:gravity="center"
+        android:text="Qahvazor"
+        android:textColor="@color/primary_300"
+        android:textSize="30sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/backImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_arrow_left_back"
+        app:layout_constraintBottom_toBottomOf="@id/title"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@id/title" />
+
+    <TextView
+        android:id="@+id/confirmation_code"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="70dp"
+        android:fontFamily="@font/inter_bold"
+        android:text="Confirmation code"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <TextView
+        android:id="@+id/code_send_to"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:text="Code sent to number:"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="@id/confirmation_code"
+        app:layout_constraintTop_toBottomOf="@id/confirmation_code" />
+
+    <TextView
+        android:id="@+id/phoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_medium"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toLeftOf="@id/confirmation_code"
+        app:layout_constraintTop_toBottomOf="@id/code_send_to"
+        tools:text="+998 91 342 34 55" />
+
+    <com.chaos.view.PinView
+        android:id="@+id/inputCode"
+        style="@style/PinWidget.PinView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
+        android:enabled="true"
+        android:gravity="center"
+        android:inputType="number"
+        android:itemBackground="@drawable/bg_corner14_grey200"
+        android:textColor="@color/black_300"
+        android:textSize="19sp"
+        app:cursorColor="@color/primary_300"
+        app:itemCount="5"
+        app:itemHeight="80dp"
+        app:itemRadius="12dp"
+        app:itemSpacing="12dp"
+        app:itemWidth="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/phoneNumber"
+        app:lineColor="@android:color/transparent"
+        app:viewType="rectangle" />
+
+    <TextView
+        android:id="@+id/errorTextCode"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:fontFamily="@font/inter_regular"
+        android:text="verification_code_entered_incorrect"
+        android:textColor="@color/error_300"
+        android:textSize="11sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/inputCode"
+        app:layout_constraintStart_toStartOf="@id/inputCode"
+        app:layout_constraintTop_toBottomOf="@id/inputCode" />
+
+    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+        android:id="@+id/btConfirm"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="30dp"
+        android:text="Confirm"
+        android:textAllCaps="false"
+        app:finalCornerAngle="10dp"
+        app:initialCornerAngle="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/errorTextCode"
+        app:layout_constraintVertical_bias="0"
+        app:spinning_bar_color="@color/white"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp" />
+
+
+    <TextView
+        android:id="@+id/send_again"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:clickable="false"
+        android:enabled="false"
+        android:fontFamily="@font/inter_regular"
+        android:text="Send again: "
+        android:textColor="@color/selector_black100_black300"
+        android:textSize="14sp"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/timer"
+        app:layout_constraintTop_toBottomOf="@id/btConfirm" />
+
+    <TextView
+        android:id="@+id/timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_medium"
+        android:paddingHorizontal="6dp"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintLeft_toRightOf="@id/send_again"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/send_again"
+        tools:text="00:30" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
