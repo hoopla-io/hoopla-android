@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:scrollbarFadeDuration="1000"
+            app:collapsedTitleTextColor="@color/white"
+            app:contentScrim="@color/primary"
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleMarginStart="48dp"
+            app:expandedTitleTextColor="@android:color/transparent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:scrimAnimationDuration="100"
+            app:titleCollapseMode="fade"
+            tools:title="kjnsdckjnadc jhjsd isudhsc isuhciuwce iuech">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_collapseMode="none">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/mainImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintDimensionRatio="2:1"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/image"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintBottom_toBottomOf="@id/mainImage"
+                    app:layout_constraintEnd_toEndOf="@id/mainImage"
+                    app:layout_constraintStart_toStartOf="@id/mainImage"
+                    app:layout_constraintTop_toTopOf="@id/mainImage"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner16" />
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:gravity="start"
+                    android:textColor="@color/white"
+                    android:textSize="32sp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="@id/mainImage"
+                    tools:text="Safia" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:navigationContentDescription="Orqaga"
+                app:navigationIcon="@drawable/ic_arrow_left_back" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="60dp"
+            android:clipToPadding="false">
+
+            <uz.i_tv.domain.ui.views.expandable_text_view.ExpandableTextView
+                android:id="@+id/desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/inter_medium"
+                android:lineHeight="24sp"
+                android:textColor="@color/black_300"
+                android:textSize="18sp"
+                app:expandAction="show more"
+                app:layout_constraintTop_toTopOf="parent"
+                app:limitedMaxLines="2"
+                app:originalText="@string/privacy_policy_desc"
+                tools:text="@string/privacy_policy_desc" />
+
+            <TextView
+                android:id="@+id/coffee_type_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="Coffee types:"
+                android:textColor="@color/black_300"
+                android:textSize="21sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/desc" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/drink_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/coffee_type_label"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_drink" />
+
+            <TextView
+                android:id="@+id/shops_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="Shops:"
+                android:textColor="@color/black_300"
+                android:textSize="21sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/drink_rv" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/shop_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/shops_label"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_shop" />
+
+            <TextView
+                android:id="@+id/contacts_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="Contacts:"
+                android:textColor="@color/black_300"
+                android:textSize="21sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/shop_rv" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/contacts_label">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/phone_number"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginVertical="12dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@color/white"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_phone"
+                    android:tint="@color/black"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/web"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/white"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_world"
+                    android:tint="@color/black"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/instagram"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/white"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_instagram"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/facebook"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/white"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_facebook"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

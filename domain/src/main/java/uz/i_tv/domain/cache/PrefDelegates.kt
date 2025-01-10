@@ -69,6 +69,22 @@ fun SharedPreferences.int(
     ): Unit = edit().putInt(key(property), value).apply()
 }
 
+fun SharedPreferences.long(
+    defaultValue: Long = 0L,
+    key: (KProperty<*>) -> String = KProperty<*>::name
+): ReadWriteProperty<Any, Long> = object : ReadWriteProperty<Any, Long> {
+    override fun getValue(
+        thisRef: Any,
+        property: KProperty<*>
+    ) = getLong(key(property), defaultValue)
+
+    override fun setValue(
+        thisRef: Any,
+        property: KProperty<*>,
+        value: Long
+    ): Unit = edit().putLong(key(property), value).apply()
+}
+
 fun SharedPreferences.float(
     defaultValue: Float = 0f,
     key: (KProperty<*>) -> String = KProperty<*>::name

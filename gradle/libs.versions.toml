@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.3"
-coil = "2.6.0"
+cicerone = "7.1"
+coil = "3.0.4"
 kotlin = "1.9.24"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -31,11 +32,12 @@ localization = "1.2.11"
 
 
 
-
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
-coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+cicerone = { module = "com.github.terrakok:cicerone", version.ref = "cicerone" }
+coil = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -63,7 +65,6 @@ androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensi
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
 locale-helper-android = { module = "com.zeugmasolutions.localehelper:locale-helper-android", version.ref = "localeHelperAndroid" }
 localization = { module = "com.akexorcist:localization", version.ref = "localization" }
-
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

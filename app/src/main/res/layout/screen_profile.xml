@@ -1,8 +1,218 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/primary"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/header_title"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/inter_bold"
+                android:gravity="center"
+                android:text="Profile"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/logout"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Log out"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_log_out"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/authGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="user_desc_card,myDetails" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/unAuthGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="line,login" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/user_desc_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="20dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:layout_constraintTop_toBottomOf="@id/header_layout">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/profileImageCard"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="14dp"
+                app:cardBackgroundColor="@color/grey_200"
+                app:cardCornerRadius="40dp"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/profileName"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:fontFamily="@font/inter_bold"
+                    android:gravity="center"
+                    android:textColor="@color/black_100"
+                    android:textSize="30sp"
+                    tools:text="JE" />
+
+                <ImageView
+                    android:id="@+id/profileImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerCrop" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/inter_bold"
+                android:textColor="@color/black_300"
+                android:textSize="17sp"
+                app:layout_constraintBottom_toTopOf="@id/phone_number"
+                app:layout_constraintLeft_toRightOf="@id/profileImageCard"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/profileImageCard"
+                tools:text="Jamoliddin Esonboyev" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/phone_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:paddingVertical="4dp"
+                android:textColor="@color/black_300"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="@id/profileImageCard"
+                app:layout_constraintLeft_toLeftOf="@id/name"
+                app:layout_constraintTop_toBottomOf="@id/name"
+                tools:text="+998 91 123 45 67" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/myDetails"
+        style="@style/DetailButtonStyle"
+        android:layout_marginTop="20dp"
+        android:drawableStart="@drawable/ic_user"
+        android:elevation="4dp"
+        android:text="My Details"
+        app:drawableEndCompat="@drawable/ic_arrow_right_black300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_desc_card" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/devices"
+        style="@style/DetailButtonStyle"
+        android:drawableStart="@drawable/ic_devices"
+        android:elevation="4dp"
+        android:text="Sessions"
+        android:visibility="gone"
+        app:drawableEndCompat="@drawable/ic_arrow_right_black300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/myDetails" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/support"
+        style="@style/DetailButtonStyle"
+        android:drawableStart="@drawable/ic_support"
+        android:elevation="4dp"
+        android:text="Support"
+        app:drawableEndCompat="@drawable/ic_arrow_right_black300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/devices" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/privacyPolicy"
+        style="@style/DetailButtonStyle"
+        android:drawableStart="@drawable/ic_privacy_policy"
+        android:drawablePadding="14dp"
+        android:elevation="4dp"
+        android:paddingStart="22dp"
+        android:text="Privacy policy"
+        app:drawableEndCompat="@drawable/ic_arrow_right_black300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/support" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/settings"
+        style="@style/DetailButtonStyle"
+        android:layout_marginBottom="10dp"
+        android:drawableStart="@drawable/ic_settings"
+        android:elevation="4dp"
+        android:text="Settings"
+        app:drawableEndCompat="@drawable/ic_arrow_right_black300"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/privacyPolicy"
+        app:layout_constraintVertical_bias="0" />
+
+    <View
+        android:id="@+id/line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_corner14_grey300"
+        app:layout_constraintTop_toBottomOf="@id/settings" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/login"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_marginTop="16dp"
+        android:text="Log in"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/line" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,10 +20,6 @@ class HeaderInterceptor : Interceptor {
             mutableHeaders["Content-Type"] = "application/json"
         }
 
-        if (!mutableHeaders.containsKey("x-api-key")) {
-            mutableHeaders["x-api-key"] = "DEMO-API-KEY"
-        }
-
 
         val headerBuilder: Headers.Builder = Headers.Builder()
         for ((k, v) in mutableHeaders.entries) {

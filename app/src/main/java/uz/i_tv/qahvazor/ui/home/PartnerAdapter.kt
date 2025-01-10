@@ -1,13 +1,14 @@
 package uz.i_tv.qahvazor.ui.home
 
 import android.view.View
-import uz.i_tv.data.models.CompanyItemData
+import coil3.load
+import uz.i_tv.data.models.PartnerItemData
 import uz.i_tv.domain.rv.BaseAdapter
 import uz.i_tv.domain.rv.BaseVH
 import uz.i_tv.qahvazor.R
 import uz.i_tv.qahvazor.databinding.ItemCompanyBinding
 
-class CompanyAdapter : BaseAdapter<CompanyItemData>() {
+class PartnerAdapter : BaseAdapter<PartnerItemData>() {
 
     override fun onCreateViewHolder(view: View): BaseVH {
         return VH(ItemCompanyBinding.bind(view))
@@ -20,7 +21,8 @@ class CompanyAdapter : BaseAdapter<CompanyItemData>() {
             val itemData = getItem(absoluteAdapterPosition) ?: return
 
             binding.name.text = itemData.name
-
+//            binding.desc.text = itemData.description
+            binding.image.load(itemData.logoUrl)
         }
     }
 

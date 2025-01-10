@@ -54,6 +54,4 @@ dependencies {
 
     api(libs.lottie)
 
-    api(libs.coil)
-
 }

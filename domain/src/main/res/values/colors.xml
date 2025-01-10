@@ -13,8 +13,8 @@
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
 
-    <color name="primary">#C67C4E</color>
-    <color name="primaryVariant">#EDD6C8</color>
+    <color name="primary">#862631</color>
+    <color name="primaryVariant">#A1444D</color>
     <color name="secondary">#66000000</color>
     <color name="secondaryVariant">#66000000</color>
     <color name="background">#66000000</color>
@@ -39,7 +39,7 @@
     <color name="primary_75">#9FDEE5</color>
     <color name="primary_100">#77D0DA</color>
     <color name="primary_200">#3DBCCA</color>
-    <color name="primary_300">#C67C4E</color>
+    <color name="primary_300">#9E3D4B</color>
     <color name="primary_400">#0F7A86</color>
     <color name="primary_500">#0D6A75</color>
 

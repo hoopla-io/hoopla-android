@@ -2,23 +2,43 @@ package uz.i_tv.domain.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.collection.ArrayMap
+import com.chuckerteam.chucker.api.ChuckerInterceptor
+import kotlinx.coroutines.runBlocking
+import okhttp3.Authenticator
 import okhttp3.Interceptor
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.Response
+import okhttp3.Route
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONObject
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import uz.i_tv.data.BaseResponse
+import uz.i_tv.data.models.AccessTokenData
 import uz.i_tv.data.services.AuthService
 import uz.i_tv.data.services.HomeService
+import uz.i_tv.data.services.PartnerService
+import uz.i_tv.data.services.ProfileService
+import uz.i_tv.data.services.QrCodeService
+import uz.i_tv.data.services.ShopService
 import uz.i_tv.domain.BuildConfig
 import uz.i_tv.domain.cache.AppCache
 import uz.i_tv.domain.cache.AppCacheImpl
 import uz.i_tv.domain.network.interceptor.NetworkConnectionInterceptor
 import uz.i_tv.domain.repositories.AuthRepo
 import uz.i_tv.domain.repositories.HomeRepo
+import uz.i_tv.domain.repositories.PartnerRepo
+import uz.i_tv.domain.repositories.ProfileRepo
+import uz.i_tv.domain.repositories.QRCodeRepo
+import uz.i_tv.domain.repositories.ShopRepo
 import uz.i_tv.domain.utils.Constants.APP_CACHE
+import uz.i_tv.domain.utils.log
 import java.util.concurrent.TimeUnit
 
 object Modules {
@@ -29,20 +49,37 @@ object Modules {
 
     val apiModule = module {
         single { provideAppCacheSharedPreferences(androidContext()) }
-//        single { AppInterceptor() }
+//        single { AppInterceptor(get()) }
         single { provideRetrofit(get()) }
-        single { provideOkHttpClient(androidContext()) }
+        single { provideOkHttpClient(androidContext(), get()) }
         single { provideAuthService(get()) }
         single { provideHomeService(get()) }
+        single { provideProfileService(get()) }
+        single { provideCompanyService(get()) }
+        single { provideShopService(get()) }
+        single { provideQrCodeService(get()) }
     }
 
     val repositoryModule = module {
         factory { AuthRepo(get()) }
         factory { HomeRepo(get()) }
+        factory { ProfileRepo(get()) }
+        factory { PartnerRepo(get()) }
+        factory { ShopRepo(get()) }
+        factory { QRCodeRepo(get()) }
     }
 
     private fun provideAuthService(retrofit: Retrofit) = retrofit.create(AuthService::class.java)
     private fun provideHomeService(retrofit: Retrofit) = retrofit.create(HomeService::class.java)
+    private fun provideProfileService(retrofit: Retrofit) =
+        retrofit.create(ProfileService::class.java)
+
+    private fun provideCompanyService(retrofit: Retrofit) =
+        retrofit.create(PartnerService::class.java)
+
+    private fun provideShopService(retrofit: Retrofit) = retrofit.create(ShopService::class.java)
+    private fun provideQrCodeService(retrofit: Retrofit) =
+        retrofit.create(QrCodeService::class.java)
 
     private fun provideAppCacheSharedPreferences(
         context: Context
@@ -55,41 +92,114 @@ object Modules {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-//    private fun provideOkHttpClient(
-//        interceptor: AppInterceptor,
-//        context: Context
-//    ): OkHttpClient {
-//        return OkHttpClient().newBuilder().apply {
-//            if (BuildConfig.DEBUG)
-//                addInterceptor(ChuckerInterceptor.Builder(context).build())
-//        }
-//            .addInterceptor(HttpLoggingInterceptor { message -> message.log("HTTP_LOGGING_INTERCEPTOR") }.apply {
-//                this.level = HttpLoggingInterceptor.Level.BODY
-//            })
-//            .addInterceptor(interceptor)
-//            .build()
-//    }
 
-
-    private fun provideOkHttpClient(context: Context): OkHttpClient {
-        val loggingInterceptor = HttpLoggingInterceptor()
+    private fun provideOkHttpClient(context: Context, appCache: AppCache): OkHttpClient {
+        val loggingInterceptor = HttpLoggingInterceptor { message ->
+            message.log("HTTP_LOGGING_INTERCEPTOR")
+        }
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
-            .addInterceptor(NetworkConnectionInterceptor(context))
+            .addInterceptor(ChuckerInterceptor.Builder(context).build())
+//            .addInterceptor(HeaderInterceptor())
+            .addInterceptor(NetworkConnectionInterceptor(context, appCache))
+            .addNetworkInterceptor(NetworkInterceptor())
+            .authenticator(TokenAuthenticator(appCache))
             .addInterceptor(loggingInterceptor)
             .writeTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS)
             .connectTimeout(60, TimeUnit.SECONDS).build()
     }
 
-    class AppInterceptor() : Interceptor {
+    class NetworkInterceptor() : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
-
-            val req = chain.request()
-            val builder = req.newBuilder()
-
-            return chain.proceed(builder.build())
+            val response = chain.proceed(chain.request())
+            if (response.code == 412)
+                return response.newBuilder().code(401).build()
+            else
+                return response
         }
     }
 
+    class TokenAuthenticator(private val appCache: AppCache) : Authenticator {
+        override fun authenticate(route: Route?, response: Response): Request? {
+            "authenticate".log("TokenAuthenticator")
+            return synchronized(this) {
+
+                val refreshToken = runBlocking { appCache.refreshToken }
+
+                if (!refreshToken.isNullOrEmpty()) {
+                    val newTokenResponse = runBlocking {
+                        getNewToken(refreshToken)
+                    }
+
+                    // Проверяем успешность ответа
+                    when (newTokenResponse.code()) {
+                        200 -> {
+                            newTokenResponse.body()?.let {
+                                appCache.saveTokens(
+                                    it.data?.accessToken,
+                                    it.data?.refreshToken,
+                                    it.data?.expireAt ?: 0L
+                                )
+                            }
+                            "saveTokens 200 TokenAuthenticator".log("CustomInterceptor")
+                        }
+
+                        401 -> {
+                            appCache.clearTokens()
+                            "clearTokens ${newTokenResponse.code()} TokenAuthenticator".log("CustomInterceptor")
+                        }
+
+                        else -> {
+                            "Error refreshing token: ${newTokenResponse.message()} ${newTokenResponse.code()} TokenAuthenticator".log(
+                                "CustomInterceptor"
+                            )
+                        }
+                    }
+
+                    response.request.log("TokenAuthenticator")
+                    val req = response.request
+                    val builder = req.newBuilder()
+
+                    if (appCache.accessToken != null) builder.header(
+                        "Authorization",
+                        "Bearer ${appCache.accessToken}"
+                    )
+
+                    builder.build()
+                } else
+                    null
+            }
+
+        }
+
+        private suspend fun getNewToken(
+            refreshToken: String
+        ): BaseResponse<AccessTokenData> {
+
+            val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(HttpLoggingInterceptor { message -> message.log("LOGGING_INTERCEPTOR") }.apply {
+                    this.level = HttpLoggingInterceptor.Level.BODY
+                })
+                .build()
+
+            val retrofit = Retrofit.Builder()
+                .baseUrl("http://api.qahvazor.uz/api/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
+                .build()
+            val service = retrofit.create(AuthService::class.java)
+
+            val jsonParams: MutableMap<String?, Any?> = ArrayMap()
+
+            jsonParams["refreshToken"] = refreshToken
+
+            val body: RequestBody = RequestBody.create(
+                "application/json".toMediaTypeOrNull(),
+                (JSONObject(jsonParams)).toString()
+            )
+
+            return service.refreshToken(refreshToken)
+        }
+    }
 
 }

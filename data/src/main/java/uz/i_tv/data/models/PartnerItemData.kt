@@ -2,10 +2,10 @@ package uz.i_tv.data.models
 
 import uz.i_tv.data.rv.BaseItem
 
-data class CompanyItemData(
+data class PartnerItemData(
     val description: String?,
     val id: Int?,
-    val imageUrl: String?,
+    val logoUrl: String?,
     val name: String?
 ) : BaseItem {
     override val uniqueId: String

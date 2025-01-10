@@ -1,18 +1,20 @@
 package uz.i_tv.domain.ui
 
-import android.app.Activity
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import uz.i_tv.data.UIResource
+import uz.i_tv.domain.cache.AppCache
 import uz.i_tv.domain.network.BadRequestException
 import uz.i_tv.domain.network.ConflictException
 import uz.i_tv.domain.network.ForbiddenException
@@ -23,7 +25,9 @@ import uz.i_tv.domain.network.RemoteException
 import uz.i_tv.domain.network.TooManyRequestException
 import uz.i_tv.domain.network.UnauthorizedException
 import uz.i_tv.domain.network.ValidationException
+import uz.i_tv.domain.utils.hideKeyboard
 import uz.i_tv.domain.utils.log
+import uz.i_tv.domain.utils.showKeyboard
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
@@ -31,6 +35,10 @@ abstract class BaseFragment : Fragment, View.OnClickListener, RemoteErrorListene
 
     constructor() : super()
     constructor(@LayoutRes contentLayoutId: Int) : super(contentLayoutId)
+
+    val cache: AppCache by inject()
+
+    open var forceKeyboard = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +61,11 @@ abstract class BaseFragment : Fragment, View.OnClickListener, RemoteErrorListene
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        hideKeyboard()
+        if (!forceKeyboard)
+            hideKeyboard()
+        else
+            requireContext().showKeyboard()
+
         initialize()
         requireView().setOnClickListener { hideKeyboard() }
     }
@@ -91,18 +103,19 @@ abstract class BaseFragment : Fragment, View.OnClickListener, RemoteErrorListene
         else -> isRealRemoving()
     }
 
+    protected fun navigateTo(screen: Screen) = router.navigateTo(screen)
+    protected fun replaceScreen(screen: Screen) = router.replaceScreen(screen)
+    protected fun newRootScreen(screen: Screen) = router.newRootScreen(screen)
+    protected fun backTo(screen: Screen?) = router.backTo(screen)
+    protected fun exit() = router.exit()
+
     abstract fun initialize()
+
+    open fun onBackPressed(): Boolean = false
 
     protected open fun onRealDestroy() {}
 
     override fun onClick(view: View) {}
-
-    protected fun hideKeyboard() {
-        val manager: InputMethodManager =
-            requireContext().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        if (view != null)
-            manager.hideSoftInputFromWindow(view?.windowToken, 0)
-    }
 
     protected fun launch(
         context: CoroutineContext = EmptyCoroutineContext,
@@ -222,6 +235,15 @@ abstract class BaseFragment : Fragment, View.OnClickListener, RemoteErrorListene
         private const val FIRST_RUN_ID = "STATE_FIRST_RUN_ID"
         private const val APP_RUN_ID = "STATE_APP_RUN_ID"
     }
+}
+
+val BaseFragment.router: Router get() = findParentRouter()
+
+fun BaseFragment.findParentRouter(): Router {
+    val parentActivity = activity as? BaseRootActivity
+    if (parentActivity != null) {
+        return parentActivity.router
+    } else throw NullPointerException("router not found in parent activity or parent fragments")
 }
 
 enum class CreateMode {

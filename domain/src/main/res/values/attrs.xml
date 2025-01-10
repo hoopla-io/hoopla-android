@@ -3,4 +3,35 @@
     <declare-styleable name="MaskedEditText">
         <attr name="mask" format="string" />
     </declare-styleable>
+
+    <declare-styleable name="SecondMaskedEditText">
+        <attr name="second_mask" format="string" />
+        <attr name="allowed_chars" format="string" />
+        <attr name="enable_ime_action" format="boolean" />
+        <attr name="denied_chars" format="string" />
+        <attr name="char_representation" format="string" />
+        <attr name="keep_hint" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="PinView">
+        <attr name="pCount" format="integer" />
+        <attr name="pSize" format="dimension" />
+        <attr name="pWidth" format="dimension" />
+        <attr name="pHeight" format="dimension" />
+        <attr name="pGap" format="dimension" />
+        <attr name="pTextSize" format="dimension" />
+        <attr name="pTextColor" format="color" />
+        <attr name="pTextColorSelected" format="color" />
+        <attr name="pFont" format="string" />
+        <attr name="pBackground" format="reference" />
+        <attr name="pBackgroundFilled" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="ExpandableTextView">
+        <attr name="limitedMaxLines" format="integer" />
+        <attr name="originalText" format="string" />
+        <attr name="expandAction" format="string" />
+        <attr name="expandActionColor" format="string" />
+    </declare-styleable>
+
 </resources>

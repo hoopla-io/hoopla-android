@@ -7,8 +7,7 @@
 
     <item
         android:id="@+id/qr_code"
-        android:icon="@drawable/ic_home_stroke"
-        android:title="QR Code" />
+        android:title="" />
 
     <item
         android:id="@+id/profile"

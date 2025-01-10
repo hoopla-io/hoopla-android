@@ -1,3 +1,5 @@
+import java.net.URI
+
 pluginManagement {
     repositories {
         google {
@@ -16,6 +18,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { url = URI.create("https://jitpack.io") }
     }
 }
 
@@ -23,3 +26,4 @@ rootProject.name = "Qahvazor"
 include(":app")
 include(":data")
 include(":domain")
+include(":imageviewer")

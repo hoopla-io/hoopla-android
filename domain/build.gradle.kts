@@ -16,13 +16,15 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "BASE_URL", "\"http://192.168.31.72:8000/api/\"")
+            buildConfigField("String", "BASE_URL", "\"http://api.qahvazor.uz/api/\"")
+            buildConfigField("String", "MAPKIT_API_KEY", "\"4115671a-34dd-47dc-a8e5-809ed17374c1\"")
             isMinifyEnabled = false
         }
 
         release {
 
-            buildConfigField("String", "BASE_URL", "\"http://192.168.31.72:8000/api/\"")
+            buildConfigField("String", "BASE_URL", "\"http://api.qahvazor.uz/api/\"")
+            buildConfigField("String", "MAPKIT_API_KEY", "\"4115671a-34dd-47dc-a8e5-809ed17374c1\"")
 
             isMinifyEnabled = false
             proguardFiles(
@@ -34,6 +36,7 @@ android {
 
     buildFeatures {
         buildConfig = true
+        viewBinding = true
     }
 
     compileOptions {
@@ -47,6 +50,7 @@ android {
 
 dependencies {
     api(project(mapOf("path" to ":data")))
+    api(project(mapOf("path" to ":imageviewer")))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -67,7 +71,17 @@ dependencies {
     //Navigation
     api(libs.androidx.navigation.fragment.ktx)
 
+    api(libs.cicerone)
+
     api(libs.loading.button.android)
 
     api(libs.pinview)
+
+    api(libs.coil)
+    api(libs.coil.compose)
+
+    api("com.facebook.fbui.textlayoutbuilder:staticlayout-proxy:1.6.0")
+
+    api("com.github.alexzhirkevich:custom-qr-generator:1.6.2")
+
 }

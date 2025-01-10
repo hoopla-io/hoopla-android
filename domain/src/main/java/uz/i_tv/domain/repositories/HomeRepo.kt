@@ -5,8 +5,8 @@ import uz.i_tv.domain.network.BaseRepo
 
 class HomeRepo(private val homeService: HomeService) : BaseRepo() {
 
-    suspend fun getCompanies() = handleFlow {
-        homeService.getCompanies()
+    suspend fun getPartners() = handleFlow {
+        homeService.getPartners()
     }
 
 }
