@@ -2,6 +2,7 @@ package uz.i_tv.qahvazor.ui.qr_code
 
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.CountDownTimer
 import androidx.core.content.ContextCompat
 import coil3.load
 import com.github.alexzhirkevich.customqrgenerator.QrData
@@ -23,6 +24,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.i_tv.data.UIResource
 import uz.i_tv.data.models.QRCodeAccessData
 import uz.i_tv.domain.ui.BaseFragment
+import uz.i_tv.domain.utils.gone
+import uz.i_tv.domain.utils.visible
 import uz.i_tv.domain.viewbinding.viewBinding
 import uz.i_tv.qahvazor.R
 import uz.i_tv.qahvazor.databinding.ScreenQrCodeBinding
@@ -32,17 +35,71 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
     private val binding by viewBinding(ScreenQrCodeBinding::bind)
     private val viewModel: QRCodeVM by viewModel()
 
+    private var time: Long = 0
+
     override fun initialize() {
 
         launch {
             viewModel.generateQRCode().collectLatest(::collectQRCodeData)
         }
 
+        binding.refresh.setOnClickListener {
+            launch {
+                viewModel.generateQRCode().collectLatest(::collectQRCodeData)
+            }
+        }
+
     }
 
-    private fun collectQRCodeData(t: UIResource<QRCodeAccessData>) = t.collect {
+    private fun collectQRCodeData(t: UIResource<QRCodeAccessData>) = t.collect(onLoading = {
+        if (it)
+            binding.refresh.playAnimation()
+        else
+            binding.refresh.pauseAnimation()
+    }) {
+
+        binding.qrCode.alpha = 1f
+        binding.refresh.isEnabled = false
+        binding.refresh.isClickable = false
+        binding.refresh.gone()
+
+        time = (it?.expireAt ?: 0L) - System.currentTimeMillis() / 1000L
+        startCountDownTimer()
         val drawable = generateQRCodeImage(it?.qrCode.toString())
         binding.qrCode.load(drawable)
+    }
+
+    private var countDownTimer: CountDownTimer? = null
+
+    private fun startCountDownTimer() {
+        countDownTimer = object : CountDownTimer(time * 1000, 1000) {
+
+            override fun onTick(p0: Long) {
+                val minute = time / 60
+                val second = time % 60
+                if (p0 < 0)
+                    this.onFinish()
+                else {
+                    binding.timer.text = "${checkDigit(minute)}:" + checkDigit(second)
+                    time--
+                }
+            }
+
+            override fun onFinish() {
+                binding.qrCode.alpha = 0.5f
+                binding.timer.text = "00:00"
+                binding.refresh.isEnabled = true
+                binding.refresh.isClickable = true
+                binding.refresh.visible()
+            }
+        }
+
+        countDownTimer?.start()
+    }
+
+    override fun onDestroyView() {
+        countDownTimer?.cancel()
+        super.onDestroyView()
     }
 
     private fun generateQRCodeImage(data: String): Drawable {
@@ -51,7 +108,7 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
             .setLogo(
                 QrVectorLogo(
                     drawable = ContextCompat
-                        .getDrawable(requireContext(), uz.i_tv.domain.R.drawable.logo_img_text),
+                        .getDrawable(requireContext(), uz.i_tv.domain.R.drawable.img_logo_q),
                     size = .25f,
                     padding = QrVectorLogoPadding.Natural(.2f),
                     shape = QrVectorLogoShape
@@ -95,6 +152,12 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
 
         val drawable: Drawable = QrCodeDrawable(QrData.Url(data), options)
         return drawable
+    }
+
+    private fun checkDigit(number: Long): String = if (number <= 9) {
+        "0$number"
+    } else {
+        number.toString()
     }
 
 }
