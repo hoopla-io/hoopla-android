@@ -5,7 +5,9 @@ import android.os.Looper
 import androidx.core.os.bundleOf
 import com.github.terrakok.cicerone.Screen
 import uz.i_tv.domain.ui.BaseFragment
+import uz.i_tv.domain.ui.BaseRootActivity
 import uz.i_tv.domain.ui.NavigationFragment
+import uz.i_tv.domain.ui.showRequestDF
 import uz.i_tv.domain.utils.log
 import uz.i_tv.domain.viewbinding.viewBinding
 import uz.i_tv.qahvazor.R
@@ -28,8 +30,18 @@ class BottomNavScreen : BaseFragment(R.layout.screen_bottom_nav) {
     override fun initialize() {
 
         binding.fab.setOnClickListener {
-            if (binding.bottomNav.selectedItemId != TAB_QR_CODE)
-                binding.bottomNav.selectedItemId = TAB_QR_CODE
+            if (cache.accessToken.isNullOrEmpty()) {
+                showRequestDF(
+                    "Sign in",
+                    "You are not logged in!\nPlease sign in",
+                    "Sign in",
+                    "Cancel"
+                ) {
+                    (requireActivity() as BaseRootActivity).navigateToAuthScreen()
+                }
+            } else
+                if (binding.bottomNav.selectedItemId != TAB_QR_CODE)
+                    binding.bottomNav.selectedItemId = TAB_QR_CODE
         }
 
         binding.bottomNav.setOnItemReselectedListener { }

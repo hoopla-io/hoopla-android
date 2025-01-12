@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.AppCompatTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/feature"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:drawableStart="@drawable/ic_done"
+    android:drawablePadding="6dp"
+    android:fontFamily="@font/inter_regular"
+    android:lineHeight="22sp"
+    android:textColor="@color/black_300"
+    android:textSize="16sp"
+    tools:text="Luxurious and exclusive for coffee enthusiasts">
+
+</androidx.appcompat.widget.AppCompatTextView>

@@ -1,6 +1,7 @@
 package uz.i_tv.qahvazor.ui.profile
 
 import android.view.View
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.i_tv.data.UIResource
@@ -13,19 +14,25 @@ import uz.i_tv.domain.utils.visible
 import uz.i_tv.domain.viewbinding.viewBinding
 import uz.i_tv.qahvazor.R
 import uz.i_tv.qahvazor.databinding.ScreenProfileBinding
+import uz.i_tv.qahvazor.ui.Screens
 
-class ProfileScreen : BaseFragment(R.layout.screen_profile) {
+class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.OnRefreshListener {
 
     private val binding by viewBinding(ScreenProfileBinding::bind)
     private val viewModel: ProfileVM by viewModel()
 
     override fun initialize() {
 
+        binding.subscription.setOnClickListener(this)
         binding.logout.setOnClickListener(this)
         binding.login.setOnClickListener(this)
 
+        binding.swipeRefreshLayout.setOnRefreshListener(this)
+
+        viewModel.getUser()
+
         launch {
-            viewModel.getMe().collectLatest(::collectUserData)
+            viewModel.userDataFlow.collectLatest(::collectUserData)
         }
     }
 
@@ -40,10 +47,15 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile) {
 
     private fun collectLogoutData(t: UIResource<Any>) = t.collect {
         cache.clearTokens()
+        newRootScreen(Screens.bottomNav())
     }
 
     override fun onClick(view: View) {
         when (view.id) {
+            R.id.subscription -> {
+                navigateTo(Screens.subscriptionsScreen())
+            }
+
             R.id.logout -> {
                 showRequestDF(
                     "Log out",
@@ -67,6 +79,18 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile) {
         binding.unAuthGroup.visible()
         binding.authGroup.gone()
         binding.logout.gone()
+    }
+
+    override fun showLoading() {
+        binding.swipeRefreshLayout.isRefreshing = true
+    }
+
+    override fun hideLoading() {
+        binding.swipeRefreshLayout.isRefreshing = false
+    }
+
+    override fun onRefresh() {
+        viewModel.getUser()
     }
 
 }

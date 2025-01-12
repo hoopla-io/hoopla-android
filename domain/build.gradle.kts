@@ -84,4 +84,6 @@ dependencies {
 
     api("com.github.alexzhirkevich:custom-qr-generator:1.6.2")
 
+    api("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
 }

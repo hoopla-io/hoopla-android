@@ -9,4 +9,8 @@ class QRCodeRepo(private val api: QrCodeService) : BaseRepo() {
         api.generateQRCode()
     }
 
+    suspend fun getOrders() = handleFlow {
+        api.getOrders()
+    }
+
 }

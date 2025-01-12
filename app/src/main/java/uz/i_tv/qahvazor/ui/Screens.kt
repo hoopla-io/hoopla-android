@@ -5,6 +5,7 @@ import uz.i_tv.qahvazor.ui.auth.AuthScreen
 import uz.i_tv.qahvazor.ui.auth.ConfirmPhoneNumberScreen
 import uz.i_tv.qahvazor.ui.home.HomeScreen
 import uz.i_tv.qahvazor.ui.profile.ProfileScreen
+import uz.i_tv.qahvazor.ui.profile.subscriptions.SubscriptionsScreen
 import uz.i_tv.qahvazor.ui.qr_code.QRCodeScreen
 
 object Screens {
@@ -27,5 +28,7 @@ object Screens {
         fun qrCode() = FragmentScreen { QRCodeScreen() }
         fun profile() = FragmentScreen { ProfileScreen() }
     }
+
+    fun subscriptionsScreen() = FragmentScreen { SubscriptionsScreen() }
 
 }

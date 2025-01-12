@@ -5,6 +5,7 @@ import uz.i_tv.qahvazor.ui.auth.AuthVM
 import uz.i_tv.qahvazor.ui.home.HomeVM
 import uz.i_tv.qahvazor.ui.partner_details.PartnerVM
 import uz.i_tv.qahvazor.ui.profile.ProfileVM
+import uz.i_tv.qahvazor.ui.profile.subscriptions.SubscriptionVM
 import uz.i_tv.qahvazor.ui.qr_code.QRCodeVM
 import uz.i_tv.qahvazor.ui.shop_details.ShopVM
 
@@ -17,6 +18,7 @@ object AppModule {
         factory { PartnerVM(get()) }
         factory { ShopVM(get()) }
         factory { QRCodeVM(get()) }
+        factory { SubscriptionVM(get()) }
     }
 
 }

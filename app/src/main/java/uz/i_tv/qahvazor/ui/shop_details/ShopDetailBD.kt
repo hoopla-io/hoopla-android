@@ -10,8 +10,8 @@ import uz.i_tv.data.UIResource
 import uz.i_tv.data.models.ShopData
 import uz.i_tv.domain.ui.BaseActivity
 import uz.i_tv.domain.ui.BaseBottomSheetDF
-import uz.i_tv.domain.utils.Utils
-import uz.i_tv.domain.utils.Utils.formatPhoneNumber
+import uz.i_tv.domain.utils.formatPhoneNumber
+import uz.i_tv.domain.utils.getMapImageUrl
 import uz.i_tv.domain.utils.intentToCall
 import uz.i_tv.domain.viewbinding.viewBinding
 import uz.i_tv.qahvazor.R
@@ -51,10 +51,7 @@ class ShopDetailBD(private val shopId: Int) : BaseBottomSheetDF(R.layout.screen_
         workTimeAdapter.submitList(data?.workingHours)
 
         binding.mapImage.load(
-            Utils.getMapImageUrl(
-                data?.location?.lng.toString(),
-                data?.location?.lat.toString()
-            )
+            getMapImageUrl(data?.location?.lng.toString(), data?.location?.lat.toString())
         )
 
         binding.maximizeImg.setOnClickListener {

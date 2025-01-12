@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="6dp"
+    android:background="@drawable/bg_corner10_white"
+    android:elevation="2dp"
+    android:paddingVertical="6dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/partner_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_bold"
+        android:paddingHorizontal="16dp"
+        android:textColor="@color/black_300"
+        android:textSize="24sp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Safia" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/shop_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="@font/inter_medium"
+        android:lineHeight="20sp"
+        android:lines="1"
+        android:maxLines="1"
+        android:paddingHorizontal="16dp"
+        android:textColor="@color/black_300"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/partner_name"
+        tools:text="Safia Tashkent city" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="5dp"
+        android:textColor="@color/black_300"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/shop_name"
+        tools:text="24 Dec 2024 12:04" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

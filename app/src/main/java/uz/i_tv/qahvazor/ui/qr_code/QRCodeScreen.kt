@@ -6,6 +6,7 @@ import android.os.CountDownTimer
 import androidx.core.content.ContextCompat
 import coil3.load
 import com.github.alexzhirkevich.customqrgenerator.QrData
+import com.github.alexzhirkevich.customqrgenerator.style.BitmapScale
 import com.github.alexzhirkevich.customqrgenerator.style.Color
 import com.github.alexzhirkevich.customqrgenerator.vector.QrCodeDrawable
 import com.github.alexzhirkevich.customqrgenerator.vector.QrVectorOptions
@@ -22,6 +23,7 @@ import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorShapes
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.i_tv.data.UIResource
+import uz.i_tv.data.models.OrderItemData
 import uz.i_tv.data.models.QRCodeAccessData
 import uz.i_tv.domain.ui.BaseFragment
 import uz.i_tv.domain.utils.gone
@@ -35,12 +37,20 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
     private val binding by viewBinding(ScreenQrCodeBinding::bind)
     private val viewModel: QRCodeVM by viewModel()
 
+    private val orderAdapter = OrderAdapter()
+
     private var time: Long = 0
 
     override fun initialize() {
 
+        binding.orderRv.adapter = orderAdapter
+
         launch {
             viewModel.generateQRCode().collectLatest(::collectQRCodeData)
+        }
+
+        launch {
+            viewModel.getOrders().collectLatest(::collectOrdersData)
         }
 
         binding.refresh.setOnClickListener {
@@ -67,6 +77,10 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
         startCountDownTimer()
         val drawable = generateQRCodeImage(it?.qrCode.toString())
         binding.qrCode.load(drawable)
+    }
+
+    private fun collectOrdersData(t: UIResource<List<OrderItemData>>) = t.collect {
+        orderAdapter.submitList(it)
     }
 
     private var countDownTimer: CountDownTimer? = null
@@ -119,6 +133,7 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
                 QrVectorBackground(
                     drawable = ContextCompat
                         .getDrawable(requireContext(), uz.i_tv.domain.R.drawable.bg_corner20_white),
+                    scale = BitmapScale.CenterCrop
                 )
             )
             .setColors(

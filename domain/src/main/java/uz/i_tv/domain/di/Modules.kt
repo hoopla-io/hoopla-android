@@ -27,6 +27,7 @@ import uz.i_tv.data.services.PartnerService
 import uz.i_tv.data.services.ProfileService
 import uz.i_tv.data.services.QrCodeService
 import uz.i_tv.data.services.ShopService
+import uz.i_tv.data.services.SubscriptionService
 import uz.i_tv.domain.BuildConfig
 import uz.i_tv.domain.cache.AppCache
 import uz.i_tv.domain.cache.AppCacheImpl
@@ -37,6 +38,7 @@ import uz.i_tv.domain.repositories.PartnerRepo
 import uz.i_tv.domain.repositories.ProfileRepo
 import uz.i_tv.domain.repositories.QRCodeRepo
 import uz.i_tv.domain.repositories.ShopRepo
+import uz.i_tv.domain.repositories.SubscriptionRepo
 import uz.i_tv.domain.utils.Constants.APP_CACHE
 import uz.i_tv.domain.utils.log
 import java.util.concurrent.TimeUnit
@@ -58,6 +60,7 @@ object Modules {
         single { provideCompanyService(get()) }
         single { provideShopService(get()) }
         single { provideQrCodeService(get()) }
+        single { provideSubscriptionService(get()) }
     }
 
     val repositoryModule = module {
@@ -67,6 +70,7 @@ object Modules {
         factory { PartnerRepo(get()) }
         factory { ShopRepo(get()) }
         factory { QRCodeRepo(get()) }
+        factory { SubscriptionRepo(get()) }
     }
 
     private fun provideAuthService(retrofit: Retrofit) = retrofit.create(AuthService::class.java)
@@ -80,6 +84,9 @@ object Modules {
     private fun provideShopService(retrofit: Retrofit) = retrofit.create(ShopService::class.java)
     private fun provideQrCodeService(retrofit: Retrofit) =
         retrofit.create(QrCodeService::class.java)
+
+    private fun provideSubscriptionService(retrofit: Retrofit) =
+        retrofit.create(SubscriptionService::class.java)
 
     private fun provideAppCacheSharedPreferences(
         context: Context

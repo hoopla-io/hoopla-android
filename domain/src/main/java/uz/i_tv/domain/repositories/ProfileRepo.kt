@@ -5,7 +5,7 @@ import uz.i_tv.domain.network.BaseRepo
 
 class ProfileRepo(private val api: ProfileService) : BaseRepo() {
 
-    suspend fun getMe() = handleFlow {
+    suspend fun getMe() = handle {
         api.getMe()
     }
 
