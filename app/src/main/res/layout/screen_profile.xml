@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="visible"
-                    app:constraint_referenced_ids="user_desc_card,myDetails,subscription" />
+                    app:constraint_referenced_ids="user_desc_card,subscription" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/unAuthGroup"
@@ -79,67 +79,113 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <androidx.cardview.widget.CardView
-                            android:id="@+id/profileImageCard"
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:layout_margin="14dp"
-                            app:cardBackgroundColor="@color/grey_200"
-                            app:cardCornerRadius="40dp"
-                            app:cardElevation="0dp"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintTop_toTopOf="parent">
-
-                            <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/profileName"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:fontFamily="@font/inter_bold"
-                                android:gravity="center"
-                                android:textColor="@color/black_100"
-                                android:textSize="30sp"
-                                tools:text="JE" />
-
-                            <ImageView
-                                android:id="@+id/profileImage"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@android:color/transparent"
-                                android:scaleType="centerCrop" />
-
-                        </androidx.cardview.widget.CardView>
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="14dp">
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/name"
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="16dp"
                             android:ellipsize="marquee"
                             android:fontFamily="@font/inter_bold"
                             android:textColor="@color/black_300"
-                            android:textSize="17sp"
-                            app:layout_constraintBottom_toTopOf="@id/phone_number"
-                            app:layout_constraintLeft_toRightOf="@id/profileImageCard"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="@id/profileImageCard"
+                            android:textSize="18sp"
+                            app:layout_constraintTop_toTopOf="parent"
                             tools:text="Jamoliddin Esonboyev" />
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/phone_number"
+                            android:id="@+id/phone_number_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_medium"
-                            android:gravity="center"
+                            android:fontFamily="@font/inter_regular"
+                            android:paddingVertical="4dp"
+                            android:text="Phone number: "
+                            android:textColor="@color/black_300"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@id/name"
+                            app:layout_constraintTop_toBottomOf="@id/name" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/phone_number"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_bold"
                             android:paddingVertical="4dp"
                             android:textColor="@color/black_300"
                             android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="@id/profileImageCard"
-                            app:layout_constraintLeft_toLeftOf="@id/name"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/phone_number_title"
                             app:layout_constraintTop_toBottomOf="@id/name"
                             tools:text="+998 91 123 45 67" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/balance_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="Balance: "
+                            android:textColor="@color/black_300"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@id/name"
+                            app:layout_constraintTop_toBottomOf="@id/phone_number_title" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/balance"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_bold"
+                            android:textColor="@color/black_300"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@id/balance_title"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/balance_title"
+                            tools:text="29 000 sum" />
+
+                        <View
+                            android:id="@+id/line1"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_corner14_grey300"
+                            app:layout_constraintTop_toBottomOf="@id/balance_title" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/subscription_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="Your subscription: "
+                            android:textColor="@color/black_300"
+                            android:textSize="12sp"
+                            app:layout_constraintStart_toStartOf="@id/name"
+                            app:layout_constraintTop_toBottomOf="@id/line1" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/subscription_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_bold"
+                            android:textColor="@color/black_300"
+                            android:textSize="18sp"
+                            app:layout_constraintStart_toStartOf="@id/subscription_title"
+                            app:layout_constraintTop_toBottomOf="@id/subscription_title"
+                            tools:text="Hoop 3" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/subscription_end_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="12dp"
+                            android:layout_marginBottom="2dp"
+                            android:fontFamily="@font/inter_regular"
+                            android:textColor="@color/black_300"
+                            android:textSize="12sp"
+                            app:layout_constraintBottom_toBottomOf="@id/subscription_name"
+                            app:layout_constraintStart_toEndOf="@id/subscription_name"
+                            tools:text="(Active to: 12 mart)" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
@@ -151,6 +197,7 @@
                     android:drawableStart="@drawable/ic_user"
                     android:elevation="4dp"
                     android:text="My Details"
+                    android:visibility="gone"
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -159,6 +206,7 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/subscription"
                     style="@style/DetailButtonStyle"
+                    android:layout_marginTop="20dp"
                     android:drawableStart="@drawable/ic_subscription"
                     android:drawableTint="@color/black_300"
                     android:elevation="4dp"
@@ -205,6 +253,19 @@
                     app:layout_constraintTop_toBottomOf="@id/support" />
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/termOfUse"
+                    style="@style/DetailButtonStyle"
+                    android:drawableStart="@drawable/ic_privacy_policy"
+                    android:drawablePadding="14dp"
+                    android:elevation="4dp"
+                    android:paddingStart="22dp"
+                    android:text="Term of use"
+                    app:drawableEndCompat="@drawable/ic_arrow_right_black300"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/privacyPolicy" />
+
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/settings"
                     style="@style/DetailButtonStyle"
                     android:layout_marginBottom="10dp"
@@ -215,7 +276,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/privacyPolicy"
+                    app:layout_constraintTop_toBottomOf="@id/termOfUse"
                     app:layout_constraintVertical_bias="0" />
 
                 <View

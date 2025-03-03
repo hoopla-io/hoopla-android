@@ -42,6 +42,7 @@ dependencies {
     api(project(mapOf("path" to ":domain")))
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.play.services.location)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

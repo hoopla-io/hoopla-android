@@ -28,7 +28,7 @@ class SubscriptionAdapter : BaseAdapter<SubscriptionItemData>() {
             val itemData = getItem(absoluteAdapterPosition) ?: return
 
             binding.name.text = itemData.name
-            binding.price.text = itemData.price.toString().formatToPrice()
+            binding.price.text = itemData.price?.formatToPrice()
                 .plus(" ${itemData.currency}")
                 .plus(" / ${itemData.days} days")
 

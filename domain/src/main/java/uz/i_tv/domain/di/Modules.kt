@@ -32,6 +32,8 @@ import uz.i_tv.domain.BuildConfig
 import uz.i_tv.domain.cache.AppCache
 import uz.i_tv.domain.cache.AppCacheImpl
 import uz.i_tv.domain.network.interceptor.NetworkConnectionInterceptor
+import uz.i_tv.domain.permission.PermissionManager
+import uz.i_tv.domain.permission.PermissionManagerImpl
 import uz.i_tv.domain.repositories.AuthRepo
 import uz.i_tv.domain.repositories.HomeRepo
 import uz.i_tv.domain.repositories.PartnerRepo
@@ -47,6 +49,7 @@ object Modules {
 
     val utilsModule = module {
         single<AppCache> { AppCacheImpl(get()) }
+        single<PermissionManager> { PermissionManagerImpl(androidContext()) }
     }
 
     val apiModule = module {
@@ -190,7 +193,7 @@ object Modules {
                 .build()
 
             val retrofit = Retrofit.Builder()
-                .baseUrl("http://api.qahvazor.uz/api/")
+                .baseUrl("https://api.hoopla.uz/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build()

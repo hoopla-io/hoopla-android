@@ -7,7 +7,7 @@ data class SubscriptionItemData(
     val days: Int?,
     val id: Int?,
     val name: String?,
-    val price: Int?,
+    val price: Double?,
     val features: List<FeatureItemData?>?
 ) : BaseItem {
     override val uniqueId: String

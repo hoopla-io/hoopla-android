@@ -13,16 +13,16 @@
         android:background="@color/primary"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <TextView
             android:id="@+id/logo"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:paddingVertical="12dp"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/eugusto_bold_700"
+            android:gravity="center_vertical"
             android:paddingStart="16dp"
-            android:scaleType="fitStart"
-            android:src="@drawable/logo_text"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/white" />
+            android:text="@string/app_name_lowercase"
+            android:textColor="@color/white"
+            android:textSize="28sp" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -40,9 +40,49 @@
             android:clipToPadding="false"
             android:paddingBottom="120dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="3"
+            tools:itemCount="0"
             tools:listitem="@layout/item_company" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/turnOnGPSContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:background="@drawable/bg_corner14_grey200"
+        android:backgroundTint="@color/error_75"
+        android:foreground="?attr/selectableItemBackground"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="14dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_layout"
+        app:layout_constraintVertical_bias="0.2">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/locationDesc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:text="Xizmatlarimiz to'g'ri ishlashi uchun iltimos geolokatsiyani yoqing"
+            android:textColor="@color/error_400"
+            android:textSize="20sp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/turnOnGPS"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:gravity="end"
+            android:paddingVertical="6dp"
+            android:text="Yoqish"
+            android:textColor="@color/error_400"
+            android:textSize="20sp"
+            app:layout_constraintTop_toBottomOf="@id/locationDesc" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

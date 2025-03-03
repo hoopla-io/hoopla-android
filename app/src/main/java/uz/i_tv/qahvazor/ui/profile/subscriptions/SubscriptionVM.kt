@@ -16,4 +16,9 @@ class SubscriptionVM(private val repo: SubscriptionRepo) : BaseVM() {
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
+    suspend fun buySubscription(subscriptionId: Int): SharedFlow<UIResource<Any>> {
+        return repo.buySubscription(subscriptionId)
+            .shareIn(viewModelScope, SharingStarted.Lazily, 0)
+    }
+
 }

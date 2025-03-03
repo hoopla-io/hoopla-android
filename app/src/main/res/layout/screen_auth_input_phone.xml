@@ -48,31 +48,6 @@
 
     </uz.i_tv.domain.ui.views.CustomTextInputLayout>
 
-    <CheckBox
-        android:id="@+id/publicCheckbox"
-        android:layout_width="27dp"
-        android:layout_height="27dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_checkbox"
-        android:button="@color/primary"
-        android:checked="false"
-        app:layout_constraintBottom_toBottomOf="@id/privacy_policy"
-        app:layout_constraintStart_toStartOf="@id/inputPhoneLayout"
-        app:layout_constraintTop_toBottomOf="@id/inputPhoneLayout" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/privacy_policy"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginTop="16dp"
-        android:gravity="start"
-        android:text="@string/privacy_policy_desc"
-        android:textColor="@color/black_300"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/publicCheckbox"
-        app:layout_constraintTop_toBottomOf="@id/inputPhoneLayout" />
-
     <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
         android:id="@+id/btSend"
         style="@style/PrimaryColorButtonStyle"
@@ -83,7 +58,7 @@
         app:initialCornerAngle="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/privacy_policy"
+        app:layout_constraintTop_toBottomOf="@id/inputPhoneLayout"
         app:spinning_bar_color="@color/white"
         app:spinning_bar_padding="6dp"
         app:spinning_bar_width="4dp" />

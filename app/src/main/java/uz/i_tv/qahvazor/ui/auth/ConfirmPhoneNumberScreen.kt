@@ -3,17 +3,18 @@ package uz.i_tv.qahvazor.ui.auth
 import android.os.CountDownTimer
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.withStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.i_tv.data.UIResource
-import uz.i_tv.data.models.AccessTokenData
 import uz.i_tv.data.models.ConfirmSMSData
 import uz.i_tv.data.models.LoginSessionData
 import uz.i_tv.domain.ui.BaseFragment
 import uz.i_tv.domain.utils.disable
+import uz.i_tv.domain.utils.intentToBrowser
 import uz.i_tv.domain.utils.setTextColorRes
 import uz.i_tv.domain.utils.visible
 import uz.i_tv.domain.viewbinding.viewBinding
@@ -44,6 +45,11 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
         binding.backImg.setOnClickListener(this)
         binding.sendAgain.setOnClickListener(this)
         binding.btConfirm.setOnClickListener(this)
+        binding.privacyPolicy.setOnClickListener(this)
+
+        binding.inputCode.doAfterTextChanged {
+            binding.btConfirm.performClick()
+        }
 
         launch {
             viewModel.confirmSmsFlow.collectLatest(::collectConfirmSms)
@@ -68,7 +74,7 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
         cache.refreshToken = confirmData?.jwt?.refreshToken
         cache.tokenExpireAt = confirmData?.jwt?.expireAt ?: 0L
 
-        navigateTo(Screens.bottomNav())
+        replaceScreen(Screens.bottomNav())
     }
 
     private fun collectResendSmsResource(t: UIResource<LoginSessionData>) = t?.collect {
@@ -92,6 +98,10 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
                 if (!sessionId.isNullOrEmpty() && code.length == 5 && codeInt != null) {
                     viewModel.confirmSMS(codeInt, sessionId ?: "")
                 }
+            }
+
+            R.id.privacy_policy -> {
+                requireContext().intentToBrowser("https://hoopla.uz/ru/privacy-policy")
             }
         }
     }

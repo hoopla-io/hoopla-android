@@ -10,7 +10,7 @@ interface QrCodeService {
     @GET("v1/user/generate-qr-code")
     suspend fun generateQRCode(): BaseResponse<QRCodeAccessData>
 
-    @GET("v1/user/orders")
+    @GET("v1/user/orders/orders-list")
     suspend fun getOrders(): BaseResponse<List<OrderItemData>>
 
 }

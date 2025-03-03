@@ -1,6 +1,7 @@
 package uz.i_tv.qahvazor.ui.auth
 
 import android.view.View
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.withStarted
 import kotlinx.coroutines.flow.collectLatest
@@ -32,21 +33,15 @@ class AuthScreen : BaseFragment(R.layout.screen_auth_input_phone) {
 
     override fun initialize() {
         binding.inputPhone.requestFocus()
-        binding.privacyPolicy.setOnClickListener(this)
         binding.btSend.setOnClickListener(this)
         binding.btSend.disable()
 
-//        binding.inputPhone.doAfterTextChanged {
-//            binding.inputPhone.setSelection(
-//                it?.length ?: binding.inputPhone.unMaskedText?.length ?: 0
-//            )
-//        }
-
-        binding.publicCheckbox.setOnCheckedChangeListener { compoundButton, isChecked ->
-            if (isChecked)
+        binding.inputPhone.doOnTextChanged { text, start, before, count ->
+            if (phone.length == 12) {
                 binding.btSend.enable()
-            else
+            } else {
                 binding.btSend.disable()
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

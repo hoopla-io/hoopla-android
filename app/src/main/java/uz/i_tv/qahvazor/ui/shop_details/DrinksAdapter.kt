@@ -1,4 +1,4 @@
-package uz.i_tv.qahvazor.ui.partner_details
+package uz.i_tv.qahvazor.ui.shop_details
 
 import android.view.View
 import coil3.load

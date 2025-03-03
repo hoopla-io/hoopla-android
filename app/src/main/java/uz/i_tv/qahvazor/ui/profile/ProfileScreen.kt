@@ -9,7 +9,11 @@ import uz.i_tv.data.models.UserData
 import uz.i_tv.domain.ui.BaseFragment
 import uz.i_tv.domain.ui.BaseRootActivity
 import uz.i_tv.domain.ui.showRequestDF
+import uz.i_tv.domain.utils.formatPhoneNumber
+import uz.i_tv.domain.utils.formatToPrice
+import uz.i_tv.domain.utils.getDateDMMMMYYYYHHmm
 import uz.i_tv.domain.utils.gone
+import uz.i_tv.domain.utils.intentToBrowser
 import uz.i_tv.domain.utils.visible
 import uz.i_tv.domain.viewbinding.viewBinding
 import uz.i_tv.qahvazor.R
@@ -26,6 +30,9 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
         binding.subscription.setOnClickListener(this)
         binding.logout.setOnClickListener(this)
         binding.login.setOnClickListener(this)
+        binding.privacyPolicy.setOnClickListener(this)
+        binding.termOfUse.setOnClickListener(this)
+        binding.settings.setOnClickListener(this)
 
         binding.swipeRefreshLayout.setOnRefreshListener(this)
 
@@ -42,12 +49,22 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
         binding.logout.visible()
 
         binding.name.text = it?.name
-        binding.phoneNumber.text = it?.phoneNumber
+        binding.phoneNumber.text = it?.phoneNumber?.formatPhoneNumber()
+        binding.balance.text = it?.balance?.formatToPrice().plus(" ${it?.currency}")
+
+        if (it?.subscription != null) {
+            binding.subscriptionName.text = it.subscription?.name
+            binding.subscriptionEndDate.text =
+                "(Active to: ".plus(it.subscription?.endDateUnix?.getDateDMMMMYYYYHHmm()).plus(")")
+        } else {
+            binding.subscriptionName.text = "You have not active subscription!"
+            binding.subscriptionEndDate.text = ""
+        }
     }
 
     private fun collectLogoutData(t: UIResource<Any>) = t.collect {
         cache.clearTokens()
-        newRootScreen(Screens.bottomNav())
+        replaceScreen(Screens.bottomNav())
     }
 
     override fun onClick(view: View) {
@@ -71,6 +88,14 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
             R.id.login -> {
                 (requireActivity() as BaseRootActivity).navigateToAuthScreen()
+            }
+
+            R.id.privacyPolicy -> {
+                requireContext().intentToBrowser("https://hoopla.uz/ru/privacy-policy")
+            }
+
+            R.id.termOfUse -> {
+                requireContext().intentToBrowser("https://hoopla.uz/ru/terms-of-use")
             }
         }
     }

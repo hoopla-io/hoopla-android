@@ -41,36 +41,43 @@
             tools:itemCount="4"
             tools:listitem="@layout/item_image" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/phone_number"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
+        <TextView
+            android:id="@+id/drinks_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/bg_corner20_white"
-            android:drawableStart="@drawable/ic_phone"
-            android:drawablePadding="12dp"
-            android:elevation="1dp"
-            android:foreground="?attr/selectableItemBackground"
-            android:gravity="center"
-            android:paddingHorizontal="24dp"
-            android:textAllCaps="false"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/inter_bold"
+            android:text="Drinks:"
+            android:textColor="@color/black_300"
+            android:textSize="21sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/image_view_pager"
-            tools:text="+998 90 123 45 76" />
+            app:layout_constraintTop_toBottomOf="@id/image_view_pager" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/drink_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/drinks_label"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_drink" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title_working_time"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:fontFamily="@font/inter_medium"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/inter_bold"
             android:text="Working time:"
             android:textColor="@color/black_300"
-            android:textSize="18sp"
+            android:textSize="21sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/phone_number" />
+            app:layout_constraintTop_toBottomOf="@id/drink_rv" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/work_time_rv"
@@ -128,6 +135,98 @@
             app:layout_constraintBottom_toBottomOf="@id/map_image"
             app:layout_constraintRight_toRightOf="@id/map_image" />
 
+        <TextView
+            android:id="@+id/contacts_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/inter_bold"
+            android:text="Contacts:"
+            android:textColor="@color/black_300"
+            android:textSize="21sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/map_image" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/contacts_label">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/phone_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_marginVertical="12dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_corner30_primary300"
+                    android:backgroundTint="@color/white"
+                    android:drawableStart="@drawable/ic_phone"
+                    android:drawablePadding="12dp"
+                    android:elevation="1dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center"
+                    android:paddingHorizontal="24dp"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black_300"
+                    android:textSize="16sp"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/map_image"
+                    tools:text="+998 90 123 45 76" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/web"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/white"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_world"
+                    android:tint="@color/black"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/instagram"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/white"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_instagram"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/facebook"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/white"
+                    android:elevation="2dp"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_facebook"
+                    android:visibility="gone"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

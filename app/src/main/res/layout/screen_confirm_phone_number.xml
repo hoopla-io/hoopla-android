@@ -159,4 +159,15 @@
         app:layout_constraintTop_toTopOf="@id/send_again"
         tools:text="00:30" />
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/privacy_policy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="36dp"
+        android:gravity="center"
+        android:text="@string/privacy_policy_desc"
+        android:textColor="@color/black_300"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

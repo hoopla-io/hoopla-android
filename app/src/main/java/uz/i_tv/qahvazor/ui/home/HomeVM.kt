@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 import uz.i_tv.data.UIResource
 import uz.i_tv.data.models.PartnerItemData
+import uz.i_tv.data.models.ShopItemData
 import uz.i_tv.domain.repositories.HomeRepo
 import uz.i_tv.domain.ui.BaseVM
 
@@ -13,6 +14,14 @@ class HomeVM(private val homeRepo: HomeRepo) : BaseVM() {
 
     suspend fun getPartners(): SharedFlow<UIResource<List<PartnerItemData>>> {
         return homeRepo.getPartners()
+            .shareIn(viewModelScope, SharingStarted.Lazily, 0)
+    }
+
+    suspend fun getNearShops(
+        lat: Double,
+        long: Double
+    ): SharedFlow<UIResource<List<ShopItemData>>> {
+        return homeRepo.getNearShops(lat, long)
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 

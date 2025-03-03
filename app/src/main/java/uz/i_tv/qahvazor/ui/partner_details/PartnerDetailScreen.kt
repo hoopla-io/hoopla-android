@@ -5,7 +5,6 @@ import coil3.load
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.i_tv.data.UIResource
-import uz.i_tv.data.models.LocationData
 import uz.i_tv.data.models.PartnerData
 import uz.i_tv.data.models.ShopItemData
 import uz.i_tv.data.models.UrlTypes.URL_TYPE_INSTAGRAM
@@ -15,6 +14,7 @@ import uz.i_tv.domain.utils.intentToBrowser
 import uz.i_tv.domain.utils.intentToCall
 import uz.i_tv.domain.utils.visible
 import uz.i_tv.qahvazor.databinding.ScreenPartnerDetailsBinding
+import uz.i_tv.qahvazor.ui.shop_details.DrinksAdapter
 import uz.i_tv.qahvazor.ui.shop_details.ShopDetailBD.Companion.showShopDetailBD
 
 class PartnerDetailScreen : BaseActivity() {

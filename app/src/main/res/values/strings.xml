@@ -1,6 +1,4 @@
 <resources>
-    <string name="app_name">Qahvazor</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="app_name">Hoopla</string>
+    <string name="app_name_lowercase">hoopla</string>
 </resources>

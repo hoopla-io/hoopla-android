@@ -1,5 +1,6 @@
 package uz.i_tv.data.models
 
+import uz.i_tv.data.models.PartnerData.UrlData
 import uz.i_tv.data.rv.BaseItem
 
 data class ShopData(
@@ -10,6 +11,8 @@ data class ShopData(
     val phoneNumbers: List<PhoneNumber?>?,
     val workingHours: List<WorkHour?>?,
     val pictures: List<PictureData?>?,
+    val drinks: List<DrinkItemData>?,
+    val urls: List<UrlData>?,
 ) {
     data class WorkHour(
         val weekDay: String?,

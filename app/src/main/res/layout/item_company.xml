@@ -23,7 +23,6 @@
             android:background="@color/grey_200"
             android:padding="1.5dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/img_logo_text"
             app:layout_constraintDimensionRatio="16:8"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ItemCompanyImageAppearance" />
@@ -38,6 +37,17 @@
             android:textColor="@color/black_300"
             android:textSize="24sp"
             app:layout_constraintTop_toBottomOf="@id/image" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_regular"
+            android:paddingHorizontal="12dp"
+            android:text="1.2 km"
+            android:textColor="@color/black_300"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/name" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

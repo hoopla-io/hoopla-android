@@ -1,5 +1,6 @@
 package uz.i_tv.domain.utils
 
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -14,19 +15,35 @@ fun String.formatPhoneNumber(): String {
     return output
 }
 
-fun String.formatToPrice(): String {
-    val value = replace(" ", "")
-    val reverseValue = StringBuilder(value).reverse()
-        .toString()
-    val finalValue = StringBuilder()
-    for (i in 1..reverseValue.length) {
-        val `val` = reverseValue[i - 1]
-        finalValue.append(`val`)
-        if (i % 3 == 0 && i != reverseValue.length && i > 0) {
-            finalValue.append(" ")
-        }
+fun Double.formatToPrice(): String {
+
+    val intValue = this.toInt()
+
+    if (this == intValue.toDouble()) return intValue.toString().moneyType()
+    else {
+        val string = this.toString()
+        val indexOfFirst = string.indexOfFirst { it == '.' }
+        val substring = string.substring(indexOfFirst)
+        return intValue.toString().moneyType().plus(substring)
     }
-    return finalValue.reverse().toString()
+}
+
+fun String.moneyType(): String {
+    return this
+        .reversed()
+        .chunked(3)
+        .joinToString(" ")
+        .reversed()
+}
+
+fun Double.formatDistance(): String {
+    val int = this.toInt()
+    val dec = DecimalFormat("#,###.##")
+    return if (int == 0) {
+        dec.format((this * 1000)).plus(" metr")
+    } else {
+        dec.format(this).plus(" km")
+    }.plus(" masofada")
 }
 
 fun Long.getDateDDMMMMYYYYHHmm(): String {
@@ -39,3 +56,15 @@ fun Long.getDateDDMMMMYYYYHHmm(): String {
         stringBuilder[0] = stringBuilder[0].uppercaseChar()
     return stringBuilder.toString()
 }
+
+fun Long.getDateDMMMMYYYYHHmm(): String {
+    val format = "d MMMM, yyyy  HH:mm" // you can add the format you need
+    val sdf = SimpleDateFormat(format, Locale.getDefault()) // default local
+    sdf.timeZone = TimeZone.getDefault() // set anytime zone you need
+    val s = sdf.format(java.sql.Date(this * 1000))
+    val stringBuilder = StringBuilder(s)
+    if (!s.isNullOrEmpty())
+        stringBuilder[0] = stringBuilder[0].uppercaseChar()
+    return stringBuilder.toString()
+}
+

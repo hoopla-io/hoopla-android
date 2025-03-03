@@ -11,18 +11,15 @@ class SplashScreen : BaseFragment(R.layout.screen_splash) {
 
     override fun initialize() {
         Handler(Looper.getMainLooper()).postDelayed({
-//            when {
-//                cache.isFirstTime -> {
-//                    cache.isFirstTime = false
-//                    replaceScreen(Screens.authScreen())
-//                }
-//
-//                else -> replaceScreen(Screens.bottomNav())
-//            }
+            when {
+                cache.isFirstTime -> {
+                    cache.isFirstTime = false
+                    replaceScreen(Screens.onBoardingScreen())
+                }
 
-            replaceScreen(Screens.bottomNav())
+                else -> replaceScreen(Screens.bottomNav())
+            }
 
-//            newRootScreen(ClientScreens.bottomNav())
         }, 1000)
     }
 

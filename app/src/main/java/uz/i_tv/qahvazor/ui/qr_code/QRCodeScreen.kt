@@ -122,7 +122,7 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
             .setLogo(
                 QrVectorLogo(
                     drawable = ContextCompat
-                        .getDrawable(requireContext(), uz.i_tv.domain.R.drawable.img_logo_q),
+                        .getDrawable(requireContext(), uz.i_tv.domain.R.drawable.img_logo_hoopla),
                     size = .25f,
                     padding = QrVectorLogoPadding.Natural(.2f),
                     shape = QrVectorLogoShape
