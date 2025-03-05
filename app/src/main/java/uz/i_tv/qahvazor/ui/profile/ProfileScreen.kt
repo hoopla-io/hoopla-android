@@ -28,6 +28,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
     override fun initialize() {
 
         binding.subscription.setOnClickListener(this)
+        binding.paymentService.setOnClickListener(this)
         binding.logout.setOnClickListener(this)
         binding.login.setOnClickListener(this)
         binding.privacyPolicy.setOnClickListener(this)
@@ -57,7 +58,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
             binding.subscriptionEndDate.text =
                 "(Active to: ".plus(it.subscription?.endDateUnix?.getDateDMMMMYYYYHHmm()).plus(")")
         } else {
-            binding.subscriptionName.text = "You have not active subscription!"
+            binding.subscriptionName.text = "You don\'t have any active subscription!"
             binding.subscriptionEndDate.text = ""
         }
     }
@@ -71,6 +72,10 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
         when (view.id) {
             R.id.subscription -> {
                 navigateTo(Screens.subscriptionsScreen())
+            }
+
+            R.id.payment_service -> {
+                navigateTo(Screens.paymentServicesScreen())
             }
 
             R.id.logout -> {

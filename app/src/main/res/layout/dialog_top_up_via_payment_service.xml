@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/bg_bottom_sheet_dialog_fragment"
+    android:elevation="2dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="36dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_bold"
+        android:textColor="@color/black_300"
+        android:textSize="16sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Оплата через Payme" />
+
+    <uz.i_tv.domain.ui.views.CustomTextInputLayout
+        android:id="@+id/inputAmountLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.InputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:inputType="numberDecimal"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@id/title">
+
+        <EditText
+            android:id="@+id/inputAmount"
+            style="@style/InputStyle"
+            android:hint="Enter summa"
+            android:inputType="numberDecimal"
+            app:layout_constraintTop_toBottomOf="@id/title" />
+
+    </uz.i_tv.domain.ui.views.CustomTextInputLayout>
+
+    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+        android:id="@+id/btSend"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_marginTop="15dp"
+        android:text="Continue"
+        android:textAllCaps="false"
+        app:finalCornerAngle="10dp"
+        app:initialCornerAngle="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputAmountLayout"
+        app:spinning_bar_color="@color/white"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

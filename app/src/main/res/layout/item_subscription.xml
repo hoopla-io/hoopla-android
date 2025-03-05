@@ -9,6 +9,7 @@
     android:background="@drawable/bg_corner20_white"
     android:backgroundTint="#ECEDF1"
     android:elevation="0dp"
+    android:foreground="@drawable/ripple_corner20"
     android:paddingHorizontal="20dp"
     android:paddingVertical="20dp">
 

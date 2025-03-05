@@ -208,13 +208,23 @@
                     style="@style/DetailButtonStyle"
                     android:layout_marginTop="20dp"
                     android:drawableStart="@drawable/ic_subscription"
-                    android:drawableTint="@color/black_300"
                     android:elevation="4dp"
                     android:text="Subscriptions"
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/myDetails" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/payment_service"
+                    style="@style/DetailButtonStyle"
+                    android:drawableStart="@drawable/ic_payments"
+                    android:elevation="4dp"
+                    android:text="Payment"
+                    app:drawableEndCompat="@drawable/ic_arrow_right_black300"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/subscription" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/devices"
@@ -226,7 +236,7 @@
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/subscription" />
+                    app:layout_constraintTop_toBottomOf="@id/payment_service" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/support"

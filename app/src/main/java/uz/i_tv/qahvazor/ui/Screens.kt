@@ -6,6 +6,7 @@ import uz.i_tv.qahvazor.ui.auth.ConfirmPhoneNumberScreen
 import uz.i_tv.qahvazor.ui.home.HomeScreen
 import uz.i_tv.qahvazor.ui.on_boarding.OnBoardingScreen
 import uz.i_tv.qahvazor.ui.profile.ProfileScreen
+import uz.i_tv.qahvazor.ui.profile.payment.PaymentServicesScreen
 import uz.i_tv.qahvazor.ui.profile.subscriptions.SubscriptionsScreen
 import uz.i_tv.qahvazor.ui.qr_code.QRCodeScreen
 
@@ -32,5 +33,6 @@ object Screens {
     }
 
     fun subscriptionsScreen() = FragmentScreen { SubscriptionsScreen() }
+    fun paymentServicesScreen() = FragmentScreen { PaymentServicesScreen() }
 
 }

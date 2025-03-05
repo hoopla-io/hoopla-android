@@ -46,6 +46,33 @@ abstract class BaseRepo {
         }
     }
 
+    protected suspend fun <T> handleX(
+        callback: suspend () -> Response<BaseResponseData<T>>
+    ): UIResource<BaseResponseData<T>> {
+        return withContext(IO) {
+            try {
+                val response: Response<BaseResponseData<T>> = callback()
+
+                val body: BaseResponseData<T>? = response.body()
+                val data: T? = body?.data
+                val message: String = body?.message ?: ""
+
+                if (response.isSuccessful) {
+                    UIResource.Success(body)
+                } else UIResource.Error(
+                    throwException(
+                        response.code(),
+                        response.errorBody()?.string(),
+                        message
+                    )
+                )
+            } catch (e: Exception) {
+                UIResource.Error(handleDeviceException(e))
+            }
+
+        }
+    }
+
     private fun throwException(
         code: Int,
         errorBodyJson: String?,

@@ -24,6 +24,7 @@ import uz.i_tv.data.models.AccessTokenData
 import uz.i_tv.data.services.AuthService
 import uz.i_tv.data.services.HomeService
 import uz.i_tv.data.services.PartnerService
+import uz.i_tv.data.services.PaymentService
 import uz.i_tv.data.services.ProfileService
 import uz.i_tv.data.services.QrCodeService
 import uz.i_tv.data.services.ShopService
@@ -37,6 +38,7 @@ import uz.i_tv.domain.permission.PermissionManagerImpl
 import uz.i_tv.domain.repositories.AuthRepo
 import uz.i_tv.domain.repositories.HomeRepo
 import uz.i_tv.domain.repositories.PartnerRepo
+import uz.i_tv.domain.repositories.PaymentServiceRepo
 import uz.i_tv.domain.repositories.ProfileRepo
 import uz.i_tv.domain.repositories.QRCodeRepo
 import uz.i_tv.domain.repositories.ShopRepo
@@ -64,6 +66,7 @@ object Modules {
         single { provideShopService(get()) }
         single { provideQrCodeService(get()) }
         single { provideSubscriptionService(get()) }
+        single { providePaymentService(get()) }
     }
 
     val repositoryModule = module {
@@ -74,6 +77,7 @@ object Modules {
         factory { ShopRepo(get()) }
         factory { QRCodeRepo(get()) }
         factory { SubscriptionRepo(get()) }
+        factory { PaymentServiceRepo(get()) }
     }
 
     private fun provideAuthService(retrofit: Retrofit) = retrofit.create(AuthService::class.java)
@@ -90,6 +94,9 @@ object Modules {
 
     private fun provideSubscriptionService(retrofit: Retrofit) =
         retrofit.create(SubscriptionService::class.java)
+
+    private fun providePaymentService(retrofit: Retrofit) =
+        retrofit.create(PaymentService::class.java)
 
     private fun provideAppCacheSharedPreferences(
         context: Context
