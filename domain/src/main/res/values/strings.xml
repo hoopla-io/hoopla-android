@@ -1,7 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="no_internet_connection">No internet connection</string>
-    <string name="privacy_policy_desc">By registering, I agree to the terms and conditions of the <u><font color="#FF039BE5">user agreement</font></u></string>
 
-    <string name="send_again_">Send again: </string>
+    <string name="home">Главная</string>
+    <string name="profile">Профиль</string>
+    <string name="qr_code">QR Code</string>
+
+    <string name="skip">Пропустить</string>
+    <string name="welcome_to_hoopla">Добро пожаловать в Hoopla</string>
+    <string name="your_coffee_is_waiting_for_you">Ваш кофе ждёт вас</string>
+    <string name="on_boarding_desc1">Наслаждайтесь свежим и ароматным кофе каждый день. Удобно и без лишних усилий</string>
+    <string name="on_boarding_desc2">Покажите QR-код и заберите свой напиток. Быстро, удобно и без очередей</string>
+
+    <string name="your_phone_number_">Ваш номер телефона:</string>
+    <string name="phone_number__">Номер телефона: </string>
+    <string name="continue_">Продолжить</string>
+    <string name="phone_number_is_not_valid">Неверный номер телефона</string>
+    <string name="confirmation_code">Код подтверждения</string>
+    <string name="code_sent_to_number_">Код отправлен на номер:</string>
+    <string name="confirm">Подтвердить</string>
+
+    <string name="sign_in">Войти</string>
+    <string name="cancel">Отмена</string>
+    <string name="you_r_not_logged_in">Вы не авторизованы!\nПожалуйста авторизуйтесь</string>
+
+    <string name="please_turn_on_gps">Пожалуйста, включите геолокацию, чтобы наши сервисы работали правильно</string>
+    <string name="turn_on">Включить</string>
+    <string name="location_permission_not_full_granted">Разрешение на местоположение не предоставлено</string>
+    <string name="label_distance_away">в %1$s %2$s</string>
+    <string name="short_metr">м</string>
+    <string name="short_km">км</string>
+
+    <string name="drinks_">Напитки:</string>
+    <string name="branches_">Филиалы:</string>
+    <string name="working_time_">Рабочее время:</string>
+    <string name="address_on_the_map_">Адрес на карте:</string>
+    <string name="show_on_the_map">Показать на карте</string>
+    <string name="contacts_">Контакты:</string>
+
+    <string name="available_time_">Доступное время:</string>
+    <string name="order_history_">История заказов:</string>
+
+    <string name="log_out">Выйти</string>
+    <string name="balance__">Баланс: </string>
+    <string name="your_subscription__">Ваша подписка: </string>
+    <string name="my_details">Мои данные</string>
+    <string name="subscriptions">Подписки</string>
+    <string name="payment">Оплата</string>
+    <string name="sessions">Сессии</string>
+    <string name="support">Поддержка</string>
+    <string name="privacy_policy">Политика конфиденциальности</string>
+    <string name="term_of_use">Условия использования</string>
+    <string name="settings">Настройки</string>
+    <string name="label_active_to_">(Активно до: %1$s)</string>
+    <string name="you_dont_have_any_active_subscription">У вас нет активной подписки!</string>
+    <string name="label_top_up_via_">Пополнить через %1$s</string>
+    <string name="label_price_currency_days">%1$s %2$s / %3$s дней</string>
+    <string name="subscribe">Подписаться</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="label_question_purchase_subscription">Стоимость подписки %1$s %2$s на %3$s дней. Вы действительно хотите купить эту подписку?</string>
+    <string name="successfully_bought">Успешно куплено!</string>
+    <string name="label_successfully_bought">Вы купили подписку на %1$s на %2$s дня за %3$s %4$s.</string>
+
+
+    <string name="no_internet_connection">Нет соединения с Интернетом</string>
+    <string name="privacy_policy_desc">Регистрируясь, я соглашаюсь с условиями <u><font color="#FF039BE5">пользовательского соглашения</font></u></string>
+
+    <string name="send_again_">Отправить еще раз: </string>
 </resources>

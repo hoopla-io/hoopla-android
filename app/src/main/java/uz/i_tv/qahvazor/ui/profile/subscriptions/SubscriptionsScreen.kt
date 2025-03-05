@@ -37,8 +37,13 @@ class SubscriptionsScreen : BaseFragment(R.layout.screen_subscriptions),
 
         adapter.setOnItemClickListener { item ->
             showRequestDF(item.name ?: "",
-                "Are you sure you want to purchase this subscription for ${item.price?.formatToPrice()} ${item.currency}?",
-                "Yes", "No",
+                getString(
+                    uz.i_tv.domain.R.string.label_question_purchase_subscription,
+                    item.price?.formatToPrice(),
+                    item.currency ?: "",
+                    item.days.toString()
+                ),
+                getString(uz.i_tv.domain.R.string.yes), getString(uz.i_tv.domain.R.string.no),
                 onCancel = {},
                 onApprove = {
                     launch {
@@ -60,8 +65,14 @@ class SubscriptionsScreen : BaseFragment(R.layout.screen_subscriptions),
         t.collect {
             onRefresh()
             showMessageDF(
-                "Successfully bought!",
-                "You have successfully purchased ${item.name} subscription for ${item.days} days for ${item.price?.formatToPrice()} ${item.currency}!",
+                getString(uz.i_tv.domain.R.string.successfully_bought),
+                getString(
+                    uz.i_tv.domain.R.string.label_successfully_bought,
+                    item.name,
+                    item.days.toString(),
+                    item.price?.formatToPrice(),
+                    item.currency
+                ),
                 "OK"
             ) {}
         }

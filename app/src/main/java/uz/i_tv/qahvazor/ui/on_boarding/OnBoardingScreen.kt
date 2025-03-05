@@ -13,14 +13,13 @@ class OnBoardingScreen : BaseFragment(R.layout.screen_on_boarding) {
 
     private val binding by viewBinding(ScreenOnBoardingBinding::bind)
 
-    private val title1 = "Добро пожаловать в Hoopla"
-    private val title2 = "Ваш кофе ждёт вас"
-
-    private val desc1 =
-        "Наслаждайтесь свежим и ароматным кофе каждый день. Удобно и без лишних усилий"
-    private val desc2 = "Покажите QR-код и заберите свой напиток. Быстро, удобно и без очередей"
-
     override fun initialize() {
+
+        val title1 = getString(uz.i_tv.domain.R.string.welcome_to_hoopla)
+        val title2 = getString(uz.i_tv.domain.R.string.your_coffee_is_waiting_for_you)
+
+        val desc1 = getString(uz.i_tv.domain.R.string.on_boarding_desc1)
+        val desc2 = getString(uz.i_tv.domain.R.string.on_boarding_desc2)
 
         binding.desc.animateText(desc1)
 

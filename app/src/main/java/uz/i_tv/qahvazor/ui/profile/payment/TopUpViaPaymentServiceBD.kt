@@ -23,7 +23,7 @@ class TopUpViaPaymentServiceBD(private val serviceData: PaymentServiceItemData) 
 
     override fun initialize() {
 
-        binding.title.text = "Top up via ${serviceData.name}"
+        binding.title.text = getString(uz.i_tv.domain.R.string.label_top_up_via_, serviceData.name)
 
         binding.inputAmount.requestFocus()
 

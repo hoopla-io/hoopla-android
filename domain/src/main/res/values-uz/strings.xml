@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="home">Bosh sahifa</string>
+    <string name="profile">Profil</string>
+    <string name="qr_code">QR Kod</string>
+
+    <string name="skip">O\'tkazib yuborish</string>
+    <string name="welcome_to_hoopla">Hooplaga xush kelibsiz</string>
+    <string name="your_coffee_is_waiting_for_you">Xushbo\'y qahva sizni kutmoqda</string>
+    <string name="on_boarding_desc1">Har kuni yangi va xushbo\'y qahvadan bahramand bo\'ling. Juda qulay va oson</string>
+    <string name="on_boarding_desc2">QR kodini ko\'rsating va ichimlikni oling. Tez, qulay va navbatlarsiz</string>
+
+    <string name="your_phone_number_">Telefon raqamingiz:</string>
+    <string name="phone_number__">Telefon raqamingiz: </string>
+    <string name="continue_">Davom ettirish</string>
+    <string name="phone_number_is_not_valid">Telefon raqam mos emas</string>
+    <string name="confirmation_code">Kodni tasdiqlash</string>
+    <string name="code_sent_to_number_">Kod ushnu raqamga yuborildi:</string>
+    <string name="confirm">Tasdiqlash</string>
+
+    <string name="sign_in">Tizimga kirish</string>
+    <string name="cancel">Bekor qilish</string>
+    <string name="you_r_not_logged_in">Siz tizimga kirmagansiz!\nIltimos, tizimga kiring</string>
+
+    <string name="please_turn_on_gps">Xizmatlarimiz to\'g\'ri ishlashi uchun iltimos geolokatsiyani yoqing</string>
+    <string name="turn_on">Yoqish</string>
+    <string name="location_permission_not_full_granted">Joylashuvga ruxsat to\'liq berilmagan</string>
+    <string name="label_distance_away">%1$s %2$s uzoqlikda</string>
+    <string name="short_metr">m</string>
+    <string name="short_km">km</string>
+
+    <string name="drinks_">Ichimliklar:</string>
+    <string name="branches_">Filiallar:</string>
+    <string name="working_time_">Ish vaqti:</string>
+    <string name="address_on_the_map_">Xaritadagi manzil:</string>
+    <string name="show_on_the_map">Xaritada ko\'rish</string>
+    <string name="contacts_">Kontaktlar:</string>
+
+    <string name="available_time_">Foydalanish vaqti:</string>
+    <string name="order_history_">Buyurtmalar tarixi:</string>
+
+    <string name="log_out">Tizimdan chiqish</string>
+    <string name="balance__">Balans: </string>
+    <string name="your_subscription__">Tarifingiz: </string>
+    <string name="my_details">Mening ma\'lumotlarim</string>
+    <string name="subscriptions">Obunalar</string>
+    <string name="payment">To\'lovlar</string>
+    <string name="sessions">Aktiv qurilmalar</string>
+    <string name="support">Qo\'llab quvvatlash</string>
+    <string name="privacy_policy">Maxfiylik siyosati</string>
+    <string name="term_of_use">Foydalanish shartlari</string>
+    <string name="settings">Sozlamalar</string>
+    <string name="label_active_to_">(%1$s gacha faol)</string>
+    <string name="you_dont_have_any_active_subscription">Sizda faol obuna mavjud emas!</string>
+    <string name="label_top_up_via_">%1$s orqali to\'ldirish</string>
+    <string name="label_price_currency_days">%1$s %2$s / %3$s kun</string>
+    <string name="subscribe">Obuna bo\'lish</string>
+    <string name="yes">Ha</string>
+    <string name="no">Yo\'q</string>
+    <string name="label_question_purchase_subscription">Obuna narxi %1$s %2$s %3$s kunga. Rostdan ham ushbu obunani sotib olmoqchimisiz?</string>
+    <string name="successfully_bought">Muvaffaqiyatli sotib olindi!</string>
+    <string name="label_successfully_bought">Siz %1$s obunasini %2$s kunga %3$s %4$s evaziga sotib oldingiz</string>
+
+
+    <string name="no_internet_connection">Internet mavjud emas</string>
+    <string name="privacy_policy_desc">Ro\'yxatdan o\'tish orqali siz <u><font color="#FF039BE5">foydalanuvchi shartnomasi</font></u> shartlariga rozilik bildirasiz</string>
+
+    <string name="send_again_">Qayta yuborish: </string>
+
+</resources>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="home">Home</string>
+    <string name="profile">Profile</string>
+    <string name="qr_code">QR Code</string>
+
+    <string name="skip">Skip</string>
+    <string name="welcome_to_hoopla">Welcome to Hoopla</string>
+    <string name="your_coffee_is_waiting_for_you">Your coffee is waiting for you</string>
+    <string name="on_boarding_desc1">Enjoy fresh and aromatic coffee every day. Convenient and effortless</string>
+    <string name="on_boarding_desc2">Show the QR code and pick up your drink. Fast, convenient and without queues</string>
+
+    <string name="your_phone_number_">Your phone number:</string>
+    <string name="phone_number__">Phone number: </string>
+    <string name="continue_">Continue</string>
+    <string name="phone_number_is_not_valid">Phone number is not valid</string>
+    <string name="confirmation_code">Confirmation code</string>
+    <string name="code_sent_to_number_">Code sent to number:</string>
+    <string name="confirm">Confirm</string>
+
+    <string name="sign_in">Sign in</string>
+    <string name="cancel">Cancel</string>
+    <string name="you_r_not_logged_in">You are not logged in!\nPlease sign in</string>
+
+    <string name="please_turn_on_gps">Please turn on geolocation for our services to work properly</string>
+    <string name="turn_on">Turn on</string>
+    <string name="location_permission_not_full_granted">Location permission not full granted</string>
+    <string name="label_distance_away">%1$s %2$s away</string>
+    <string name="short_metr">m</string>
+    <string name="short_km">km</string>
+
+    <string name="drinks_">Drinks:</string>
+    <string name="branches_">Branches:</string>
+    <string name="working_time_">Working time:</string>
+    <string name="address_on_the_map_">Address on the map:</string>
+    <string name="show_on_the_map">Show on the map</string>
+    <string name="contacts_">Contacts:</string>
+
+    <string name="available_time_">Available time:</string>
+    <string name="order_history_">Order history:</string>
+
+    <string name="log_out">Log out</string>
+    <string name="balance__">Balance: </string>
+    <string name="your_subscription__">Your subscription: </string>
+    <string name="my_details">My Details</string>
+    <string name="subscriptions">Subscriptions</string>
+    <string name="payment">Payment</string>
+    <string name="sessions">Sessions</string>
+    <string name="support">Support</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="term_of_use">Term of use</string>
+    <string name="settings">Settings</string>
+    <string name="label_active_to_">(Active to: %1$s)</string>
+    <string name="you_dont_have_any_active_subscription">You don\'t have any active subscription!</string>
+    <string name="label_top_up_via_">Top up via %1$s</string>
+    <string name="label_price_currency_days">%1$s %2$s / %3$s days</string>
+    <string name="subscribe">Subscribe</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="label_question_purchase_subscription">The subscription price is %1$s %2$s for %3$s days. Do you really want to buy this subscription?</string>
+    <string name="successfully_bought">Successfully bought!</string>
+    <string name="label_successfully_bought">You purchased %1$s subscription for %2$s days for %3$s %4$s</string>
+
+
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="privacy_policy_desc">By registering, I agree to the terms and conditions of the <u><font color="#FF039BE5">user agreement</font></u></string>
+
+    <string name="send_again_">Send again: </string>
+</resources>

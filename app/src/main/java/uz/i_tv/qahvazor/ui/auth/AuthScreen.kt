@@ -67,7 +67,8 @@ class AuthScreen : BaseFragment(R.layout.screen_auth_input_phone) {
         when (view.id) {
             R.id.btSend -> {
                 if ((phone.length < 12)) {
-                    binding.inputPhoneLayout.error = "getString(R.string.error_phone_number)"
+                    binding.inputPhoneLayout.error =
+                        getString(uz.i_tv.domain.R.string.phone_number_is_not_valid)
                 } else {
                     hideKeyboard()
                     viewModel.sendSms(phone)

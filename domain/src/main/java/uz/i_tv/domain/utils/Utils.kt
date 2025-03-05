@@ -1,5 +1,7 @@
 package uz.i_tv.domain.utils
 
+import android.content.Context
+import uz.i_tv.domain.R
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -36,14 +38,22 @@ fun String.moneyType(): String {
         .reversed()
 }
 
-fun Double.formatDistance(): String {
-    val int = this.toInt()
+fun Context.formatDistance(distance: Double): String {
+    val int = distance.toInt()
     val dec = DecimalFormat("#,###.##")
     return if (int == 0) {
-        dec.format((this * 1000)).plus(" metr")
+        getString(
+            R.string.label_distance_away,
+            dec.format((distance * 1000)),
+            getString(R.string.short_metr)
+        )
     } else {
-        dec.format(this).plus(" km")
-    }.plus(" masofada")
+        getString(
+            R.string.label_distance_away,
+            dec.format(distance),
+            getString(R.string.short_km)
+        )
+    }
 }
 
 fun Long.getDateDDMMMMYYYYHHmm(): String {

@@ -14,7 +14,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:navigationContentDescription="Orqaga"
         app:navigationIcon="@drawable/ic_arrow_left_back"
-        app:title="Payment services"
+        app:title="@string/payment"
         app:titleTextAppearance="@style/ToolbarTitleTextStyle"
         app:titleTextColor="@color/white" />
 

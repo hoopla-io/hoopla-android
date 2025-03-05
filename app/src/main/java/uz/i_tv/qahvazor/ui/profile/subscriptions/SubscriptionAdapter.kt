@@ -28,9 +28,11 @@ class SubscriptionAdapter : BaseAdapter<SubscriptionItemData>() {
             val itemData = getItem(absoluteAdapterPosition) ?: return
 
             binding.name.text = itemData.name
-            binding.price.text = itemData.price?.formatToPrice()
-                .plus(" ${itemData.currency}")
-                .plus(" / ${itemData.days} days")
+            binding.price.text = itemView.context.getString(
+                uz.i_tv.domain.R.string.label_price_currency_days,
+                itemData.price?.formatToPrice(),
+                itemData.currency, itemData.days.toString()
+            )
 
             featureAdapter.submitList(itemData.features)
         }

@@ -33,7 +33,7 @@ class PaymentServicesScreen : BaseFragment(R.layout.screen_payment_services) {
 
     }
 
-    private suspend fun collectPaymentServices(t: UIResource<List<PaymentServiceItemData>>) =
+    private fun collectPaymentServices(t: UIResource<List<PaymentServiceItemData>>) =
         t.collect {
             adapter.submitList(it)
         }

@@ -41,7 +41,7 @@
             android:paddingBottom="120dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:itemCount="0"
-            tools:listitem="@layout/item_company" />
+            tools:listitem="@layout/item_partner" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium"
-            android:text="Xizmatlarimiz to'g'ri ishlashi uchun iltimos geolokatsiyani yoqing"
+            android:text="@string/please_turn_on_gps"
             android:textColor="@color/error_400"
             android:textSize="20sp"
             app:layout_constraintTop_toTopOf="parent" />
@@ -78,7 +78,7 @@
             android:fontFamily="@font/inter_bold"
             android:gravity="end"
             android:paddingVertical="6dp"
-            android:text="Yoqish"
+            android:text="@string/turn_on"
             android:textColor="@color/error_400"
             android:textSize="20sp"
             app:layout_constraintTop_toBottomOf="@id/locationDesc" />

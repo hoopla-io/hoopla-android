@@ -121,7 +121,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
             if (isGPSEnabled) {
                 if (!checkPermissionForLocationIsGranted()) {
-                    showErrorMessage("location_permission_not_full_granted")
+                    showErrorMessage(getString(uz.i_tv.domain.R.string.location_permission_not_full_granted))
                     return
                 }
                 binding.turnOnGPSContainer.gone()
@@ -129,7 +129,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
                 showLoading()
                 startFusedLocationListener()
             } else {
-                showErrorMessage("please_turn_on_gps_or_internet")
+                showErrorMessage(getString(uz.i_tv.domain.R.string.please_turn_on_gps))
                 binding.turnOnGPSContainer.visible()
                 binding.partnersRv.gone()
             }

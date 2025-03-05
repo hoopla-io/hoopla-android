@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
-        android:text="Your phone number:"
+        android:text="@string/your_phone_number_"
         app:layout_constraintBottom_toTopOf="@id/inputPhoneLayout"
         app:layout_constraintLeft_toLeftOf="parent" />
 
@@ -52,7 +52,7 @@
         android:id="@+id/btSend"
         style="@style/PrimaryColorButtonStyle"
         android:layout_marginTop="15dp"
-        android:text="Continue"
+        android:text="@string/continue_"
         android:textAllCaps="false"
         app:finalCornerAngle="10dp"
         app:initialCornerAngle="10dp"

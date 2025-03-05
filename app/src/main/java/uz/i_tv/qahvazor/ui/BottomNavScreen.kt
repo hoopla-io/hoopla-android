@@ -32,10 +32,10 @@ class BottomNavScreen : BaseFragment(R.layout.screen_bottom_nav) {
         binding.fab.setOnClickListener {
             if (cache.accessToken.isNullOrEmpty()) {
                 showRequestDF(
-                    "Sign in",
-                    "You are not logged in!\nPlease sign in",
-                    "Sign in",
-                    "Cancel"
+                    getString(uz.i_tv.domain.R.string.sign_in),
+                    getString(uz.i_tv.domain.R.string.you_r_not_logged_in),
+                    getString(uz.i_tv.domain.R.string.sign_in),
+                    getString(uz.i_tv.domain.R.string.cancel)
                 ) {
                     (requireActivity() as BaseRootActivity).navigateToAuthScreen()
                 }

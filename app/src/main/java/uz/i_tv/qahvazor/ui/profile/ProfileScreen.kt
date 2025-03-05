@@ -55,10 +55,13 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
         if (it?.subscription != null) {
             binding.subscriptionName.text = it.subscription?.name
-            binding.subscriptionEndDate.text =
-                "(Active to: ".plus(it.subscription?.endDateUnix?.getDateDMMMMYYYYHHmm()).plus(")")
+            binding.subscriptionEndDate.text = getString(
+                uz.i_tv.domain.R.string.label_active_to_,
+                it.subscription?.endDateUnix?.getDateDMMMMYYYYHHmm()
+            )
         } else {
-            binding.subscriptionName.text = "You don\'t have any active subscription!"
+            binding.subscriptionName.text =
+                getString(uz.i_tv.domain.R.string.you_dont_have_any_active_subscription)
             binding.subscriptionEndDate.text = ""
         }
     }
