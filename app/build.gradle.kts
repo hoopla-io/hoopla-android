@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "uz.i_tv.qahvazor"
+    namespace = "uz.alphazet.hoopla"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "uz.i_tv.qahvazor"
+        applicationId = "uz.alphazet.hoopla"
         minSdk = 21
         targetSdk = 34
         versionCode = 1

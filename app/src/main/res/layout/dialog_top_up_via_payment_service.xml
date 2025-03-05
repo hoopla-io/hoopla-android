@@ -23,7 +23,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Оплата через Payme" />
 
-    <uz.i_tv.domain.ui.views.CustomTextInputLayout
+    <uz.alphazet.domain.ui.views.CustomTextInputLayout
         android:id="@+id/inputAmountLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.InputLayoutStyle"
         android:layout_width="match_parent"
@@ -41,7 +41,7 @@
             android:inputType="numberDecimal"
             app:layout_constraintTop_toBottomOf="@id/title" />
 
-    </uz.i_tv.domain.ui.views.CustomTextInputLayout>
+    </uz.alphazet.domain.ui.views.CustomTextInputLayout>
 
     <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
         android:id="@+id/btSend"

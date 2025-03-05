@@ -41,6 +41,7 @@
     <string name="order_history_">История заказов:</string>
 
     <string name="log_out">Выйти</string>
+    <string name="question_log_out">Вы действительно хотите выйти из аккаунта?</string>
     <string name="balance__">Баланс: </string>
     <string name="your_subscription__">Ваша подписка: </string>
     <string name="my_details">Мои данные</string>

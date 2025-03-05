@@ -41,6 +41,7 @@
     <string name="order_history_">Order history:</string>
 
     <string name="log_out">Log out</string>
+    <string name="question_log_out">Are you sure log out from the app?</string>
     <string name="balance__">Balance: </string>
     <string name="your_subscription__">Your subscription: </string>
     <string name="my_details">My Details</string>

@@ -46,7 +46,8 @@
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fillViewport="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -100,7 +101,7 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_regular"
                             android:paddingVertical="4dp"
-                            android:text="@string/phone_number_"
+                            android:text="@string/phone_number__"
                             android:textColor="@color/black_300"
                             android:textSize="12sp"
                             app:layout_constraintStart_toStartOf="@id/name"
@@ -111,6 +112,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_bold"
+                            android:paddingHorizontal="3dp"
                             android:paddingVertical="4dp"
                             android:textColor="@color/black_300"
                             android:textSize="12sp"
@@ -136,6 +138,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/inter_bold"
+                            android:paddingHorizontal="3dp"
                             android:textColor="@color/black_300"
                             android:textSize="12sp"
                             app:layout_constraintBottom_toBottomOf="@id/balance_title"
@@ -273,7 +276,8 @@
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/privacyPolicy" />
+                    app:layout_constraintTop_toBottomOf="@id/privacyPolicy"
+                    app:layout_goneMarginBottom="10dp" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/settings"
@@ -282,6 +286,7 @@
                     android:drawableStart="@drawable/ic_settings"
                     android:elevation="4dp"
                     android:text="@string/settings"
+                    android:visibility="gone"
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -296,7 +301,7 @@
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/bg_corner14_grey300"
-                    app:layout_constraintTop_toBottomOf="@id/settings" />
+                    app:layout_constraintTop_toBottomOf="@id/termOfUse" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/login"

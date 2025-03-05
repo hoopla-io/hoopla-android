@@ -28,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <uz.i_tv.domain.ui.views.animation_text_views.scale.ScaleTextView
+    <uz.alphazet.domain.ui.views.animation_text_views.scale.ScaleTextView
         android:id="@+id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
         app:layout_constraintTop_toBottomOf="@id/image"
         app:layout_constraintVertical_chainStyle="packed" />
 
-    <uz.i_tv.domain.ui.views.animation_text_views.TyperTextView
+    <uz.alphazet.domain.ui.views.animation_text_views.TyperTextView
         android:id="@+id/desc"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

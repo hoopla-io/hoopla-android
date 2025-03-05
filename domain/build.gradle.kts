@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "uz.i_tv.domain"
+    namespace = "uz.alphazet.domain"
     compileSdk = 34
 
     defaultConfig {

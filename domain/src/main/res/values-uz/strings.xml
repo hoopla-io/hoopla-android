@@ -41,6 +41,7 @@
     <string name="order_history_">Buyurtmalar tarixi:</string>
 
     <string name="log_out">Tizimdan chiqish</string>
+    <string name="question_log_out">Rostdan ham ilovadan chiqmoqchimisiz?</string>
     <string name="balance__">Balans: </string>
     <string name="your_subscription__">Tarifingiz: </string>
     <string name="my_details">Mening ma\'lumotlarim</string>
