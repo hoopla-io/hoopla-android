@@ -53,7 +53,7 @@ fun BottomSheetDialogFragment.hideKeyboard() {
 }
 
 
-inline fun <reified T> T.log(tag: String = "QAHVAZOR") {
+inline fun <reified T> T.log(tag: String = "Hoopla") {
     Log.d(tag, "${(T::class.java).simpleName} ${this.toString()}")
 //    Timber.tag(tag).d("${(T::class.java).simpleName} ${this.toString()}")
 }

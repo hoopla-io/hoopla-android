@@ -115,7 +115,7 @@ class NetworkConnectionInterceptor(
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://api.qahvazor.uz/api/")
+            .baseUrl("http://api.hoopla.uz/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

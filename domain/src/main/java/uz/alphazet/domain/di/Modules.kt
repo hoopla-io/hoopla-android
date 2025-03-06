@@ -116,7 +116,7 @@ object Modules {
         }
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
-            .addInterceptor(ChuckerInterceptor.Builder(context).build())
+//            .addInterceptor(ChuckerInterceptor.Builder(context).build())
 //            .addInterceptor(HeaderInterceptor())
             .addInterceptor(NetworkConnectionInterceptor(context, appCache))
             .addNetworkInterceptor(NetworkInterceptor())

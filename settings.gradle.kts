@@ -22,7 +22,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Qahvazor"
+rootProject.name = "Hoopla"
 include(":app")
 include(":data")
 include(":domain")
