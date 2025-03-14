@@ -23,6 +23,10 @@ class PaymentServicesScreen : BaseFragment(R.layout.screen_payment_services) {
 
         binding.subscriptionRv.adapter = adapter
 
+        binding.toolbar.setNavigationOnClickListener {
+            exit()
+        }
+
         adapter.setOnItemClickListener {
             showTopUpViaPaymentServiceBD(it)
         }

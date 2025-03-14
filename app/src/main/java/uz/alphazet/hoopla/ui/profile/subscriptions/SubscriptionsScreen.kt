@@ -12,6 +12,7 @@ import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenSubscriptionsBinding
+import uz.alphazet.hoopla.ui.Screens
 
 class SubscriptionsScreen : BaseFragment(R.layout.screen_subscriptions),
     SwipeRefreshLayout.OnRefreshListener {
@@ -36,14 +37,16 @@ class SubscriptionsScreen : BaseFragment(R.layout.screen_subscriptions),
         }
 
         adapter.setOnItemClickListener { item ->
-            showRequestDF(item.name ?: "",
+            showRequestDF(
+                item.name ?: "",
                 getString(
                     uz.alphazet.domain.R.string.label_question_purchase_subscription,
                     item.price?.formatToPrice(),
                     item.currency ?: "",
                     item.days.toString()
                 ),
-                getString(uz.alphazet.domain.R.string.yes), getString(uz.alphazet.domain.R.string.no),
+                getString(uz.alphazet.domain.R.string.yes),
+                getString(uz.alphazet.domain.R.string.no),
                 onCancel = {},
                 onApprove = {
                     launch {
@@ -76,6 +79,11 @@ class SubscriptionsScreen : BaseFragment(R.layout.screen_subscriptions),
                 "OK"
             ) {}
         }
+
+    override fun onPreconditionRequiredException(message: String?, code: Int) {
+        super.onPreconditionRequiredException(message, code)
+        navigateTo(Screens.paymentServicesScreen())
+    }
 
     override fun showLoading() {
         binding.swipeRefreshLayout.isRefreshing = true

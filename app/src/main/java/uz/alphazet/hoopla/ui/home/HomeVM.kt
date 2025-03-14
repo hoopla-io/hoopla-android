@@ -19,9 +19,10 @@ class HomeVM(private val homeRepo: HomeRepo) : BaseVM() {
 
     suspend fun getNearShops(
         lat: Double,
-        long: Double
+        long: Double,
+        name: String?,
     ): SharedFlow<UIResource<List<ShopItemData>>> {
-        return homeRepo.getNearShops(lat, long)
+        return homeRepo.getNearShops(lat, long, name)
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 

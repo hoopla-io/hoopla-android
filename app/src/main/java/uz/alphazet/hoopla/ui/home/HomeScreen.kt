@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Looper
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.core.widget.doAfterTextChanged
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -84,6 +85,20 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             turnOnGPS()
         }
 
+        binding.inputSearch.doAfterTextChanged { text ->
+            if (!text.isNullOrEmpty() && currentLocation != null) {
+                launch {
+                    viewModel.getNearShops(
+                        currentLocation?.latitude ?: 0.0,
+                        currentLocation?.longitude ?: 0.0,
+                        text.toString()
+                    ).collectLatest(::collectNearShopsData)
+                }
+            } else if (currentLocation != null) {
+                getNearShops(currentLocation!!)
+            }
+        }
+
     }
 
     private fun collectNearShopsData(t: UIResource<List<ShopItemData>>) = t.collect(
@@ -97,7 +112,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
     private fun getNearShops(location: Location) {
         launch {
-            viewModel.getNearShops(location.latitude, location.longitude)
+            viewModel.getNearShops(location.latitude, location.longitude, null)
                 .collectLatest(::collectNearShopsData)
         }
     }
@@ -252,7 +267,8 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             launch {
                 viewModel.getNearShops(
                     currentLocation?.latitude ?: 0.0,
-                    currentLocation?.longitude ?: 0.0
+                    currentLocation?.longitude ?: 0.0,
+                    null
                 ).collectLatest(::collectNearShopsData)
             }
     }

@@ -12,6 +12,7 @@ import uz.alphazet.domain.R as domainR
 class OnBoardingScreen : BaseFragment(R.layout.screen_on_boarding) {
 
     private val binding by viewBinding(ScreenOnBoardingBinding::bind)
+    private var currentPage = 1
 
     override fun initialize() {
 
@@ -24,8 +25,8 @@ class OnBoardingScreen : BaseFragment(R.layout.screen_on_boarding) {
         binding.desc.animateText(desc1)
 
         binding.next.setOnClickListener {
-            when {
-                binding.desc.text.toString() == desc1 -> {
+            when (currentPage) {
+                1 -> {
                     launch {
                         binding.image.startAnim(domainR.anim.alpha1_0, 200, onEnd = {
                             binding.image.startAnim(domainR.anim.alpha0_1, 200, onStart = {
@@ -36,12 +37,31 @@ class OnBoardingScreen : BaseFragment(R.layout.screen_on_boarding) {
                         delay(300)
                         binding.desc.animateText(desc2)
                     }
+                    currentPage++
                 }
 
-                binding.desc.text.toString() == desc2 -> {
+                2 -> {
                     replaceScreen(Screens.bottomNav())
                 }
             }
+//            when {
+//                binding.desc.text.toString() == desc1 -> {
+//                    launch {
+//                        binding.image.startAnim(domainR.anim.alpha1_0, 200, onEnd = {
+//                            binding.image.startAnim(domainR.anim.alpha0_1, 200, onStart = {
+//                                binding.image.setImageResource(domainR.drawable.intro_2)
+//                            }, onEnd = { })
+//                        })
+//                        binding.title.animateText(title2)
+//                        delay(300)
+//                        binding.desc.animateText(desc2)
+//                    }
+//                }
+//
+//                binding.desc.text.toString() == desc2 -> {
+//                    replaceScreen(Screens.bottomNav())
+//                }
+//            }
         }
 
         binding.skip.setOnClickListener {

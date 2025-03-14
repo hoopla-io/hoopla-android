@@ -19,6 +19,7 @@ import uz.alphazet.domain.network.ConflictException
 import uz.alphazet.domain.network.ForbiddenException
 import uz.alphazet.domain.network.NotFoundException
 import uz.alphazet.domain.network.PaymentException
+import uz.alphazet.domain.network.PreconditionRequiredException
 import uz.alphazet.domain.network.RemoteErrorListener
 import uz.alphazet.domain.network.RemoteException
 import uz.alphazet.domain.network.TooManyRequestException
@@ -95,6 +96,11 @@ abstract class BaseActivity : AppCompatActivity(), RemoteErrorListener {
         when (throwable) {
             is UnauthorizedException -> onUnauthorizedException(throwable.message, throwable.code)
             is PaymentException -> onPaymentException(throwable.message, throwable.code)
+            is PreconditionRequiredException -> onPreconditionRequiredException(
+                throwable.message,
+                throwable.code
+            )
+
             is ValidationException -> onValidationException(throwable.message, throwable.code)
             is BadRequestException -> onBadRequestException(throwable.message, throwable.code)
             is ForbiddenException -> onForbiddenException(throwable.message, throwable.code)
@@ -118,6 +124,10 @@ abstract class BaseActivity : AppCompatActivity(), RemoteErrorListener {
     }
 
     override fun onPaymentException(message: String?, code: Int) {
+        showErrorMessage(message)
+    }
+
+    override fun onPreconditionRequiredException(message: String?, code: Int) {
         showErrorMessage(message)
     }
 

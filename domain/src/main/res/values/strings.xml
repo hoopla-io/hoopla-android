@@ -68,4 +68,6 @@
     <string name="privacy_policy_desc">Регистрируясь, я соглашаюсь с условиями <u><font color="#FF039BE5">пользовательского соглашения</font></u></string>
 
     <string name="send_again_">Отправить еще раз: </string>
+    <string name="search">Поиск</string>
+
 </resources>

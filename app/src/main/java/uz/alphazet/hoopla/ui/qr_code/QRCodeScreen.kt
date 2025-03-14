@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.os.CountDownTimer
 import androidx.core.content.ContextCompat
 import coil3.load
+import com.example.imageviewer.StfalconImageViewer
 import com.github.alexzhirkevich.customqrgenerator.QrData
 import com.github.alexzhirkevich.customqrgenerator.style.BitmapScale
 import com.github.alexzhirkevich.customqrgenerator.style.Color
@@ -40,6 +41,8 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
     private val orderAdapter = OrderAdapter()
 
     private var time: Long = 0
+
+    private var imageViewer: StfalconImageViewer<Drawable>? = null
 
     override fun initialize() {
 
@@ -77,6 +80,16 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
         startCountDownTimer()
         val drawable = generateQRCodeImage(it?.qrCode.toString())
         binding.qrCode.load(drawable)
+
+        binding.qrCode.setOnClickListener {
+            imageViewer = StfalconImageViewer.Builder(
+                requireContext(), arrayListOf(binding.qrCode.drawable)
+            ) { view, image ->
+                view.load(drawable)
+            }.build()
+            imageViewer?.show()
+        }
+
     }
 
     private fun collectOrdersData(t: UIResource<List<OrderItemData>>) = t.collect {
@@ -89,6 +102,7 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
         countDownTimer = object : CountDownTimer(time * 1000, 1000) {
 
             override fun onTick(p0: Long) {
+                binding.qrCode.isClickable = true
                 val minute = time / 60
                 val second = time % 60
                 if (p0 < 0)
@@ -100,6 +114,8 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
             }
 
             override fun onFinish() {
+                binding.qrCode.isClickable = false
+//                imageViewer?.dismiss()
                 binding.qrCode.alpha = 0.5f
                 binding.timer.text = "00:00"
                 binding.refresh.isEnabled = true
@@ -122,7 +138,10 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
             .setLogo(
                 QrVectorLogo(
                     drawable = ContextCompat
-                        .getDrawable(requireContext(), uz.alphazet.domain.R.drawable.img_logo_hoopla),
+                        .getDrawable(
+                            requireContext(),
+                            uz.alphazet.domain.R.drawable.img_logo_hoopla
+                        ),
                     size = .25f,
                     padding = QrVectorLogoPadding.Natural(.2f),
                     shape = QrVectorLogoShape
@@ -132,7 +151,10 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
             .setBackground(
                 QrVectorBackground(
                     drawable = ContextCompat
-                        .getDrawable(requireContext(), uz.alphazet.domain.R.drawable.bg_corner20_white),
+                        .getDrawable(
+                            requireContext(),
+                            uz.alphazet.domain.R.drawable.bg_corner20_white
+                        ),
                     scale = BitmapScale.CenterCrop
                 )
             )

@@ -31,6 +31,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
         binding.paymentService.setOnClickListener(this)
         binding.logout.setOnClickListener(this)
         binding.login.setOnClickListener(this)
+        binding.support.setOnClickListener(this)
         binding.privacyPolicy.setOnClickListener(this)
         binding.termOfUse.setOnClickListener(this)
         binding.settings.setOnClickListener(this)
@@ -100,6 +101,10 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
             R.id.privacyPolicy -> {
                 requireContext().intentToBrowser("https://hoopla.uz/ru/privacy-policy")
+            }
+
+            R.id.support -> {
+                requireContext().intentToBrowser("https://t.me/alphazzet")
             }
 
             R.id.termOfUse -> {

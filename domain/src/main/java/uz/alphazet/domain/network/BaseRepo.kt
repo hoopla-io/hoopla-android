@@ -88,14 +88,14 @@ abstract class BaseRepo {
             null
         }
         throw return when (code) {
+            400 -> BadRequestException(errorData?.message ?: message, code)
             401 -> UnauthorizedException(errorData?.message ?: message, code)
             402 -> PaymentException(errorData?.message ?: message, code)
-
-            422 -> ValidationException(errorData?.message ?: message, code)
-            400 -> BadRequestException(errorData?.message ?: message, code)
             403 -> ForbiddenException(errorData?.message ?: message, code)
-            409 -> ConflictException(errorData?.message ?: message, code)
             404 -> NotFoundException(errorData?.message ?: message, code)
+            409 -> ConflictException(errorData?.message ?: message, code)
+            422 -> ValidationException(errorData?.message ?: message, code)
+            428 -> PreconditionRequiredException(errorData?.message ?: message, code)
             429 -> TooManyRequestException(errorData?.message ?: message, code)
             in 500..599 -> ServerErrorException(errorData?.message ?: message, code)
 

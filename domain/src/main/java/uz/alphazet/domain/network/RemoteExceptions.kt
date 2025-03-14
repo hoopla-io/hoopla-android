@@ -17,6 +17,12 @@ class PaymentException(
     override val code: Int
 ) : RemoteException(message, code)
 
+//428
+class PreconditionRequiredException(
+    override val message: String?,
+    override val code: Int
+) : RemoteException(message, code)
+
 //422
 class ValidationException(
     override val message: String?,

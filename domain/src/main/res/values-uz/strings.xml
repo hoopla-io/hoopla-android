@@ -68,5 +68,6 @@
     <string name="privacy_policy_desc">Ro\'yxatdan o\'tish orqali siz <u><font color="#FF039BE5">foydalanuvchi shartnomasi</font></u> shartlariga rozilik bildirasiz</string>
 
     <string name="send_again_">Qayta yuborish: </string>
+    <string name="search">Qidiruv</string>
 
 </resources>

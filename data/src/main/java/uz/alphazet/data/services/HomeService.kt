@@ -14,7 +14,8 @@ interface HomeService {
     @GET("v1/shops/near-shops")
     suspend fun getNearShops(
         @Query("lat") lat: Double,
-        @Query("long") long: Double
+        @Query("long") long: Double,
+        @Query("name") name: String?,
     ): BaseResponse<List<ShopItemData>>
 
 }
