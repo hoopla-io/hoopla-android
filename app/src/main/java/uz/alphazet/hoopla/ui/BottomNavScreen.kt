@@ -66,6 +66,7 @@ class BottomNavScreen : BaseFragment(R.layout.screen_bottom_nav) {
     }
 
     private fun selectTab(itemId: Int) {
+        childFragmentManager.fragments.toString().log("CHILD_FRAGMENTS")
         val fm = childFragmentManager
         val current = currentFragment
         val newFragment = fm.findFragmentByTag(itemId.toString())

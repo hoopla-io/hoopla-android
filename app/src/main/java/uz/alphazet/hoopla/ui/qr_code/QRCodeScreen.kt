@@ -1,6 +1,5 @@
 package uz.alphazet.hoopla.ui.qr_code
 
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.CountDownTimer
 import androidx.core.content.ContextCompat
@@ -8,7 +7,6 @@ import coil3.load
 import com.example.imageviewer.StfalconImageViewer
 import com.github.alexzhirkevich.customqrgenerator.QrData
 import com.github.alexzhirkevich.customqrgenerator.style.BitmapScale
-import com.github.alexzhirkevich.customqrgenerator.style.Color
 import com.github.alexzhirkevich.customqrgenerator.vector.QrCodeDrawable
 import com.github.alexzhirkevich.customqrgenerator.vector.QrVectorOptions
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorBackground
@@ -16,9 +14,6 @@ import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorBallShap
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorColor
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorColors
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorFrameShape
-import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogo
-import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogoPadding
-import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorLogoShape
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorPixelShape
 import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorShapes
 import kotlinx.coroutines.flow.collectLatest
@@ -135,19 +130,19 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
     private fun generateQRCodeImage(data: String): Drawable {
         val options = QrVectorOptions.Builder()
             .setPadding(.3f)
-            .setLogo(
-                QrVectorLogo(
-                    drawable = ContextCompat
-                        .getDrawable(
-                            requireContext(),
-                            uz.alphazet.domain.R.drawable.img_logo_hoopla
-                        ),
-                    size = .25f,
-                    padding = QrVectorLogoPadding.Natural(.2f),
-                    shape = QrVectorLogoShape
-                        .Circle
-                )
-            )
+//            .setLogo(
+//                QrVectorLogo(
+//                    drawable = ContextCompat
+//                        .getDrawable(
+//                            requireContext(),
+//                            uz.alphazet.domain.R.drawable.img_logo_hoopla
+//                        ),
+//                    size = .25f,
+//                    padding = QrVectorLogoPadding.Natural(.2f),
+//                    shape = QrVectorLogoShape
+//                        .Circle
+//                )
+//            )
             .setBackground(
                 QrVectorBackground(
                     drawable = ContextCompat
@@ -160,19 +155,19 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
             )
             .setColors(
                 QrVectorColors(
-                    dark = QrVectorColor
-                        .Solid(Color(0xff345288)),
+//                    dark = QrVectorColor
+//                        .Solid(Color(0xff345288)),
                     ball = QrVectorColor.Solid(
-                        ContextCompat.getColor(requireContext(), uz.alphazet.domain.R.color.primary)
+                        ContextCompat.getColor(requireContext(), uz.alphazet.domain.R.color.black)
                     ),
-                    frame = QrVectorColor.LinearGradient(
-                        colors = listOf(
-                            0f to Color.RED,
-                            1f to Color.BLUE,
-                        ),
-                        orientation = QrVectorColor.LinearGradient
-                            .Orientation.LeftDiagonal
-                    )
+//                    frame = QrVectorColor.LinearGradient(
+//                        colors = listOf(
+//                            0f to Color.RED,
+//                            1f to Color.BLUE,
+//                        ),
+//                        orientation = QrVectorColor.LinearGradient
+//                            .Orientation.LeftDiagonal
+//                    )
                 )
             )
             .setShapes(
@@ -195,6 +190,14 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
         "0$number"
     } else {
         number.toString()
+    }
+
+    override fun toString(): String {
+        return TAG
+    }
+
+    companion object {
+        const val TAG = "QRCodeScreen"
     }
 
 }

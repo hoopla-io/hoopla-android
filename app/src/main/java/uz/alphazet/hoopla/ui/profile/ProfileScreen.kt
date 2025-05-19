@@ -14,11 +14,13 @@ import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.getDateDMMMMYYYYHHmm
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToBrowser
+import uz.alphazet.domain.utils.log
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenProfileBinding
 import uz.alphazet.hoopla.ui.Screens
+import uz.alphazet.hoopla.ui.home.HomeScreen
 
 class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.OnRefreshListener {
 
@@ -101,6 +103,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
             R.id.privacyPolicy -> {
                 requireContext().intentToBrowser("https://hoopla.uz/ru/privacy-policy")
+                AppSignatureHelper(requireContext()).getAppSignatures().log("PROFILE_SCREEN")
             }
 
             R.id.support -> {
@@ -129,6 +132,14 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
     override fun onRefresh() {
         viewModel.getUser()
+    }
+
+    override fun toString(): String {
+        return HomeScreen.Companion.TAG
+    }
+
+    companion object {
+        const val TAG = "ProfileScreen"
     }
 
 }

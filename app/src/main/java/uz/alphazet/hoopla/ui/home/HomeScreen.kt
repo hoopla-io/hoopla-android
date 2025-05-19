@@ -286,6 +286,10 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         super.onDestroy()
     }
 
+    override fun toString(): String {
+        return TAG
+    }
+
     companion object {
         const val TAG = "HOME_SCREEN"
 
