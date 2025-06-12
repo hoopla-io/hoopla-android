@@ -11,7 +11,7 @@ import uz.alphazet.domain.ui.BaseRootActivity
 import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.formatToPrice
-import uz.alphazet.domain.utils.getDateDMMMMYYYYHHmm
+import uz.alphazet.domain.utils.getDateDMMMMYYYY
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.log
@@ -29,8 +29,9 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
     override fun initialize() {
 
+        binding.selectTariff.setOnClickListener(this)
         binding.subscription.setOnClickListener(this)
-        binding.paymentService.setOnClickListener(this)
+        binding.topUp.setOnClickListener(this)
         binding.logout.setOnClickListener(this)
         binding.login.setOnClickListener(this)
         binding.support.setOnClickListener(this)
@@ -57,15 +58,13 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
         binding.balance.text = it?.balance?.formatToPrice().plus(" ${it?.currency}")
 
         if (it?.subscription != null) {
+            binding.activeTariffInfoCard.visible()
+            binding.selectTariff.gone()
             binding.subscriptionName.text = it.subscription?.name
-            binding.subscriptionEndDate.text = getString(
-                uz.alphazet.domain.R.string.label_active_to_,
-                it.subscription?.endDateUnix?.getDateDMMMMYYYYHHmm()
-            )
+            binding.subscriptionEndDate.text = it.subscription?.endDateUnix?.getDateDMMMMYYYY()
         } else {
-            binding.subscriptionName.text =
-                getString(uz.alphazet.domain.R.string.you_dont_have_any_active_subscription)
-            binding.subscriptionEndDate.text = ""
+            binding.activeTariffInfoCard.gone()
+            binding.selectTariff.visible()
         }
     }
 
@@ -76,11 +75,11 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.subscription -> {
+            R.id.select_tariff, R.id.subscription -> {
                 navigateTo(Screens.subscriptionsScreen())
             }
 
-            R.id.payment_service -> {
+            R.id.top_up -> {
                 navigateTo(Screens.paymentServicesScreen())
             }
 

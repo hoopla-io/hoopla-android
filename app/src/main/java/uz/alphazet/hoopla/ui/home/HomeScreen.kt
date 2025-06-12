@@ -102,10 +102,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
     }
 
     private fun collectNearShopsData(t: UIResource<List<ShopItemData>>) = t.collect(
-        onError = {
-            it.log("HOOOOPPPLLLAAA")
-            it.printStackTrace()
-        }
+
     ) {
         adapter.submitList(it)
     }
@@ -176,8 +173,6 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 //            }
 
         } catch (e: Exception) {
-            showErrorMessage("catch")
-            e.log()
             e.printStackTrace()
         }
     }

@@ -66,24 +66,18 @@ class BottomNavScreen : BaseFragment(R.layout.screen_bottom_nav) {
     }
 
     private fun selectTab(itemId: Int) {
-        childFragmentManager.fragments.toString().log("CHILD_FRAGMENTS")
         val fm = childFragmentManager
         val current = currentFragment
         val newFragment = fm.findFragmentByTag(itemId.toString())
         if (current != null && newFragment != null && newFragment === currentFragment) return
 
         fm.beginTransaction().apply {
-            if (newFragment == null) {
-                val fragment = TabContainerFragment.getNewInstance(itemId)
-                add(
-                    R.id.containerBottomNav,
-                    fragment,
-                    itemId.toString()
-                )
+            val fragmentToShow = newFragment ?: TabContainerFragment.getNewInstance(itemId).also {
+                add(R.id.containerBottomNav, it, itemId.toString())
             }
             if (current != null) hide(current)
-            if (newFragment != null) show(newFragment)
-        }.commit()
+            show(fragmentToShow)
+        }.commitNow()
 
     }
 

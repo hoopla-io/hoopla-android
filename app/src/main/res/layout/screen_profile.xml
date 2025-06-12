@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="visible"
-                    app:constraint_referenced_ids="user_desc_card,subscription,payment_service" />
+                    app:constraint_referenced_ids="user_desc_card,tariff_info_card,balance_info_card,subscription" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/unAuthGroup"
@@ -67,131 +67,224 @@
                     android:visibility="invisible"
                     app:constraint_referenced_ids="line,login" />
 
-                <androidx.cardview.widget.CardView
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/user_desc_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="20dp"
-                    app:cardBackgroundColor="@color/white"
-                    app:cardCornerRadius="12dp"
-                    app:cardElevation="4dp"
+                    android:background="@drawable/bg_corner20_white"
+                    android:elevation="3dp"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:fontFamily="@font/inter_bold"
+                        android:textColor="@color/black_300"
+                        android:textSize="24sp"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Jamoliddin Esonboyev" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/phone_number_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:paddingVertical="4dp"
+                        android:text="@string/phone_number__"
+                        android:textColor="@color/black_300"
+                        android:textSize="12sp"
+                        app:layout_constraintStart_toStartOf="@id/name"
+                        app:layout_constraintTop_toBottomOf="@id/name" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/phone_number"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_bold"
+                        android:paddingHorizontal="3dp"
+                        android:paddingVertical="3dp"
+                        android:textColor="@color/black_300"
+                        android:textSize="14sp"
+                        app:layout_constraintBottom_toBottomOf="@id/phone_number_title"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/phone_number_title"
+                        tools:text="+998 91 123 45 67" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/tariff_info_card"
+                    android:layout_width="0dp"
+                    android:layout_height="160dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_corner20_white"
+                    android:elevation="3dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toStartOf="@id/balance_info_card"
+                    app:layout_constraintStart_toStartOf="@id/user_desc_card"
+                    app:layout_constraintTop_toBottomOf="@id/user_desc_card">
+
+                    <LinearLayout
+                        android:id="@+id/active_tariff_info_card"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="14dp">
+                        android:background="@android:color/transparent"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:visibility="invisible">
 
                         <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:ellipsize="marquee"
-                            android:fontFamily="@font/inter_bold"
-                            android:textColor="@color/black_300"
-                            android:textSize="18sp"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="Jamoliddin Esonboyev" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/phone_number_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_regular"
-                            android:paddingVertical="4dp"
-                            android:text="@string/phone_number__"
-                            android:textColor="@color/black_300"
-                            android:textSize="12sp"
-                            app:layout_constraintStart_toStartOf="@id/name"
-                            app:layout_constraintTop_toBottomOf="@id/name" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/phone_number"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_bold"
-                            android:paddingHorizontal="3dp"
-                            android:paddingVertical="4dp"
-                            android:textColor="@color/black_300"
-                            android:textSize="12sp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/phone_number_title"
-                            app:layout_constraintTop_toBottomOf="@id/name"
-                            tools:text="+998 91 123 45 67" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/balance_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:fontFamily="@font/inter_regular"
-                            android:text="@string/balance__"
-                            android:textColor="@color/black_300"
-                            android:textSize="12sp"
-                            app:layout_constraintStart_toStartOf="@id/name"
-                            app:layout_constraintTop_toBottomOf="@id/phone_number_title" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/balance"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_bold"
-                            android:paddingHorizontal="3dp"
-                            android:textColor="@color/black_300"
-                            android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="@id/balance_title"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/balance_title"
-                            tools:text="29 000 sum" />
-
-                        <View
-                            android:id="@+id/line1"
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="8dp"
-                            android:background="@drawable/bg_corner14_grey300"
-                            app:layout_constraintTop_toBottomOf="@id/balance_title" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/subscription_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
                             android:fontFamily="@font/inter_regular"
                             android:text="@string/your_subscription__"
                             android:textColor="@color/black_300"
-                            android:textSize="12sp"
-                            app:layout_constraintStart_toStartOf="@id/name"
-                            app:layout_constraintTop_toBottomOf="@id/line1" />
+                            android:textSize="14sp" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/subscription_name"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_bold"
+                            android:fontFamily="@font/inter_medium"
                             android:textColor="@color/black_300"
-                            android:textSize="18sp"
-                            app:layout_constraintStart_toStartOf="@id/subscription_title"
-                            app:layout_constraintTop_toBottomOf="@id/subscription_title"
-                            tools:text="Hoop 3" />
+                            android:textSize="28sp"
+                            tools:text="Routine" />
+
+                        <com.google.android.material.divider.MaterialDivider
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="12dp" />
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_regular"
+                            android:text="@string/valid_until_"
+                            android:textColor="@color/black_300"
+                            android:textSize="14sp" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/subscription_end_date"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="12dp"
-                            android:layout_marginBottom="2dp"
-                            android:fontFamily="@font/inter_regular"
+                            android:fontFamily="@font/inter_bold"
                             android:textColor="@color/black_300"
-                            android:textSize="12sp"
-                            app:layout_constraintBottom_toBottomOf="@id/subscription_name"
-                            app:layout_constraintStart_toEndOf="@id/subscription_name"
-                            tools:text="(Active to: 12 mart)" />
+                            android:textSize="16sp"
+                            tools:text="12 June 2025" />
+                    </LinearLayout>
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.cardview.widget.CardView>
+                    <RelativeLayout
+                        android:id="@+id/select_tariff"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_corner22_primary300"
+                        android:backgroundTint="@color/primary"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:visibility="invisible">
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/inter_medium"
+                            android:lineHeight="28sp"
+                            android:maxLines="3"
+                            android:text="@string/select_subscription"
+                            android:textColor="@color/white"
+                            android:textSize="22sp"
+                            app:autoSizeMaxTextSize="28sp"
+                            app:autoSizeMinTextSize="16sp"
+                            app:autoSizeStepGranularity="1sp"
+                            app:autoSizeTextType="uniform" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:layout_alignParentBottom="true"
+                            android:background="@drawable/bg_corner22_primary300"
+                            android:backgroundTint="@color/white"
+                            android:paddingHorizontal="12dp"
+                            android:src="@drawable/ic_arrow_right_black300"
+                            app:tint="@color/primary" />
+
+                    </RelativeLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/balance_info_card"
+                    android:layout_width="0dp"
+                    android:layout_height="160dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_corner20_white"
+                    android:clipToPadding="false"
+                    android:elevation="3dp"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    app:layout_constraintEnd_toEndOf="@id/user_desc_card"
+                    app:layout_constraintStart_toEndOf="@id/tariff_info_card"
+                    app:layout_constraintTop_toBottomOf="@id/user_desc_card">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/balance_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/balance__"
+                        android:textColor="@color/black_300"
+                        android:textSize="14sp"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/balance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="bottom"
+                        android:lineHeight="28sp"
+                        android:maxLines="1"
+                        android:textColor="@color/black_300"
+                        android:textSize="28sp"
+                        app:autoSizeMaxTextSize="28sp"
+                        app:autoSizeMinTextSize="16sp"
+                        app:autoSizeStepGranularity="1sp"
+                        app:autoSizeTextType="uniform"
+                        app:layout_constraintTop_toBottomOf="@id/balance_title"
+                        tools:text="200 049 sum" />
+
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/top_up"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_corner22_primary300"
+                        android:backgroundTint="@color/primary"
+                        android:drawableStart="@drawable/ic_top_up_balance"
+                        android:drawablePadding="12dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="start|center_vertical"
+                        android:maxLines="1"
+                        android:paddingHorizontal="12dp"
+                        android:text="@string/top_up"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:autoSizeMaxTextSize="16sp"
+                        app:autoSizeMinTextSize="10sp"
+                        app:autoSizeStepGranularity="1sp"
+                        app:autoSizeTextType="uniform"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/myDetails"
@@ -216,18 +309,7 @@
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/myDetails" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/payment_service"
-                    style="@style/DetailButtonStyle"
-                    android:drawableStart="@drawable/ic_payments"
-                    android:elevation="4dp"
-                    android:text="@string/payment"
-                    app:drawableEndCompat="@drawable/ic_arrow_right_black300"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/subscription" />
+                    app:layout_constraintTop_toBottomOf="@id/tariff_info_card" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/devices"
@@ -239,7 +321,7 @@
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/payment_service" />
+                    app:layout_constraintTop_toBottomOf="@id/subscription" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/support"

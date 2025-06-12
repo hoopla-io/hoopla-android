@@ -78,3 +78,13 @@ fun Long.getDateDMMMMYYYYHHmm(): String {
     return stringBuilder.toString()
 }
 
+fun Long.getDateDMMMMYYYY(): String {
+    val format = "d MMMM, yyyy" // you can add the format you need
+    val sdf = SimpleDateFormat(format, Locale.getDefault()) // default local
+    sdf.timeZone = TimeZone.getDefault() // set anytime zone you need
+    val s = sdf.format(java.sql.Date(this * 1000))
+    val stringBuilder = StringBuilder(s)
+    if (!s.isNullOrEmpty())
+        stringBuilder[0] = stringBuilder[0].uppercaseChar()
+    return stringBuilder.toString()
+}

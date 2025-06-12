@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_200">
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_layout"
@@ -29,46 +29,69 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/qr_code_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/bg_corner22_primary300"
+        android:background="@android:color/transparent"
+        android:clipToPadding="false"
         android:elevation="2dp"
-        android:padding="16dp"
+        app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintTop_toBottomOf="@id/header_layout">
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg_card"
+            app:shapeAppearanceOverlay="@style/ImageAppearanceCorner20" />
+
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/brand_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:alpha="0.8"
-            android:fontFamily="@font/inter_medium"
-            android:gravity="center"
-            android:text="@string/available_time_"
+            android:layout_margin="16dp"
+            android:fontFamily="@font/eugusto_bold_700"
+            android:gravity="start"
+            android:text="@string/app_name_lowercase"
             android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintBottom_toTopOf="@id/timer"
-            app:layout_constraintEnd_toEndOf="@id/timer"
+            android:textSize="32sp"
+            app:layout_constraintEnd_toStartOf="@id/qr_code"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tariff_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="start"
+            android:text="Routine"
+            android:textColor="@color/white"
+            android:textSize="32sp"
+            app:layout_constraintBottom_toTopOf="@id/phone_number"
+            app:layout_constraintEnd_toStartOf="@id/qr_code"
             app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/timer"
+            android:id="@+id/phone_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_bold"
-            android:gravity="center"
-            android:lineHeight="40sp"
+            android:layout_marginHorizontal="12dp"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="start"
+            android:text="+998 90 200 20 00"
             android:textColor="@color/white"
-            android:textSize="26sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/qr_code"
             app:layout_constraintEnd_toStartOf="@id/qr_code"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="00:10" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageView
             android:id="@+id/qr_code"
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="16dp"
             android:contentDescription="@string/qr_code"
             android:scaleType="centerCrop"
             app:layout_constraintDimensionRatio="1:1"
@@ -77,20 +100,71 @@
             app:layout_constraintWidth_percent="0.5"
             tools:src="@drawable/ic_qr_code" />
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/refresh"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/bg_corner20_white"
-            android:elevation="4dp"
-            android:padding="12dp"
-            app:layout_constraintBottom_toBottomOf="@id/qr_code"
-            app:layout_constraintEnd_toEndOf="@id/qr_code"
-            app:layout_constraintStart_toStartOf="@id/qr_code"
-            app:layout_constraintTop_toTopOf="@id/qr_code"
-            app:lottie_autoPlay="false"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/ic_refresh" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/information_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_corner14_grey200"
+        android:backgroundTint="@color/grey_300"
+        app:layout_constraintTop_toBottomOf="@id/qr_code_container">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/daily_limit_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:drawableStart="@drawable/ic_coffee_cup"
+            android:drawablePadding="8dp"
+            android:fontFamily="@font/inter_bold"
+            android:gravity="center_vertical"
+            android:text="@string/daily_limit"
+            android:textColor="@color/black_300"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/used"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="start"
+            android:textColor="@color/black_300"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/daily_limit_title"
+            tools:text="@string/label_used" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/available"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="start"
+            android:textColor="@color/black_300"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/daily_limit_title"
+            tools:text="@string/label_available" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_margin="16dp"
+            android:indeterminate="false"
+            android:progressDrawable="@drawable/curved_progress_bar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/used"
+            tools:max="100"
+            tools:progress="30" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -106,18 +180,25 @@
         android:textColor="@color/black_300"
         android:textSize="21sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/qr_code_container" />
+        app:layout_constraintTop_toBottomOf="@id/information_container" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/order_rv"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingTop="6dp"
-        android:paddingBottom="110dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/order_history_label"
-        tools:listitem="@layout/item_order" />
+        app:layout_constraintTop_toBottomOf="@id/order_history_label">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/order_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="6dp"
+            android:paddingBottom="110dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_order" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

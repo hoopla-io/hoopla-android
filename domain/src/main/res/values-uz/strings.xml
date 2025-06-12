@@ -37,8 +37,12 @@
     <string name="show_on_the_map">Xaritada ko\'rish</string>
     <string name="contacts_">Kontaktlar:</string>
 
+    //QR code screen
     <string name="available_time_">Foydalanish vaqti:</string>
     <string name="order_history_">Buyurtmalar tarixi:</string>
+    <string name="label_used">Ichildi: %1$s ta</string>
+    <string name="label_available">Qoldi: %1$s ta</string>
+    <string name="daily_limit">Kunlik limit</string>
 
     <string name="log_out">Tizimdan chiqish</string>
     <string name="question_log_out">Rostdan ham ilovadan chiqmoqchimisiz?</string>
@@ -53,10 +57,13 @@
     <string name="term_of_use">Foydalanish shartlari</string>
     <string name="settings">Sozlamalar</string>
     <string name="label_active_to_">(%1$s gacha faol)</string>
+    <string name="valid_until_">Amal qilish muddati:</string>
     <string name="you_dont_have_any_active_subscription">Sizda faol obuna mavjud emas!</string>
     <string name="label_top_up_via_">%1$s orqali to\'ldirish</string>
     <string name="label_price_currency_days">%1$s %2$s / %3$s kun</string>
     <string name="subscribe">Obuna bo\'lish</string>
+    <string name="select_subscription">Obuna tanlash</string>
+    <string name="top_up">To\'ldirish</string>
     <string name="yes">Ha</string>
     <string name="no">Yo\'q</string>
     <string name="label_question_purchase_subscription">Obuna narxi %1$s %2$s %3$s kunga. Rostdan ham ushbu obunani sotib olmoqchimisiz?</string>

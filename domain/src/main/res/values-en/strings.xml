@@ -37,8 +37,12 @@
     <string name="show_on_the_map">Show on the map</string>
     <string name="contacts_">Contacts:</string>
 
+    //QR code screen
     <string name="available_time_">Available time:</string>
     <string name="order_history_">Order history:</string>
+    <string name="label_used">Used: %1$s</string>
+    <string name="label_available">Available: %1$s</string>
+    <string name="daily_limit">Daily limit</string>
 
     <string name="log_out">Log out</string>
     <string name="question_log_out">Are you sure log out from the app?</string>
@@ -53,10 +57,13 @@
     <string name="term_of_use">Term of use</string>
     <string name="settings">Settings</string>
     <string name="label_active_to_">(Active to: %1$s)</string>
+    <string name="valid_until_">Valid until:</string>
     <string name="you_dont_have_any_active_subscription">You don\'t have any active subscription!</string>
     <string name="label_top_up_via_">Top up via %1$s</string>
     <string name="label_price_currency_days">%1$s %2$s / %3$s days</string>
     <string name="subscribe">Subscribe</string>
+    <string name="select_subscription">Select subscription</string>
+    <string name="top_up">Top up</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="label_question_purchase_subscription">The subscription price is %1$s %2$s for %3$s days. Do you really want to buy this subscription?</string>

@@ -37,8 +37,13 @@
     <string name="show_on_the_map">Показать на карте</string>
     <string name="contacts_">Контакты:</string>
 
+
+    //QR code screen
     <string name="available_time_">Доступное время:</string>
     <string name="order_history_">История заказов:</string>
+    <string name="label_used">Использовал: %1$s</string>
+    <string name="label_available">Доступно: %1$s</string>
+    <string name="daily_limit">Дневной лимит</string>
 
     <string name="log_out">Выйти</string>
     <string name="question_log_out">Вы действительно хотите выйти из аккаунта?</string>
@@ -53,10 +58,13 @@
     <string name="term_of_use">Условия использования</string>
     <string name="settings">Настройки</string>
     <string name="label_active_to_">(Активно до: %1$s)</string>
+    <string name="valid_until_">Активно до:</string>
     <string name="you_dont_have_any_active_subscription">У вас нет активной подписки!</string>
     <string name="label_top_up_via_">Пополнить через %1$s</string>
     <string name="label_price_currency_days">%1$s %2$s / %3$s дней</string>
     <string name="subscribe">Подписаться</string>
+    <string name="select_subscription">Выбрать подписку</string>
+    <string name="top_up">Пополнить</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="label_question_purchase_subscription">Стоимость подписки %1$s %2$s на %3$s дней. Вы действительно хотите купить эту подписку?</string>

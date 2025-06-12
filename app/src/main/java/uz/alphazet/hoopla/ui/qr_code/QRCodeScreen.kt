@@ -1,8 +1,11 @@
 package uz.alphazet.hoopla.ui.qr_code
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import android.os.CountDownTimer
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import coil3.load
 import com.example.imageviewer.StfalconImageViewer
 import com.github.alexzhirkevich.customqrgenerator.QrData
@@ -19,130 +22,92 @@ import com.github.alexzhirkevich.customqrgenerator.vector.style.QrVectorShapes
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
+import uz.alphazet.data.models.DailyDrinksStatData
 import uz.alphazet.data.models.OrderItemData
 import uz.alphazet.data.models.QRCodeAccessData
+import uz.alphazet.data.models.UserData
 import uz.alphazet.domain.ui.BaseFragment
-import uz.alphazet.domain.utils.gone
-import uz.alphazet.domain.utils.visible
+import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenQrCodeBinding
 
-class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
+class QRCodeScreen : BaseFragment(R.layout.screen_qr_code), SwipeRefreshLayout.OnRefreshListener {
 
     private val binding by viewBinding(ScreenQrCodeBinding::bind)
     private val viewModel: QRCodeVM by viewModel()
 
     private val orderAdapter = OrderAdapter()
 
-    private var time: Long = 0
-
     private var imageViewer: StfalconImageViewer<Drawable>? = null
 
     override fun initialize() {
 
+        binding.swipeRefreshLayout.setOnRefreshListener(this)
         binding.orderRv.adapter = orderAdapter
 
         launch {
-            viewModel.generateQRCode().collectLatest(::collectQRCodeData)
+            viewModel.qrCodeDataFlow.collectLatest(::collectQRCodeData)
+        }
+
+        launch {
+            viewModel.drinksStatDataFlow.collectLatest(::collectDrinksStat)
+        }
+
+        launch {
+            viewModel.userDataFlow.collectLatest(::collectUserData)
         }
 
         launch {
             viewModel.getOrders().collectLatest(::collectOrdersData)
         }
 
-        binding.refresh.setOnClickListener {
-            launch {
-                viewModel.generateQRCode().collectLatest(::collectQRCodeData)
-            }
+    }
+
+    private fun collectQRCodeData(t: UIResource<QRCodeAccessData>) = t.collect(onLoading = {}) {
+        val drawable = generateQRCodeImage(it?.qrCode.toString())
+        val bitmap = drawableToBitmap(drawable)
+        val bitmapDrawable = bitmap.toDrawable(resources)
+        binding.qrCode.load(bitmapDrawable)
+
+        binding.qrCode.setOnClickListener {
+            imageViewer = StfalconImageViewer.Builder(
+                requireContext(), arrayListOf(drawable)
+            ) { view, image ->
+                view.load(drawable)
+            }.allowZooming(false).withHiddenStatusBar(false).build()
+            imageViewer?.show(true)
         }
 
     }
 
-    private fun collectQRCodeData(t: UIResource<QRCodeAccessData>) = t.collect(onLoading = {
-        if (it)
-            binding.refresh.playAnimation()
-        else
-            binding.refresh.pauseAnimation()
-    }) {
+    private fun collectUserData(t: UIResource<UserData>) = t.collect {
 
-        binding.qrCode.alpha = 1f
-        binding.refresh.isEnabled = false
-        binding.refresh.isClickable = false
-        binding.refresh.gone()
+        binding.phoneNumber.text = it?.phoneNumber?.formatPhoneNumber()
 
-        time = (it?.expireAt ?: 0L) - System.currentTimeMillis() / 1000L
-        startCountDownTimer()
-        val drawable = generateQRCodeImage(it?.qrCode.toString())
-        binding.qrCode.load(drawable)
-
-        binding.qrCode.setOnClickListener {
-            imageViewer = StfalconImageViewer.Builder(
-                requireContext(), arrayListOf(binding.qrCode.drawable)
-            ) { view, image ->
-                view.load(drawable)
-            }.build()
-            imageViewer?.show()
+        if (it?.subscription != null) {
+            binding.tariffName.text = it.subscription?.name
+        } else {
+            binding.tariffName.text = ""
         }
+    }
 
+    private fun collectDrinksStat(t: UIResource<DailyDrinksStatData>) = t.collect {
+        binding.available.text =
+            getString(uz.alphazet.domain.R.string.label_available, it?.available.toString())
+        binding.used.text = getString(uz.alphazet.domain.R.string.label_used, it?.used.toString())
+
+        binding.progress.max = it?.available ?: 0
+        binding.progress.progress = it?.used ?: 0
     }
 
     private fun collectOrdersData(t: UIResource<List<OrderItemData>>) = t.collect {
         orderAdapter.submitList(it)
     }
 
-    private var countDownTimer: CountDownTimer? = null
-
-    private fun startCountDownTimer() {
-        countDownTimer = object : CountDownTimer(time * 1000, 1000) {
-
-            override fun onTick(p0: Long) {
-                binding.qrCode.isClickable = true
-                val minute = time / 60
-                val second = time % 60
-                if (p0 < 0)
-                    this.onFinish()
-                else {
-                    binding.timer.text = "${checkDigit(minute)}:" + checkDigit(second)
-                    time--
-                }
-            }
-
-            override fun onFinish() {
-                binding.qrCode.isClickable = false
-//                imageViewer?.dismiss()
-                binding.qrCode.alpha = 0.5f
-                binding.timer.text = "00:00"
-                binding.refresh.isEnabled = true
-                binding.refresh.isClickable = true
-                binding.refresh.visible()
-            }
-        }
-
-        countDownTimer?.start()
-    }
-
-    override fun onDestroyView() {
-        countDownTimer?.cancel()
-        super.onDestroyView()
-    }
-
     private fun generateQRCodeImage(data: String): Drawable {
         val options = QrVectorOptions.Builder()
-            .setPadding(.3f)
-//            .setLogo(
-//                QrVectorLogo(
-//                    drawable = ContextCompat
-//                        .getDrawable(
-//                            requireContext(),
-//                            uz.alphazet.domain.R.drawable.img_logo_hoopla
-//                        ),
-//                    size = .25f,
-//                    padding = QrVectorLogoPadding.Natural(.2f),
-//                    shape = QrVectorLogoShape
-//                        .Circle
-//                )
-//            )
+            .setPadding(0.2f)
             .setBackground(
                 QrVectorBackground(
                     drawable = ContextCompat
@@ -155,19 +120,9 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
             )
             .setColors(
                 QrVectorColors(
-//                    dark = QrVectorColor
-//                        .Solid(Color(0xff345288)),
                     ball = QrVectorColor.Solid(
                         ContextCompat.getColor(requireContext(), uz.alphazet.domain.R.color.black)
                     ),
-//                    frame = QrVectorColor.LinearGradient(
-//                        colors = listOf(
-//                            0f to Color.RED,
-//                            1f to Color.BLUE,
-//                        ),
-//                        orientation = QrVectorColor.LinearGradient
-//                            .Orientation.LeftDiagonal
-//                    )
                 )
             )
             .setShapes(
@@ -186,10 +141,34 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code) {
         return drawable
     }
 
-    private fun checkDigit(number: Long): String = if (number <= 9) {
-        "0$number"
-    } else {
-        number.toString()
+    private fun drawableToBitmap(drawable: Drawable): Bitmap {
+        val width = drawable.intrinsicWidth.takeIf { it > 0 } ?: 512
+        val height = drawable.intrinsicHeight.takeIf { it > 0 } ?: 512
+        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
+    }
+
+
+    override fun showLoading() {
+        if (isResumed)
+            binding.swipeRefreshLayout.isRefreshing = true
+    }
+
+    override fun hideLoading() {
+        if (isResumed)
+            binding.swipeRefreshLayout.isRefreshing = false
+    }
+
+    override fun onRefresh() {
+        launch {
+            viewModel.getOrders().collectLatest(::collectOrdersData)
+        }
+
+        viewModel.getDrinksStat()
+        viewModel.generateQRCode()
     }
 
     override fun toString(): String {
