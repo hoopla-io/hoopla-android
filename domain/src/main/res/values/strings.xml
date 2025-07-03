@@ -45,6 +45,12 @@
     <string name="label_available">Доступно: %1$s</string>
     <string name="daily_limit">Дневной лимит</string>
 
+    <string name="created">Созданный</string>
+    <string name="pending">В ожидании</string>
+    <string name="preparing">Подготовка</string>
+    <string name="completed">Готово</string>
+    <string name="cancelled">Отменено</string>
+
     <string name="log_out">Выйти</string>
     <string name="question_log_out">Вы действительно хотите выйти из аккаунта?</string>
     <string name="balance__">Баланс: </string>

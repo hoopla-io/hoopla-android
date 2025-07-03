@@ -5,6 +5,21 @@ import uz.alphazet.domain.databinding.DialogMessageBinding
 import uz.alphazet.domain.databinding.DialogRequestBinding
 import uz.alphazet.domain.viewbinding.viewBinding
 
+fun BaseActivity.showRequestDF(
+    title: String,
+    message: String,
+    yes: String,
+    no: String,
+    onCancel: () -> Unit = {},
+    onApprove: () -> Unit
+) {
+    if (supportFragmentManager.findFragmentByTag("REQUEST_DF") == null)
+        RequestDF(title, message, yes, no, onCancel, onApprove).show(
+            supportFragmentManager,
+            "REQUEST_DF"
+        )
+}
+
 fun BaseFragment.showRequestDF(
     title: String,
     message: String,
@@ -71,6 +86,19 @@ class RequestDF(
 
 }
 
+
+fun BaseActivity.showMessageDF(
+    title: String,
+    message: String,
+    ok: String,
+    onApprove: () -> Unit
+) {
+    if (supportFragmentManager.findFragmentByTag("MessageDF") == null)
+        MessageDF(title, message, ok, onApprove).show(
+            supportFragmentManager,
+            "MessageDF"
+        )
+}
 
 fun BaseFragment.showMessageDF(
     title: String,

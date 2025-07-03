@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="6dp"
-    android:background="@drawable/bg_corner10_white"
+    android:background="@drawable/bg_order_item"
     android:elevation="2dp"
     android:paddingVertical="6dp">
 
@@ -20,6 +20,25 @@
         android:textSize="24sp"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Safia" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_corner20_white"
+        android:backgroundTint="@color/error_50"
+        android:drawablePadding="8dp"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:textColor="@color/error_300"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/partner_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/partner_name"
+        app:lineHeight="30sp"
+        tools:text="@string/cancelled" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/shop_name"

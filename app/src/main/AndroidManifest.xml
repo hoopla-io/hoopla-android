@@ -34,10 +34,61 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="hoopla.uz" />
+                <data android:path="/" />
+                <data android:path="/uz" />
+                <data android:path="/ru" />
+                <data android:path="/en" />
+            </intent-filter>
         </activity>
 
         <activity
             android:name=".ui.partner_details.PartnerDetailScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.shop_details.ShopDetailActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait">
+
+            <intent-filter android:autoVerify="true">
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" />
+                <data android:host="hoopla.uz" />
+                <data android:pathPrefix="/shop" />
+                <data android:pathPrefix="/uz/shop" />
+                <data android:pathPrefix="/ru/shop" />
+                <data android:pathPrefix="/en/shop" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.order.OrderActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name=".ui.profile.subscriptions.SubscriptionActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.payment.PaymentServicesActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 

@@ -67,6 +67,15 @@ fun Long.getDateDDMMMMYYYYHHmm(): String {
     return stringBuilder.toString()
 }
 
+fun Long.getDateHHmm(): String {
+    val format = "HH:mm" // you can add the format you need
+    val sdf = SimpleDateFormat(format, Locale.getDefault()) // default local
+    sdf.timeZone = TimeZone.getDefault() // set anytime zone you need
+    val s = sdf.format(java.sql.Date(this * 1000))
+    val stringBuilder = StringBuilder(s)
+    return stringBuilder.toString()
+}
+
 fun Long.getDateDMMMMYYYYHHmm(): String {
     val format = "d MMMM, yyyy  HH:mm" // you can add the format you need
     val sdf = SimpleDateFormat(format, Locale.getDefault()) // default local

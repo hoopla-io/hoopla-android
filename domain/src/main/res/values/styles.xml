@@ -152,7 +152,7 @@
 
     <style name="ItemCoffeeImageAppearance">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">50dp</item>
+        <item name="cornerSize">16dp</item>
     </style>
 
     <style name="ImageAppearanceCorner10">

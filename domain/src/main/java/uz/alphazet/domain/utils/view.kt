@@ -1,6 +1,7 @@
 package uz.alphazet.domain.utils
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Rect
 import android.view.View
 import android.view.Window
@@ -10,11 +11,11 @@ import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
 import android.view.animation.OvershootInterpolator
 import android.view.animation.ScaleAnimation
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.AnimRes
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 
 fun View.gone(): View {
     visibility = View.GONE
@@ -76,10 +77,10 @@ fun View.inDevelopment() {
     }
 }
 
-fun TextView.setTextColorRes(@ColorRes color: Int) =
-    setTextColor(ContextCompat.getColor(context, color))
-
 fun Context.getColorCompat(@ColorRes color: Int) = ContextCompat.getColor(this, color)
+
+fun View.setBackgroundTintColor(@ColorRes color: Int) =
+    setBackgroundTintList(ColorStateList.valueOf(ResourcesCompat.getColor(resources, color, null)))
 
 fun View.getYInRoot(): Int {
     return if (parent == rootView) top

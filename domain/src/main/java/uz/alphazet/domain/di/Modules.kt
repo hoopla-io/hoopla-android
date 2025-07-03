@@ -23,6 +23,7 @@ import uz.alphazet.data.BaseResponse
 import uz.alphazet.data.models.AccessTokenData
 import uz.alphazet.data.services.AuthService
 import uz.alphazet.data.services.HomeService
+import uz.alphazet.data.services.OrderService
 import uz.alphazet.data.services.PartnerService
 import uz.alphazet.data.services.PaymentService
 import uz.alphazet.data.services.ProfileService
@@ -37,6 +38,7 @@ import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.permission.PermissionManagerImpl
 import uz.alphazet.domain.repositories.AuthRepo
 import uz.alphazet.domain.repositories.HomeRepo
+import uz.alphazet.domain.repositories.OrderRepo
 import uz.alphazet.domain.repositories.PartnerRepo
 import uz.alphazet.domain.repositories.PaymentServiceRepo
 import uz.alphazet.domain.repositories.ProfileRepo
@@ -64,6 +66,7 @@ object Modules {
         single { provideProfileService(get()) }
         single { provideCompanyService(get()) }
         single { provideShopService(get()) }
+        single { provideOrderService(get()) }
         single { provideQrCodeService(get()) }
         single { provideSubscriptionService(get()) }
         single { providePaymentService(get()) }
@@ -75,6 +78,7 @@ object Modules {
         factory { ProfileRepo(get()) }
         factory { PartnerRepo(get()) }
         factory { ShopRepo(get()) }
+        factory { OrderRepo(get()) }
         factory { QRCodeRepo(get()) }
         factory { SubscriptionRepo(get()) }
         factory { PaymentServiceRepo(get()) }
@@ -89,6 +93,7 @@ object Modules {
         retrofit.create(PartnerService::class.java)
 
     private fun provideShopService(retrofit: Retrofit) = retrofit.create(ShopService::class.java)
+    private fun provideOrderService(retrofit: Retrofit) = retrofit.create(OrderService::class.java)
     private fun provideQrCodeService(retrofit: Retrofit) =
         retrofit.create(QrCodeService::class.java)
 

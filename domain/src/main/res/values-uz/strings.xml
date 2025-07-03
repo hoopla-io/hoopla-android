@@ -44,6 +44,12 @@
     <string name="label_available">Qoldi: %1$s ta</string>
     <string name="daily_limit">Kunlik limit</string>
 
+    <string name="created">Yaratildi</string>
+    <string name="pending">Kutilmoqda</string>
+    <string name="preparing">Tayyorlanmoqda</string>
+    <string name="completed">Tayyor</string>
+    <string name="cancelled">Bekor qilindi</string>
+
     <string name="log_out">Tizimdan chiqish</string>
     <string name="question_log_out">Rostdan ham ilovadan chiqmoqchimisiz?</string>
     <string name="balance__">Balans: </string>

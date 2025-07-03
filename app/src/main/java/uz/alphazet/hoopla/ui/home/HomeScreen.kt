@@ -35,7 +35,9 @@ import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenHomeBinding
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailBD.Companion.showShopDetailBD
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DISTANCE
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_ID
 
 
 class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefreshListener,
@@ -78,7 +80,10 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         }
 
         adapter.setOnItemClickListener {
-            showShopDetailBD(it.shopId ?: -1)
+            val intent = Intent(requireContext(), ShopDetailActivity::class.java)
+            intent.putExtra(SHOP_ID, it.shopId)
+            intent.putExtra(DISTANCE, it.distance)
+            startActivity(intent)
         }
 
         binding.turnOnGPSContainer.setOnClickListener {

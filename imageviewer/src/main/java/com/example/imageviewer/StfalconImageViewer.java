@@ -308,7 +308,7 @@ public class StfalconImageViewer<T> {
          * Creates a {@link StfalconImageViewer} with the arguments supplied to this builder. It does not
          * show the dialog. This allows the user to do any extra processing
          * before displaying the dialog. Use {@link #show()} if you don't have any other processing
-         * to do and want this to be created and displayed.
+         * to do and want this to be completed and displayed.
          */
         public StfalconImageViewer<T> build() {
             return new StfalconImageViewer<>(context, data);

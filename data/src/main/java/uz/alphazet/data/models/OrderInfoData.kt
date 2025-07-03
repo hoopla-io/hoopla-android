@@ -1,8 +1,6 @@
 package uz.alphazet.data.models
 
-import uz.alphazet.data.rv.BaseItem
-
-data class OrderItemData(
+data class OrderInfoData(
     val id: Int?,
     val partnerName: String?,
     val shopName: String?,
@@ -10,7 +8,4 @@ data class OrderItemData(
     val purchasedAtUnix: Long?,
     val drinkName: String?,
     val orderStatus: String?
-) : BaseItem {
-    override val uniqueId: String
-        get() = id.toString()
-}
+)

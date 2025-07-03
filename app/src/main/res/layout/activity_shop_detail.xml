@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nsv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary"
+        app:navigationContentDescription="Orqaga"
+        app:navigationIcon="@drawable/ic_arrow_left_back"
+        app:titleTextAppearance="@style/ToolbarTitleTextStyle"
+        app:titleTextColor="@color/white"
+        tools:title="Qahvachi" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="60dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/image_view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="20dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
+                app:layout_constraintDimensionRatio="16:10"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:itemCount="4"
+                tools:listitem="@layout/item_image" />
+
+            <LinearLayout
+                android:id="@+id/working_time_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
+                app:layout_constraintTop_toBottomOf="@id/image_view_pager">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clock"
+                    app:shapeAppearanceOverlay="@style/ItemShopImageAppearance"
+                    app:tint="@color/black_300" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/open_today"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center_vertical"
+                    android:text="Open today:"
+                    android:textColor="@color/green_300"
+                    android:textSize="16sp"
+                    android:visibility="visible" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/closed_today"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center_vertical"
+                    android:text="Closed today:"
+                    android:textColor="@color/error_400"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/hours"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center_vertical|end"
+                    android:textColor="@color/black_300"
+                    android:textSize="16sp"
+                    tools:text="10:00 - 00:00" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/work_time_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/working_time_container"
+                tools:itemCount="7"
+                tools:listitem="@layout/item_work_time" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/work_time_barrier"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="work_time_rv,working_time_container" />
+
+            <LinearLayout
+                android:id="@+id/location_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
+                app:layout_constraintTop_toBottomOf="@id/work_time_barrier">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_location"
+                    app:shapeAppearanceOverlay="@style/ItemShopImageAppearance" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center_vertical"
+                    android:text="Get direction"
+                    android:textColor="@color/black_300"
+                    android:textSize="16sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/distance"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center_vertical|end"
+                    android:textColor="@color/black_300"
+                    android:textSize="16sp"
+                    tools:text="1.2 km away" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/phone_number_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="12dp"
+                app:layout_constraintTop_toBottomOf="@id/location_container">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="20dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_phone"
+                    app:shapeAppearanceOverlay="@style/ItemShopImageAppearance"
+                    app:tint="@color/black_300" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center_vertical"
+                    android:text="@string/phone_number__"
+                    android:textColor="@color/black_300"
+                    android:textSize="16sp" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/phone_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:gravity="center_vertical|end"
+                    android:textColor="@color/black_300"
+                    android:textSize="16sp"
+                    tools:text="+998 90 001 23 34" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/drinks_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="@string/drinks_"
+                android:textColor="@color/black_300"
+                android:textSize="21sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/phone_number_container" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/drink_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:paddingHorizontal="10dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/drinks_label"
+                app:spanCount="2"
+                tools:itemCount="1"
+                tools:listitem="@layout/item_drink_vertical" />
+
+            <TextView
+                android:id="@+id/contacts_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/inter_bold"
+                android:text="Additional information:"
+                android:textColor="@color/black_300"
+                android:textSize="21sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/drink_rv" />
+
+            <LinearLayout
+                android:id="@+id/web_links_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                app:layout_constraintTop_toBottomOf="@id/contacts_label">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/web"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/white"
+                    android:elevation="2dp"
+                    android:foreground="@drawable/ripple_round"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_world"
+                    android:tint="@color/black"
+                    android:visibility="visible"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/instagram"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/white"
+                    android:elevation="2dp"
+                    android:foreground="@drawable/ripple_round"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_instagram"
+                    android:visibility="visible"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30" />
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/facebook"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginHorizontal="8dp"
+                    android:layout_marginVertical="12dp"
+                    android:background="@color/white"
+                    android:elevation="2dp"
+                    android:foreground="@drawable/ripple_round"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_facebook"
+                    android:visibility="visible"
+                    app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30" />
+
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

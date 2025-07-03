@@ -1,5 +1,7 @@
 package uz.alphazet.data.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import uz.alphazet.data.rv.BaseItem
 
 data class PartnerData(
@@ -21,11 +23,12 @@ data class PartnerData(
     )
 }
 
+@Parcelize
 data class DrinkItemData(
     val id: Int?,
     val name: String?,
     val pictureUrl: String?
-) : BaseItem {
+) : BaseItem, Parcelable {
     override val uniqueId: String
         get() = id.toString()
 }
