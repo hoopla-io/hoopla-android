@@ -8,7 +8,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DrinkItemData
 import uz.alphazet.data.models.OrderInfoData
+import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.utils.getDateDMMMMYYYYHHmm
 import uz.alphazet.hoopla.databinding.ScreenOrderBinding
 import uz.alphazet.hoopla.ui.auth.AuthActivity
@@ -57,7 +59,14 @@ class OrderActivity : BaseActivity() {
     }
 
     private fun collectData(t: UIResource<OrderInfoData>) = t.collect { data ->
-
+        showMessageDF(
+            getString(R.string.order_received_),
+            getString(R.string.label_order_received_, data?.drinkName ?: "", data?.shopName ?: ""),
+            "OK"
+        ) {
+            setResult(RESULT_ORDER_CREATED)
+            finish()
+        }
     }
 
     override fun onPaymentException(message: String?, code: Int) {
@@ -68,8 +77,12 @@ class OrderActivity : BaseActivity() {
 
     override fun onUnauthorizedException(message: String?, code: Int) {
         super.onUnauthorizedException(message, code)
-//        val intent1 = Intent(this, AuthActivity::class.java)
-//        authListener.launch(intent1)
+        val intent1 = Intent(this, AuthActivity::class.java)
+        authListener.launch(intent1)
+    }
+
+    companion object {
+        const val RESULT_ORDER_CREATED = 203
     }
 
 }

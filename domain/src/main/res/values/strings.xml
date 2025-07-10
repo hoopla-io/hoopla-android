@@ -13,6 +13,7 @@
 
     <string name="your_phone_number_">Ваш номер телефона:</string>
     <string name="phone_number__">Номер телефона: </string>
+    <string name="not_specified">Не указан</string>
     <string name="continue_">Продолжить</string>
     <string name="phone_number_is_not_valid">Неверный номер телефона</string>
     <string name="confirmation_code">Код подтверждения</string>
@@ -38,11 +39,16 @@
     <string name="contacts_">Контакты:</string>
 
 
+    <string name="order">Заказать</string>
+    <string name="order_received_">Заказ принят! 🎉</string>
+    <string name="label_order_received_">&quot;%1$s&quot; готовится в магазине %2$s. Пожалуйста, подождите — скоро будет готов 😉</string>
+
+
     //QR code screen
     <string name="available_time_">Доступное время:</string>
     <string name="order_history_">История заказов:</string>
     <string name="label_used">Использовал: %1$s</string>
-    <string name="label_available">Доступно: %1$s</string>
+    <string name="label_total">Общее: %1$s</string>
     <string name="daily_limit">Дневной лимит</string>
 
     <string name="created">Созданный</string>
@@ -58,6 +64,7 @@
     <string name="my_details">Мои данные</string>
     <string name="subscriptions">Подписки</string>
     <string name="payment">Оплата</string>
+    <string name="languages">Языки</string>
     <string name="sessions">Сессии</string>
     <string name="support">Поддержка</string>
     <string name="privacy_policy">Политика конфиденциальности</string>
@@ -77,6 +84,10 @@
     <string name="successfully_bought">Успешно куплено!</string>
     <string name="label_successfully_bought">Вы купили подписку на %1$s на %2$s дня за %3$s %4$s.</string>
 
+    <string name="select_language">Выберите язык</string>
+    <string name="russian" translatable="false">Русский</string>
+    <string name="uzbek" translatable="false">O\'zbek tili</string>
+    <string name="english" translatable="false">English</string>
 
     <string name="no_internet_connection">Нет соединения с Интернетом</string>
     <string name="privacy_policy_desc">Регистрируясь, я соглашаюсь с условиями <u><font color="#FF039BE5">пользовательского соглашения</font></u></string>

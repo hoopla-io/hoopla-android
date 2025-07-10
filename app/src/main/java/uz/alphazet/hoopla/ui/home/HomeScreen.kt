@@ -35,6 +35,8 @@ import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenHomeBinding
+import uz.alphazet.hoopla.ui.MainActivity
+import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DISTANCE
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_ID
@@ -62,6 +64,15 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             runLocationListener()
         }
 
+    private val shopListener =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                RESULT_ORDER_CREATED -> {
+                    (requireActivity() as? MainActivity)?.navigateToQRScreen()
+                }
+            }
+        }
+
     override fun initialize() {
 
         binding.swipeRefreshLayout.setOnRefreshListener(this)
@@ -83,7 +94,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             val intent = Intent(requireContext(), ShopDetailActivity::class.java)
             intent.putExtra(SHOP_ID, it.shopId)
             intent.putExtra(DISTANCE, it.distance)
-            startActivity(intent)
+            shopListener.launch(intent)
         }
 
         binding.turnOnGPSContainer.setOnClickListener {
@@ -106,9 +117,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
     }
 
-    private fun collectNearShopsData(t: UIResource<List<ShopItemData>>) = t.collect(
-
-    ) {
+    private fun collectNearShopsData(t: UIResource<List<ShopItemData>>) = t.collect {
         adapter.submitList(it)
     }
 

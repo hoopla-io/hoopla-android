@@ -1,12 +1,13 @@
 package uz.alphazet.hoopla.ui.on_boarding
 
+import android.content.Intent
 import kotlinx.coroutines.delay
 import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.utils.startAnim
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenOnBoardingBinding
-import uz.alphazet.hoopla.ui.Screens
+import uz.alphazet.hoopla.ui.MainActivity
 import uz.alphazet.domain.R as domainR
 
 class OnBoardingScreen : BaseFragment(R.layout.screen_on_boarding) {
@@ -41,7 +42,9 @@ class OnBoardingScreen : BaseFragment(R.layout.screen_on_boarding) {
                 }
 
                 2 -> {
-                    replaceScreen(Screens.bottomNav())
+                    val intent = Intent(requireActivity(), MainActivity::class.java)
+                    startActivity(intent)
+                    requireActivity().finish()
                 }
             }
 //            when {
@@ -65,7 +68,9 @@ class OnBoardingScreen : BaseFragment(R.layout.screen_on_boarding) {
         }
 
         binding.skip.setOnClickListener {
-            replaceScreen(Screens.bottomNav())
+            val intent = Intent(requireActivity(), MainActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish()
         }
 
     }

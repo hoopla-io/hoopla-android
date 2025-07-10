@@ -6,8 +6,6 @@ import android.widget.Toast
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.github.terrakok.cicerone.Router
-import com.github.terrakok.cicerone.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
@@ -103,12 +101,6 @@ abstract class BaseFragment : Fragment, View.OnClickListener, RemoteErrorListene
         activity?.isFinishing == true -> true
         else -> isRealRemoving()
     }
-
-    protected fun navigateTo(screen: Screen) = router.navigateTo(screen)
-    protected fun replaceScreen(screen: Screen) = router.replaceScreen(screen)
-    protected fun newRootScreen(screen: Screen) = router.newRootScreen(screen)
-    protected fun backTo(screen: Screen?) = router.backTo(screen)
-    protected fun exit() = router.exit()
 
     abstract fun initialize()
 
@@ -245,15 +237,6 @@ abstract class BaseFragment : Fragment, View.OnClickListener, RemoteErrorListene
         private const val FIRST_RUN_ID = "STATE_FIRST_RUN_ID"
         private const val APP_RUN_ID = "STATE_APP_RUN_ID"
     }
-}
-
-val BaseFragment.router: Router get() = findParentRouter()
-
-fun BaseFragment.findParentRouter(): Router {
-    val parentActivity = activity as? BaseRootActivity
-    if (parentActivity != null) {
-        return parentActivity.router
-    } else throw NullPointerException("router not found in parent activity or parent fragments")
 }
 
 enum class CreateMode {

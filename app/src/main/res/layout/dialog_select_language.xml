@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/bg_bottom_sheet_dialog_fragment"
+    android:clipToPadding="false"
+    android:elevation="2dp"
+    android:orientation="vertical"
+    android:paddingTop="24dp"
+    android:paddingBottom="36dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_bold"
+        android:gravity="center"
+        android:text="@string/select_language"
+        android:textColor="@color/black_300"
+        android:textSize="16sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Оплата через Payme" />
+
+    <androidx.appcompat.widget.AppCompatCheckedTextView
+        android:id="@+id/uzbek"
+        style="@style/DetailButtonStyle"
+        android:layout_marginTop="20dp"
+        android:checkMark="@drawable/selector_checkbox"
+        android:checked="false"
+        android:drawableStart="@drawable/ic_language"
+        android:elevation="4dp"
+        android:text="@string/uzbek" />
+
+    <androidx.appcompat.widget.AppCompatCheckedTextView
+        android:id="@+id/russian"
+        style="@style/DetailButtonStyle"
+        android:checkMark="@drawable/selector_checkbox"
+        android:checked="false"
+        android:drawableStart="@drawable/ic_language"
+        android:elevation="4dp"
+        android:text="@string/russian" />
+
+    <androidx.appcompat.widget.AppCompatCheckedTextView
+        android:id="@+id/english"
+        style="@style/DetailButtonStyle"
+        android:checkMark="@drawable/selector_checkbox"
+        android:checked="false"
+        android:drawableStart="@drawable/ic_language"
+        android:elevation="4dp"
+        android:text="@string/english" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

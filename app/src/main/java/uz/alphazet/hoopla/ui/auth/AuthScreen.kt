@@ -1,5 +1,6 @@
 package uz.alphazet.hoopla.ui.auth
 
+import android.os.Bundle
 import android.view.View
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.lifecycleScope
@@ -16,7 +17,8 @@ import uz.alphazet.domain.utils.hideKeyboard
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenAuthInputPhoneBinding
-import uz.alphazet.hoopla.ui.Screens
+import uz.alphazet.hoopla.ui.auth.ConfirmPhoneNumberScreen.Companion.PHONE_FORMATTED
+import uz.alphazet.hoopla.ui.auth.ConfirmPhoneNumberScreen.Companion.SESSION_ID
 
 class AuthScreen : BaseFragment(R.layout.screen_auth_input_phone) {
 
@@ -55,12 +57,13 @@ class AuthScreen : BaseFragment(R.layout.screen_auth_input_phone) {
     }
 
     private fun collectSendSmsResource(t: UIResource<LoginSessionData>?) = t?.collect {
-        navigateTo(
-            Screens.confirmationScreen(
-                it?.sessionId ?: "",
-                (binding.inputPhone.text ?: "").toString()
-            )
-        )
+        val bundle = Bundle()
+        bundle.putString(SESSION_ID, it?.sessionId)
+        bundle.putString(PHONE_FORMATTED, (binding.inputPhone.text ?: "").toString())
+
+        val screen = ConfirmPhoneNumberScreen()
+        screen.arguments = bundle
+        (requireActivity() as? AuthActivity)?.navigateTo(screen)
     }
 
     override fun onClick(view: View) {

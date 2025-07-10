@@ -24,7 +24,7 @@ class OrderAdapter : BaseAdapter<OrderItemData>() {
         override fun bind(position: Int) {
             val itemData = getItem(absoluteAdapterPosition) ?: return
 
-            binding.partnerName.text = itemData.partnerName
+            binding.drinkName.text = "#${itemData.id}, ".plus(itemData.drinkName)
             binding.shopName.text = itemData.shopName
 
             binding.time.text = itemData.purchasedAtUnix?.getDateDDMMMMYYYYHHmm()

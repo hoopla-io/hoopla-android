@@ -1,11 +1,21 @@
 package uz.alphazet.hoopla.ui.auth
 
+import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.withStarted
+import com.google.android.gms.auth.api.phone.SmsRetriever
+import com.google.android.gms.tasks.Task
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -20,12 +30,15 @@ import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenConfirmPhoneNumberBinding
-import uz.alphazet.hoopla.ui.Screens
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_number) {
 
     private val binding by viewBinding(ScreenConfirmPhoneNumberBinding::bind)
     private val viewModel: AuthVM by viewModel()
+
+    private val smsBroadcastReceiver by lazy { MySMSBroadcastReceiver() }
 
     private var sessionId: String? = null
     private val phoneNumberFormatted by lazy { arguments?.getString(PHONE_FORMATTED) }
@@ -34,8 +47,56 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
 
     override var forceKeyboard: Boolean = true
 
+    override fun onStart() {
+        super.onStart()
+
+        startSMSRetrieverClient()
+
+        smsBroadcastReceiver.init(object : MySMSBroadcastReceiver.OTPReceiveListener {
+            override fun onOTPReceived(extras: Bundle?) {
+                val consentIntent =
+                    extras?.getParcelable<Intent>(SmsRetriever.EXTRA_CONSENT_INTENT)
+
+                val message = extras?.get(SmsRetriever.EXTRA_SMS_MESSAGE) as String?
+
+                if (message.isNullOrEmpty()) {
+                    try {
+                        // Start activity to show consent dialog to user, activity must be started in
+                        // 5 minutes, otherwise you'll receive another TIMEOUT intent
+                        smsReceiverLauncher.launch(consentIntent)
+                    } catch (e: ActivityNotFoundException) {
+                        // Handle the exception ...
+                    }
+                } else {
+                    val pattern: Pattern = Pattern.compile("(\\d{5})")
+                    //   \d is for a digit
+                    //   {} is the number of digits here 5.
+                    val matcher: Matcher = pattern.matcher(message)
+                    var code: String? = ""
+                    if (matcher.find()) {
+                        code = matcher.group(0) // 5 digit number
+                        binding.inputCode.setText(code)
+                    }
+                }
+            }
+
+            override fun onOTPTimeOut() {
+
+            }
+
+        })
+
+        requireActivity().registerReceiver(
+            smsBroadcastReceiver,
+            IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION),
+            Context.RECEIVER_EXPORTED
+        )
+
+    }
+
     override fun initialize() {
         sessionId = arguments?.getString(SESSION_ID)
+
 
         countDownTimer.start()
         binding.phoneNumber.text = phoneNumberFormatted
@@ -62,7 +123,6 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
                 }
             }
         }
-
     }
 
     private fun collectConfirmSms(t: UIResource<ConfirmSMSData>) = t.collect(onError = {
@@ -74,7 +134,8 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
         cache.refreshToken = confirmData?.jwt?.refreshToken
         cache.tokenExpireAt = confirmData?.jwt?.expireAt ?: 0L
 
-        replaceScreen(Screens.bottomNav())
+        requireActivity().finish()
+//        replaceScreen(Screens.bottomNav())
     }
 
     private fun collectResendSmsResource(t: UIResource<LoginSessionData>) = t?.collect {
@@ -88,7 +149,7 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
 
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.backImg -> exit()
+            R.id.backImg -> requireActivity().onBackPressed()
             R.id.send_again -> {
                 viewModel.resendSms(sessionId ?: "")
             }
@@ -105,6 +166,34 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
             }
         }
     }
+
+    private fun startSMSRetrieverClient() {
+        val client = SmsRetriever.getClient(requireActivity())
+        val task: Task<Void> = client.startSmsRetriever()
+        task.addOnSuccessListener { aVoid -> }
+        task.addOnFailureListener { e -> }
+    }
+
+    private val smsReceiverLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                // Get SMS message content
+                val message = result.data?.getStringExtra(SmsRetriever.EXTRA_SMS_MESSAGE)
+
+                val pattern: Pattern = Pattern.compile("(\\d{5})")
+                //   \d is for a digit
+                //   {} is the number of digits here 5.
+                val matcher: Matcher = pattern.matcher(message)
+                var code: String? = ""
+                if (matcher.find()) {
+                    code = matcher.group(0) // 5 digit number
+                    binding.inputCode.setText(code)
+                }
+
+            } else {
+                Toast.makeText(context, "Otp retrieval failed", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     private val countDownTimer = object : CountDownTimer(time * 1000, 1000) {
 
@@ -129,6 +218,7 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
     }
 
     override fun onDestroyView() {
+        requireActivity().unregisterReceiver(smsBroadcastReceiver)
         countDownTimer.cancel()
         super.onDestroyView()
     }
@@ -147,8 +237,9 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
 
     companion object {
 
-        private const val SESSION_ID = "session_id"
-        private const val PHONE_FORMATTED = "PHONE_FORMATTED"
+        const val TAG = "ConfirmPhoneNumberScreen"
+        const val SESSION_ID = "session_id"
+        const val PHONE_FORMATTED = "PHONE_FORMATTED"
 
         fun withArgs(sessionId: String, phoneNumberFormatted: String): ConfirmPhoneNumberScreen =
             ConfirmPhoneNumberScreen().apply {

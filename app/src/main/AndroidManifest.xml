@@ -25,15 +25,24 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".ui.RootActivity"
+            android:name=".ui.SplashActivity"
             android:configChanges="orientation|keyboardHidden|screenSize|uiMode|colorMode"
             android:exported="true"
             android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|uiMode|colorMode"
+            android:exported="true"
+            android:screenOrientation="portrait">
 
             <intent-filter android:autoVerify="true">
 
@@ -49,12 +58,8 @@
                 <data android:path="/ru" />
                 <data android:path="/en" />
             </intent-filter>
-        </activity>
 
-        <activity
-            android:name=".ui.partner_details.PartnerDetailScreen"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
+        </activity>
 
         <activity
             android:name=".ui.shop_details.ShopDetailActivity"
@@ -79,6 +84,11 @@
         </activity>
 
         <activity
+            android:name=".ui.auth.AuthActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.order.OrderActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
@@ -91,6 +101,15 @@
             android:name=".ui.profile.payment.PaymentServicesActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
+
+        <receiver
+            android:name=".ui.auth.MySMSBroadcastReceiver"
+            android:exported="true"
+            android:permission="com.google.android.gms.auth.api.phone.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

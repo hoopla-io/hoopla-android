@@ -170,7 +170,7 @@
         style="@style/PrimaryColorButtonStyle"
         android:layout_gravity="bottom"
         android:layout_marginTop="15dp"
-        android:text="Order"
+        android:text="@string/order"
         android:textAllCaps="false"
         app:finalCornerAngle="10dp"
         app:initialCornerAngle="10dp"

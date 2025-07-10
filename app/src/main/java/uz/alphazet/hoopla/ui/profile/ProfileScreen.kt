@@ -1,13 +1,15 @@
 package uz.alphazet.hoopla.ui.profile
 
+import android.content.Intent
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.UserData
+import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.BaseFragment
-import uz.alphazet.domain.ui.BaseRootActivity
 import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.formatToPrice
@@ -19,19 +21,39 @@ import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenProfileBinding
-import uz.alphazet.hoopla.ui.Screens
+import uz.alphazet.hoopla.ui.MainActivity
+import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.home.HomeScreen
+import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
+import uz.alphazet.hoopla.ui.profile.settings.SelectLanguageBD.Companion.showSelectLanguageBD
+import uz.alphazet.hoopla.ui.profile.subscriptions.SubscriptionActivity
 
 class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.OnRefreshListener {
 
     private val binding by viewBinding(ScreenProfileBinding::bind)
     private val viewModel: ProfileVM by viewModel()
 
+    private val authListener =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            viewModel.getUser()
+        }
+
+    private val subscriptionListener =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+        }
+
+    private val paymentListener =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+
+        }
+
     override fun initialize() {
 
         binding.selectTariff.setOnClickListener(this)
         binding.subscription.setOnClickListener(this)
         binding.topUp.setOnClickListener(this)
+        binding.languages.setOnClickListener(this)
         binding.logout.setOnClickListener(this)
         binding.login.setOnClickListener(this)
         binding.support.setOnClickListener(this)
@@ -70,17 +92,19 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
     private fun collectLogoutData(t: UIResource<Any>) = t.collect {
         cache.clearTokens()
-        replaceScreen(Screens.bottomNav())
+        (requireActivity() as? MainActivity)?.callOnLogOut()
     }
 
     override fun onClick(view: View) {
         when (view.id) {
             R.id.select_tariff, R.id.subscription -> {
-                navigateTo(Screens.subscriptionsScreen())
+                val intent1 = Intent(requireActivity(), SubscriptionActivity::class.java)
+                subscriptionListener.launch(intent1)
             }
 
             R.id.top_up -> {
-                navigateTo(Screens.paymentServicesScreen())
+                val intent1 = Intent(requireActivity(), PaymentServicesActivity::class.java)
+                paymentListener.launch(intent1)
             }
 
             R.id.logout -> {
@@ -97,7 +121,14 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
             }
 
             R.id.login -> {
-                (requireActivity() as BaseRootActivity).navigateToAuthScreen()
+                val intent = Intent(requireActivity(), AuthActivity::class.java)
+                authListener.launch(intent)
+            }
+
+            R.id.languages -> {
+                showSelectLanguageBD {
+                    (requireActivity() as BaseActivity).updateLocale(it)
+                }
             }
 
             R.id.privacyPolicy -> {

@@ -3,6 +3,7 @@ package uz.alphazet.hoopla.ui.shop_details
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import coil3.load
 import com.example.imageviewer.StfalconImageViewer
@@ -24,6 +25,7 @@ import uz.alphazet.domain.utils.setTextColorRes
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.databinding.ActivityShopDetailBinding
 import uz.alphazet.hoopla.ui.order.OrderActivity
+import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -51,6 +53,16 @@ class ShopDetailActivity : BaseActivity() {
     private val drinksAdapter = DrinksAdapter()
     private val workTimeAdapter = WorkTimeAdapter()
 
+    private val orderListener =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                RESULT_ORDER_CREATED -> {
+                    setResult(RESULT_ORDER_CREATED)
+                    finish()
+                }
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShopDetailBinding.inflate(layoutInflater)
@@ -75,7 +87,7 @@ class ShopDetailActivity : BaseActivity() {
             intent1.putExtra(SHOP_ID, shopId)
             intent1.putExtra(SHOP_NAME, binding.toolbar.title.toString())
             intent1.putExtra(DRINK_DATA, it)
-            startActivity(intent1)
+            orderListener.launch(intent1)
         }
 
         launch {
@@ -112,11 +124,12 @@ class ShopDetailActivity : BaseActivity() {
 
         val phoneNumber = data?.phoneNumbers?.firstOrNull()
         if (phoneNumber != null) {
-            binding.phoneNumber.visible()
             binding.phoneNumber.text = phoneNumber.phoneNumber?.formatPhoneNumber()
             binding.phoneNumber.setOnClickListener {
                 intentToCall(phoneNumber.phoneNumber?.formatPhoneNumber() ?: "")
             }
+        } else {
+            binding.phoneNumber.text = getString(R.string.not_specified)
         }
 
         data?.urls?.forEach { item ->

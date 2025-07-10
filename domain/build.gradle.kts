@@ -88,4 +88,7 @@ dependencies {
 
     api(libs.dexter)
 
+    api("com.google.android.gms:play-services-auth:21.3.0")
+    api("com.google.android.gms:play-services-auth-api-phone:18.2.0")
+
 }

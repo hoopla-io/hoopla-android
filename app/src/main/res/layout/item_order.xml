@@ -11,13 +11,13 @@
     android:paddingVertical="6dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/partner_name"
+        android:id="@+id/drink_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_bold"
         android:paddingHorizontal="16dp"
         android:textColor="@color/black_300"
-        android:textSize="24sp"
+        android:textSize="20sp"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Safia" />
 
@@ -34,9 +34,9 @@
         android:paddingHorizontal="16dp"
         android:textColor="@color/error_300"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@id/partner_name"
+        app:layout_constraintBottom_toBottomOf="@id/drink_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/partner_name"
+        app:layout_constraintTop_toTopOf="@id/drink_name"
         app:lineHeight="30sp"
         tools:text="@string/cancelled" />
 
@@ -52,7 +52,7 @@
         android:paddingHorizontal="16dp"
         android:textColor="@color/black_300"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/partner_name"
+        app:layout_constraintTop_toBottomOf="@id/drink_name"
         tools:text="Safia Tashkent city" />
 
     <androidx.appcompat.widget.AppCompatTextView

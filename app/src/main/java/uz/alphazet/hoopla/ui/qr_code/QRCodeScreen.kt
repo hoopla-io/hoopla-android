@@ -94,7 +94,7 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code), SwipeRefreshLayout.O
 
     private fun collectDrinksStat(t: UIResource<DailyDrinksStatData>) = t.collect {
         binding.available.text =
-            getString(uz.alphazet.domain.R.string.label_available, it?.available.toString())
+            getString(uz.alphazet.domain.R.string.label_total, it?.available.toString())
         binding.used.text = getString(uz.alphazet.domain.R.string.label_used, it?.used.toString())
 
         binding.progress.max = it?.available ?: 0
