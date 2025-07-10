@@ -84,6 +84,8 @@ dependencies {
 
     api("com.github.alexzhirkevich:custom-qr-generator:1.6.2")
 
+    api("io.github.g00fy2.quickie:quickie-unbundled:1.11.0")
+
     api("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     api(libs.dexter)

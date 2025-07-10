@@ -22,6 +22,8 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.LocationSettingsResponse
 import com.google.android.gms.location.Priority
+import io.github.g00fy2.quickie.QRResult
+import io.github.g00fy2.quickie.ScanQRCode
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -30,6 +32,7 @@ import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.utils.gone
+import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.log
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
@@ -73,6 +76,25 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             }
         }
 
+    private val scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
+        when (result) {
+            is QRResult.QRSuccess -> {
+                val rawValue = result.content.rawValue ?: ""
+                requireActivity().intentToBrowser(rawValue)
+//                launch {
+//                    viewModel.scanQRCode(rawValue).collectLatest(::collectQRCodeScanData)
+//                }
+            }
+
+            is QRResult.QRError -> {
+                showErrorMessage(result.exception.message)
+            }
+
+            is QRResult.QRUserCanceled -> {}
+            is QRResult.QRMissingPermission -> {}
+        }
+    }
+
     override fun initialize() {
 
         binding.swipeRefreshLayout.setOnRefreshListener(this)
@@ -99,6 +121,10 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         binding.turnOnGPSContainer.setOnClickListener {
             turnOnGPS()
+        }
+
+        binding.scan.setOnClickListener {
+            scanQrCodeLauncher.launch(null)
         }
 
         binding.inputSearch.doAfterTextChanged { text ->
