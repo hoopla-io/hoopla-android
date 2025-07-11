@@ -26,6 +26,7 @@
 
     <string name="please_turn_on_gps">Xizmatlarimiz to\'g\'ri ishlashi uchun iltimos geolokatsiyani yoqing</string>
     <string name="turn_on">Yoqish</string>
+    <string name="scan_qr_code">QR kodni skanerlash</string>
     <string name="location_permission_not_full_granted">Joylashuvga ruxsat to\'liq berilmagan</string>
     <string name="label_distance_away">%1$s %2$s uzoqlikda</string>
     <string name="short_metr">m</string>

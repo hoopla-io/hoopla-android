@@ -1,5 +1,6 @@
 package uz.alphazet.hoopla.ui.profile.settings
 
+import android.os.Build
 import android.view.View
 import uz.alphazet.domain.ui.BaseBottomSheetDF
 import uz.alphazet.domain.ui.BaseFragment
@@ -14,7 +15,8 @@ class SelectLanguageBD(private val onLocaleSelected: (Locale) -> Unit = {}) :
     private val binding by viewBinding(DialogSelectLanguageBinding::bind)
 
     override fun initialize() {
-        when (cache.lang) {
+        val currentLocale = getCurrentLocale()
+        when (currentLocale.language) {
             "uz" -> binding.uzbek.isChecked = true
             "ru" -> binding.russian.isChecked = true
             "en" -> binding.english.isChecked = true
@@ -47,6 +49,16 @@ class SelectLanguageBD(private val onLocaleSelected: (Locale) -> Unit = {}) :
             }
         }
     }
+
+    private fun getCurrentLocale(): Locale {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            requireContext().resources.configuration.locales[0]
+        } else {
+            @Suppress("DEPRECATION")
+            requireContext().resources.configuration.locale
+        }
+    }
+
 
     companion object {
         private const val TAG = "SelectLanguageBD"

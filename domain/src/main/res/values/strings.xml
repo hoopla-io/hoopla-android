@@ -26,6 +26,7 @@
 
     <string name="please_turn_on_gps">Пожалуйста, включите геолокацию, чтобы наши сервисы работали правильно</string>
     <string name="turn_on">Включить</string>
+    <string name="scan_qr_code">Сканировать QR-код</string>
     <string name="location_permission_not_full_granted">Разрешение на местоположение не предоставлено</string>
     <string name="label_distance_away">в %1$s %2$s</string>
     <string name="short_metr">м</string>

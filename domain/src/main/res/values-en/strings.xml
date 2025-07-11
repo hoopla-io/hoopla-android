@@ -26,6 +26,7 @@
 
     <string name="please_turn_on_gps">Please turn on geolocation for our services to work properly</string>
     <string name="turn_on">Turn on</string>
+    <string name="scan_qr_code">Scan QR code</string>
     <string name="location_permission_not_full_granted">Location permission not full granted</string>
     <string name="label_distance_away">%1$s %2$s away</string>
     <string name="short_metr">m</string>
