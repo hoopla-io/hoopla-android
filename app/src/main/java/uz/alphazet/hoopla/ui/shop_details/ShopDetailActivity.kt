@@ -16,6 +16,7 @@ import uz.alphazet.data.models.UrlTypes.URL_TYPE_INSTAGRAM
 import uz.alphazet.data.models.UrlTypes.URL_TYPE_WEB
 import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.utils.formatDistance
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.gone
@@ -82,16 +83,16 @@ class ShopDetailActivity : BaseActivity() {
             }.withStartPosition(position).show()
         }
 
-        drinksAdapter.setOnItemClickListener {
-            val intent1 = Intent(this, OrderActivity::class.java)
-            intent1.putExtra(SHOP_ID, shopId)
-            intent1.putExtra(SHOP_NAME, binding.toolbar.title.toString())
-            intent1.putExtra(DRINK_DATA, it)
-            orderListener.launch(intent1)
-        }
-
         launch {
             viewModel.getShopDetail(shopId).collectLatest(::collectData)
+        }
+    }
+
+    override fun updateStatusBarViewHeight() {
+        launch {
+            val statusBarHeight = getStatusBarHeight()
+            binding.statusBarView.layoutParams.height = statusBarHeight
+            binding.statusBarView.requestLayout()
         }
     }
 
@@ -101,6 +102,19 @@ class ShopDetailActivity : BaseActivity() {
         imagesAdapter.submitList(data?.pictures)
         drinksAdapter.submitList(data?.drinks)
         workTimeAdapter.submitList(data?.workingHours)
+
+        drinksAdapter.setOnItemClickListener {
+            if (data?.canAcceptOrders == true) {
+                val intent1 = Intent(this, OrderActivity::class.java)
+                intent1.putExtra(SHOP_ID, shopId)
+                intent1.putExtra(SHOP_NAME, binding.toolbar.title.toString())
+                intent1.putExtra(DRINK_DATA, it)
+                orderListener.launch(intent1)
+            } else {
+                showMessageDF(getString(R.string.can_not_accepting_orders), "", "OK") {}
+            }
+
+        }
 
         if (data?.workingHours.isNullOrEmpty()) {
             binding.workingTimeContainer.gone()

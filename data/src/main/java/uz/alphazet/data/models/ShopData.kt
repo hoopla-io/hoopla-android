@@ -7,6 +7,7 @@ data class ShopData(
     val id: Int?,
     val partnerId: Int?,
     val name: String?,
+    val canAcceptOrders: Boolean?,
     val location: LocationData?,
     val phoneNumbers: List<PhoneNumber?>?,
     val workingHours: List<WorkHour?>?,

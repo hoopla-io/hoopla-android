@@ -38,6 +38,14 @@ class PaymentServicesActivity : BaseActivity() {
 
     }
 
+    override fun updateStatusBarViewHeight() {
+        launch {
+            val statusBarHeight = getStatusBarHeight()
+            binding.statusBarView.layoutParams.height = statusBarHeight
+            binding.statusBarView.requestLayout()
+        }
+    }
+
     private fun collectPaymentServices(t: UIResource<List<PaymentServiceItemData>>) =
         t.collect {
             adapter.submitList(it)

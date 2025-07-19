@@ -3,6 +3,7 @@ package uz.alphazet.hoopla.ui.order
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import coil3.load
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
@@ -47,6 +48,7 @@ class OrderActivity : BaseActivity() {
         binding.time.text = (System.currentTimeMillis() / 1000L).getDateDMMMMYYYYHHmm()
         binding.shopName.text = shopName
         binding.drinksName.text = drinkData?.name
+        binding.image.load(drinkData?.pictureUrl)
 
         binding.toolbar.setNavigationOnClickListener { finish() }
 
@@ -56,6 +58,14 @@ class OrderActivity : BaseActivity() {
             }
         }
 
+    }
+
+    override fun updateStatusBarViewHeight() {
+        launch {
+            val statusBarHeight = getStatusBarHeight()
+            binding.statusBarView.layoutParams.height = statusBarHeight
+            binding.statusBarView.requestLayout()
+        }
     }
 
     private fun collectData(t: UIResource<OrderInfoData>) = t.collect { data ->

@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "uz.alphazet.hoopla"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "uz.alphazet.hoopla"
         minSdk = 21
-        targetSdk = 34
-        versionCode = 9
-        versionName = "1.0.9"
+        targetSdk = 35
+        versionCode = 10
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

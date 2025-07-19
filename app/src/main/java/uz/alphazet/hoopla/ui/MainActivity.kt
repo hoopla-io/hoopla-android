@@ -60,6 +60,14 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    override fun updateStatusBarViewHeight() {
+        launch {
+            val statusBarHeight = getStatusBarHeight()
+            binding.statusBarView.layoutParams.height = statusBarHeight
+            binding.statusBarView.requestLayout()
+        }
+    }
+
     fun callOnLogOut() {
         supportFragmentManager.commit { replace(R.id.fragment_container, HomeScreen()) }
         supportFragmentManager.executePendingTransactions()

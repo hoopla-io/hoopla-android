@@ -3,6 +3,7 @@ package uz.alphazet.domain.ui
 import uz.alphazet.domain.R
 import uz.alphazet.domain.databinding.DialogMessageBinding
 import uz.alphazet.domain.databinding.DialogRequestBinding
+import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.viewbinding.viewBinding
 
 fun BaseActivity.showRequestDF(
@@ -125,7 +126,10 @@ class MessageDF(
     override fun initialize() {
 
         binding.tvTitle.text = title
-        binding.tvMessage.text = message
+        if (message.isEmpty())
+            binding.tvMessage.gone()
+        else
+            binding.tvMessage.text = message
         binding.btApprove.text = ok
 
         binding.btApprove.setOnClickListener {

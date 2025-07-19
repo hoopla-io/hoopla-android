@@ -3,12 +3,19 @@ package uz.alphazet.domain.ui
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import com.zeugmasolutions.localehelper.LocaleHelper
 import com.zeugmasolutions.localehelper.LocaleHelperActivityDelegate
 import com.zeugmasolutions.localehelper.LocaleHelperActivityDelegateImpl
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
@@ -43,6 +50,43 @@ abstract class BaseActivity : AppCompatActivity(), RemoteErrorListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         localeDelegate.onCreate(this)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
+        WindowInsetsControllerCompat(window, window.decorView)
+            .isAppearanceLightNavigationBars = false
+
+//        applySystemBarsInsets()
+
+    }
+
+    private fun applySystemBarsInsets() {
+        val rootView = findViewById<android.view.View>(android.R.id.content)
+        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            view.updatePadding(top = systemBars.top)
+
+            insets
+        }
+    }
+
+    open fun updateStatusBarViewHeight() {}
+
+    suspend fun getStatusBarHeight(): Int {
+        val deferred = CompletableDeferred<Int>()
+
+        val content = findViewById<View>(android.R.id.content)
+
+        ViewCompat.setOnApplyWindowInsetsListener(content) { _, insets ->
+            val topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            deferred.complete(topInset)
+            insets
+        }
+
+        ViewCompat.requestApplyInsets(content)
+
+        return deferred.await()
     }
 
     override fun onResume() {

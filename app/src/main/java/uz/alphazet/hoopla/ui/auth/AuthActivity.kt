@@ -42,4 +42,12 @@ class AuthActivity : BaseActivity() {
         }.commit()
     }
 
+    override fun updateStatusBarViewHeight() {
+        launch {
+            val statusBarHeight = getStatusBarHeight()
+            binding.statusBarView.layoutParams.height = statusBarHeight
+            binding.statusBarView.requestLayout()
+        }
+    }
+
 }

@@ -32,7 +32,7 @@
     <string name="short_metr">m</string>
     <string name="short_km">km</string>
 
-    <string name="drinks_">Drinks:</string>
+    <string name="drinks_">Available drinks:</string>
     <string name="branches_">Branches:</string>
     <string name="working_time_">Working time:</string>
     <string name="address_on_the_map_">Address on the map:</string>
@@ -42,6 +42,7 @@
     <string name="order">Order</string>
     <string name="order_received_">Order received! 🎉</string>
     <string name="label_order_received_">&quot;%1$s&quot; is being prepared at %2$s. Hang tight — it’ll be ready soon 😉</string>
+    <string name="can_not_accepting_orders">The cafe shop is temporarily not accepting orders</string>
 
 
     //QR code screen

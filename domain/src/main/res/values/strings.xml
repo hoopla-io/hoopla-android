@@ -32,7 +32,7 @@
     <string name="short_metr">м</string>
     <string name="short_km">км</string>
 
-    <string name="drinks_">Напитки:</string>
+    <string name="drinks_">Доступные напитки:</string>
     <string name="branches_">Филиалы:</string>
     <string name="working_time_">Рабочее время:</string>
     <string name="address_on_the_map_">Адрес на карте:</string>
@@ -43,6 +43,7 @@
     <string name="order">Заказать</string>
     <string name="order_received_">Заказ принят! 🎉</string>
     <string name="label_order_received_">&quot;%1$s&quot; готовится в магазине %2$s. Пожалуйста, подождите — скоро будет готов 😉</string>
+    <string name="can_not_accepting_orders">Кофейня временно не принимает заказы</string>
 
 
     //QR code screen
