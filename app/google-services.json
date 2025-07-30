@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "708577463362",
+    "project_id": "hoopla-az",
+    "storage_bucket": "hoopla-az.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708577463362:android:c1746492dfd3f07091b1db",
+        "android_client_info": {
+          "package_name": "uz.alphazet.hoopla"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7FDqd_aJozSLPv85RyLKEyi7TmiKre0g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

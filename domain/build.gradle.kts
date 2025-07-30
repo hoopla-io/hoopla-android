@@ -93,4 +93,8 @@ dependencies {
     api("com.google.android.gms:play-services-auth:21.3.0")
     api("com.google.android.gms:play-services-auth-api-phone:18.2.0")
 
+    api(platform("com.google.firebase:firebase-bom:32.7.0"))
+    api("com.google.firebase:firebase-analytics")
+    api("com.google.firebase:firebase-crashlytics")
+
 }

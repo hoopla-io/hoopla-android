@@ -6,3 +6,10 @@ plugins {
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.android.library) apply false
 }
+
+buildscript {
+    dependencies {
+        classpath("com.google.gms:google-services:4.4.3")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:3.0.5")
+    }
+}
