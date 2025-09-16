@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DailyDrinksStatData
-import uz.alphazet.data.models.OrderItemData
+import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.data.models.QRCodeAccessData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.domain.ui.BaseFragment

@@ -8,10 +8,8 @@
     android:layout_marginVertical="6dp"
     android:background="@drawable/bg_item_coffee"
     android:clipToPadding="false"
-    android:elevation="0dp"
-    android:foreground="@drawable/ripple_corner12"
-    android:paddingHorizontal="8dp"
-    android:paddingVertical="8dp">
+    android:elevation="2dp"
+    android:foreground="@drawable/ripple_corner12">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image"
@@ -28,12 +26,13 @@
         android:id="@+id/name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/inter_medium"
-        android:gravity="center"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/inter_bold"
+        android:gravity="start"
         android:lines="2"
-        android:maxLines="2"
+        android:paddingHorizontal="8dp"
         android:textColor="@color/black_300"
-        app:autoSizeMaxTextSize="16sp"
+        app:autoSizeMaxTextSize="18sp"
         app:autoSizeMinTextSize="10sp"
         app:autoSizeStepGranularity="1sp"
         app:autoSizeTextType="none"
@@ -43,24 +42,37 @@
         tools:text="Cappuccino" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/order"
-        android:layout_width="match_parent"
+        android:id="@+id/price"
+        android:layout_width="0dp"
         android:layout_height="28dp"
-        android:layout_marginTop="4dp"
-        android:background="@drawable/bg_corner14_primary300"
-        android:backgroundTint="@color/primary"
-        android:fontFamily="@font/inter_medium"
-        android:gravity="center"
+        android:fontFamily="@font/inter_bold"
+        android:gravity="start|center_vertical"
         android:maxLines="1"
-        android:paddingHorizontal="12dp"
-        android:text="Order"
+        android:paddingHorizontal="8dp"
+        android:text="12 000 UZS"
         android:textAllCaps="false"
-        android:textColor="@color/white"
-        app:autoSizeMaxTextSize="14sp"
+        android:textColor="@color/black"
+        app:autoSizeMaxTextSize="18sp"
         app:autoSizeMinTextSize="10sp"
         app:autoSizeStepGranularity="1sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/order"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/name" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/order"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/bg_corner14_primary300"
+        android:backgroundTint="@color/primary"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_arrow_right_black300"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

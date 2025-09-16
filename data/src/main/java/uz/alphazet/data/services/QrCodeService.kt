@@ -3,7 +3,7 @@ package uz.alphazet.data.services
 import retrofit2.http.GET
 import uz.alphazet.data.BaseResponse
 import uz.alphazet.data.models.DailyDrinksStatData
-import uz.alphazet.data.models.OrderItemData
+import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.data.models.QRCodeAccessData
 
 interface QrCodeService {

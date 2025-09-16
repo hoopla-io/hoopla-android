@@ -27,7 +27,8 @@ data class PartnerData(
 data class DrinkItemData(
     val id: Int?,
     val name: String?,
-    val pictureUrl: String?
+    val pictureUrl: String?,
+    val productPrice: Double?
 ) : BaseItem, Parcelable {
     override val uniqueId: String
         get() = id.toString()

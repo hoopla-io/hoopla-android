@@ -27,12 +27,15 @@
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/image"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="16dp"
         android:scaleType="centerCrop"
         app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:layout_constraintWidth_percent="0.5"
         app:shapeAppearanceOverlay="@style/ImageAppearanceCorner20" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -42,68 +45,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/image">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/add_on_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="24dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/title">
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/inter_bold"
+            android:gravity="center"
+            android:text="Add-ons:"
+            android:textColor="@color/black_300"
+            android:textSize="16sp" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="center"
-                android:text="Payment method:"
-                android:textColor="@color/black_300"
-                android:textSize="16sp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="1"
-                android:fontFamily="@font/eugusto_bold_700"
-                android:gravity="end"
-                android:text="@string/app_name"
-                android:textColor="@color/black_300"
-                android:textSize="26sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
+        <RadioGroup
+            android:id="@+id/add_on_rg"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/title">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="center"
-                android:text="Date order:"
-                android:textColor="@color/black_300"
-                android:textSize="16sp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/time"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="1"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="end"
-                android:textColor="@color/black_300"
-                android:textSize="18sp"
-                tools:text="29 June, 19:03" />
-
-        </LinearLayout>
+            android:layout_height="wrap_content" />
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
@@ -182,6 +139,38 @@
                 android:textColor="@color/black_300"
                 android:textSize="18sp"
                 tools:text="Latte" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/title">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:text="Price:"
+                android:textColor="@color/black_300"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight="1"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="end"
+                android:textColor="@color/black_300"
+                android:textSize="18sp"
+                tools:text="12 000 UZS" />
 
         </LinearLayout>
 

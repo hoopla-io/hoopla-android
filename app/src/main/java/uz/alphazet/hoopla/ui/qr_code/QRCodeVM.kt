@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.shareIn
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DailyDrinksStatData
-import uz.alphazet.data.models.OrderItemData
+import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.data.models.QRCodeAccessData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.domain.repositories.ProfileRepo

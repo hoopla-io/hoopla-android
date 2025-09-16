@@ -4,9 +4,15 @@ import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.POST
 import uz.alphazet.data.BaseResponse
-import uz.alphazet.data.models.OrderInfoData
+import uz.alphazet.data.models.order.OrderDetails
+import uz.alphazet.data.models.order.OrderInfoData
 
 interface OrderService {
+
+    @POST("v1/user/orders/validate-order")
+    suspend fun validateOrder(
+        @Body body: RequestBody
+    ): BaseResponse<OrderDetails>
 
     @POST("v1/user/orders/create")
     suspend fun createOrder(

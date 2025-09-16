@@ -1,7 +1,7 @@
 package uz.alphazet.hoopla.ui.qr_code
 
 import android.view.View
-import uz.alphazet.data.models.OrderItemData
+import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.domain.rv.BaseAdapter
 import uz.alphazet.domain.rv.BaseVH
 import uz.alphazet.domain.utils.getDateDDMMMMYYYYHHmm

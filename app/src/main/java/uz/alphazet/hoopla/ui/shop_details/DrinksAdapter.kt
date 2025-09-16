@@ -5,6 +5,7 @@ import coil3.load
 import uz.alphazet.data.models.DrinkItemData
 import uz.alphazet.domain.rv.BaseAdapter
 import uz.alphazet.domain.rv.BaseVH
+import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ItemDrinkVerticalBinding
 
@@ -23,6 +24,8 @@ class DrinksAdapter : BaseAdapter<DrinkItemData>() {
 
             binding.name.text = itemData.name
             binding.image.load(itemData.pictureUrl)
+
+            binding.price.text = itemData.productPrice?.formatToPrice().plus(" UZS")
 
         }
     }

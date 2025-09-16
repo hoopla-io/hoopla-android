@@ -9,11 +9,26 @@ import uz.alphazet.domain.network.BaseRepo
 
 class OrderRepo(private val service: OrderService) : BaseRepo() {
 
-    suspend fun createOrder(shopId: Int, drinkId: Int) = handleFlow {
+    suspend fun validateOrder(shopId: Int, drinkId: Int) = handleFlow {
         val jsonParams: MutableMap<String?, Any?> = ArrayMap()
 
         jsonParams["shopId"] = shopId
         jsonParams["drinkId"] = drinkId
+
+        val body: RequestBody = RequestBody.create(
+            "application/json; charset=utf-8".toMediaTypeOrNull(),
+            (JSONObject(jsonParams)).toString()
+        )
+        service.validateOrder(body)
+    }
+
+    suspend fun createOrder(shopId: Int, drinkId: Int, addOnId: String?) = handleFlow {
+        val jsonParams: MutableMap<String?, Any?> = ArrayMap()
+
+        jsonParams["shopId"] = shopId
+        jsonParams["drinkId"] = drinkId
+        if (!addOnId.isNullOrEmpty())
+            jsonParams["addOnId"] = addOnId
 
         val body: RequestBody = RequestBody.create(
             "application/json; charset=utf-8".toMediaTypeOrNull(),
