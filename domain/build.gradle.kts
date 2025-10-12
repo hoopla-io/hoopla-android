@@ -8,7 +8,7 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 26
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -96,5 +96,7 @@ dependencies {
     api(platform("com.google.firebase:firebase-bom:32.7.0"))
     api("com.google.firebase:firebase-analytics")
     api("com.google.firebase:firebase-crashlytics")
+
+    api("com.yandex.android:maps.mobile:4.24.0-navikit")
 
 }

@@ -13,6 +13,7 @@ import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ActivityMainBinding
 import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.home.HomeScreen
+import uz.alphazet.hoopla.ui.map.MapScreen
 import uz.alphazet.hoopla.ui.profile.ProfileScreen
 import uz.alphazet.hoopla.ui.qr_code.QRCodeScreen
 
@@ -104,6 +105,7 @@ class MainActivity : BaseActivity() {
     private fun getFragment(itemId: Int): BaseFragment {
         return when (itemId) {
             R.id.home -> HomeScreen()
+            R.id.map -> MapScreen()
             R.id.qr_code -> QRCodeScreen()
             R.id.profile -> ProfileScreen()
             else -> HomeScreen()
