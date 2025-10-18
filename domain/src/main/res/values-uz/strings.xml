@@ -92,5 +92,7 @@
 
     <string name="send_again_">Qayta yuborish: </string>
     <string name="search">Qidiruv</string>
+    <string name="order_details">Buyurtma tafsilotlari</string>
+    <string name="label_by_shop">%1$s tomonidan</string>
 
 </resources>

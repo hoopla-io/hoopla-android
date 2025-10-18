@@ -24,7 +24,7 @@
             android:background="@color/grey_200"
             android:padding="1.5dp"
             android:scaleType="centerCrop"
-            app:layout_constraintDimensionRatio="16:8"
+            app:layout_constraintDimensionRatio="16:9"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ItemCompanyImageAppearance" />
 
@@ -32,10 +32,12 @@
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:fontFamily="@font/inter_medium"
             android:paddingHorizontal="12dp"
+            android:singleLine="true"
             android:textColor="@color/black_300"
-            android:textSize="24sp"
+            android:textSize="16sp"
             app:layout_constraintTop_toBottomOf="@id/image"
             tools:text="Safia" />
 

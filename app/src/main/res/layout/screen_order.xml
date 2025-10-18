@@ -21,177 +21,149 @@
         app:layout_constraintTop_toBottomOf="@id/status_bar_view"
         app:navigationContentDescription="Orqaga"
         app:navigationIcon="@drawable/ic_arrow_left_back"
+        app:title="@string/order_details"
         app:titleTextAppearance="@style/ToolbarTitleTextStyle"
-        app:titleTextColor="@color/white"
-        tools:title="Latte" />
+        app:titleTextColor="@color/white" />
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/image"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="16dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintWidth_percent="0.5"
-        app:shapeAppearanceOverlay="@style/ImageAppearanceCorner20" />
-
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image">
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-        <TextView
-            android:id="@+id/add_on_title"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/inter_bold"
-            android:gravity="center"
-            android:text="Add-ons:"
-            android:textColor="@color/black_300"
-            android:textSize="16sp" />
+            android:layout_height="match_parent">
 
-        <RadioGroup
-            android:id="@+id/add_on_rg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="16dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:fontFamily="@font/inter_bold"
-            android:gravity="center"
-            android:text="Order summary"
-            android:textColor="@color/black_300"
-            android:textSize="16sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/title">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/image"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="16dp"
+                android:background="@color/grey_500"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.5"
+                app:shapeAppearanceOverlay="@style/ImageAppearanceCorner20" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="center"
-                android:text="Shop:"
-                android:textColor="@color/black_300"
-                android:textSize="16sp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/shop_name"
+                android:id="@+id/name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="1"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="end"
-                android:textColor="@color/black_300"
-                android:textSize="18sp"
-                tools:text="Aroma coffee" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/title">
+                android:fontFamily="@font/inter_bold"
+                android:paddingHorizontal="16dp"
+                android:text="Cappuccino"
+                android:textColor="@color/black_400"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toTopOf="@id/cafe_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toTopOf="@id/image"
+                app:layout_constraintVertical_chainStyle="packed" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="center"
-                android:text="Drink:"
-                android:textColor="@color/black_300"
-                android:textSize="16sp" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/drinks_name"
+                android:id="@+id/cafe_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="1"
                 android:fontFamily="@font/inter_medium"
-                android:gravity="end"
-                android:textColor="@color/black_300"
+                android:paddingHorizontal="16dp"
+                android:text="@string/label_by_shop"
+                android:textColor="@color/black_400"
                 android:textSize="18sp"
-                tools:text="Latte" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="10dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/title">
+                app:layout_constraintBottom_toBottomOf="@id/image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/name" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
+                android:id="@+id/size_title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="center"
-                android:text="Price:"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/inter_bold"
+                android:gravity="start"
+                android:text="Drink size:"
                 android:textColor="@color/black_300"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                app:layout_constraintTop_toBottomOf="@id/image" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/price"
-                android:layout_width="0dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/sizes"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="1"
-                android:fontFamily="@font/inter_medium"
-                android:gravity="end"
-                android:textColor="@color/black_300"
-                android:textSize="18sp"
-                tools:text="12 000 UZS" />
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_tab_layout"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                android:paddingHorizontal="1dp"
+                android:paddingVertical="2dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:layout_constraintTop_toBottomOf="@id/size_title"
+                app:spanCount="3"
+                tools:itemCount="3"
+                tools:listitem="@layout/item_drink_size" />
 
-        </LinearLayout>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sizes">
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+                <TextView
+                    android:id="@+id/sugar_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:gravity="start"
+                    android:text="Sugar:"
+                    android:textColor="@color/black_300"
+                    android:textSize="16sp" />
 
-        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
-            android:id="@+id/order"
-            style="@style/PrimaryColorButtonStyle"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="15dp"
-            android:text="@string/order"
-            android:textAllCaps="false"
-            app:finalCornerAngle="10dp"
-            app:initialCornerAngle="10dp"
-            app:spinning_bar_color="@color/white"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/sugars"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_tab_layout"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="1dp"
+                    android:paddingVertical="2dp"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/size_title"
+                    app:spanCount="3"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_drink_size" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+                    android:id="@+id/order"
+                    style="@style/PrimaryColorButtonStyle"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="15dp"
+                    android:text="@string/order"
+                    android:textAllCaps="false"
+                    app:finalCornerAngle="10dp"
+                    app:initialCornerAngle="10dp"
+                    app:spinning_bar_color="@color/white"
+                    app:spinning_bar_padding="6dp"
+                    app:spinning_bar_width="4dp" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

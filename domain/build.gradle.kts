@@ -97,6 +97,6 @@ dependencies {
     api("com.google.firebase:firebase-analytics")
     api("com.google.firebase:firebase-crashlytics")
 
-    api("com.yandex.android:maps.mobile:4.24.0-navikit")
+    api("com.yandex.android:maps.mobile:4.24.0-lite")
 
 }

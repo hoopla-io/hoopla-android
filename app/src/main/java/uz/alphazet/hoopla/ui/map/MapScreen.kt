@@ -1,5 +1,6 @@
 package uz.alphazet.hoopla.ui.map
 
+import android.content.Intent
 import android.location.Location
 import android.location.LocationManager
 import androidx.activity.result.contract.ActivityResultContracts
@@ -34,7 +35,12 @@ import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenMapBinding
+import uz.alphazet.hoopla.ui.MainActivity
 import uz.alphazet.hoopla.ui.home.HomeVM
+import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DISTANCE
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_ID
 
 class MapScreen : BaseFragment(R.layout.screen_map), MapObjectTapListener,
     UserLocationObjectListener {
@@ -56,12 +62,21 @@ class MapScreen : BaseFragment(R.layout.screen_map), MapObjectTapListener,
 //            runLocationListener()
         }
 
-    val clusterListener = ClusterListener { cluster ->
+    private val clusterListener = ClusterListener { cluster ->
 
     }
 
     private val defaultPoint: Point = Point(41.31125776157484, 69.27957810360282)
     private val defaultCameraPosition = CameraPosition(defaultPoint, 12.0f, 0.0f, 10.0f)
+
+    private val shopListener =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            when (result.resultCode) {
+                RESULT_ORDER_CREATED -> {
+                    (requireActivity() as? MainActivity)?.navigateToQRScreen()
+                }
+            }
+        }
 
     override fun initialize() {
 
@@ -128,7 +143,11 @@ class MapScreen : BaseFragment(R.layout.screen_map), MapObjectTapListener,
         point: Point
     ): Boolean {
         val shopItemData = mapObject.userData as? ShopItemData
-        showErrorMessage(shopItemData?.name)
+
+        val intent = Intent(requireContext(), ShopDetailActivity::class.java)
+        intent.putExtra(SHOP_ID, shopItemData?.shopId)
+        intent.putExtra(DISTANCE, shopItemData?.distance)
+        shopListener.launch(intent)
         return true
     }
 

@@ -92,4 +92,6 @@
 
     <string name="send_again_">Send again: </string>
     <string name="search">Search</string>
+    <string name="order_details">Order details</string>
+    <string name="label_by_shop">by %1$s</string>
 </resources>

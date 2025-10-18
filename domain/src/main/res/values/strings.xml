@@ -96,5 +96,7 @@
 
     <string name="send_again_">Отправить еще раз: </string>
     <string name="search">Поиск</string>
+    <string name="order_details">Подробности заказа</string>
+    <string name="label_by_shop">от %1$s</string>
 
 </resources>

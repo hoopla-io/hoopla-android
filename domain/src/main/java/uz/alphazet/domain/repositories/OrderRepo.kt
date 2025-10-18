@@ -3,7 +3,10 @@ package uz.alphazet.domain.repositories
 import androidx.collection.ArrayMap
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
+import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.services.OrderService
 import uz.alphazet.domain.network.BaseRepo
 
@@ -22,19 +25,26 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
         service.validateOrder(body)
     }
 
-    suspend fun createOrder(shopId: Int, drinkId: Int, addOnId: String?) = handleFlow {
-        val jsonParams: MutableMap<String?, Any?> = ArrayMap()
+    suspend fun createOrder(shopId: Int, drinkId: Int, modifiers: ArrayList<ModifierItemData>) =
+        handleFlow {
+            val json = JSONObject().apply {
+                put("shopId", shopId)
+                put("drinkId", drinkId)
+                put("modifiers", JSONArray().apply {
+                    modifiers.forEach {
+                        put(JSONObject().apply {
+                            put("modifierId", it.modifierId)
+                            put("modifierKey", it.modifierKey)
+                            put("modifierPrice", it.modifierPrice)
+                        })
+                    }
+                })
+            }
 
-        jsonParams["shopId"] = shopId
-        jsonParams["drinkId"] = drinkId
-        if (!addOnId.isNullOrEmpty())
-            jsonParams["addOnId"] = addOnId
+            val requestBody = json.toString()
+                .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
 
-        val body: RequestBody = RequestBody.create(
-            "application/json; charset=utf-8".toMediaTypeOrNull(),
-            (JSONObject(jsonParams)).toString()
-        )
-        service.createOrder(body)
-    }
+            service.createOrder(requestBody)
+        }
 
 }

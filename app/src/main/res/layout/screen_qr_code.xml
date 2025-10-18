@@ -108,6 +108,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
+        android:visibility="gone"
         android:background="@drawable/bg_corner14_grey200"
         android:backgroundTint="@color/grey_300"
         app:layout_constraintTop_toBottomOf="@id/qr_code_container">
