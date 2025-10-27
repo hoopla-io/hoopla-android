@@ -127,6 +127,11 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             scanQrCodeLauncher.launch(null)
         }
 
+        binding.notification.setOnClickListener {
+            val intent = Intent(requireContext(), NotificationsScreen::class.java)
+            shopListener.launch(intent)
+        }
+
         binding.inputSearch.doAfterTextChanged { text ->
             if (!text.isNullOrEmpty() && currentLocation != null) {
                 launch {

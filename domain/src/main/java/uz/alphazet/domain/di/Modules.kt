@@ -23,6 +23,7 @@ import uz.alphazet.data.BaseResponse
 import uz.alphazet.data.models.AccessTokenData
 import uz.alphazet.data.services.AuthService
 import uz.alphazet.data.services.HomeService
+import uz.alphazet.data.services.NotificationService
 import uz.alphazet.data.services.OrderService
 import uz.alphazet.data.services.PaymentService
 import uz.alphazet.data.services.ProfileService
@@ -37,6 +38,7 @@ import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.permission.PermissionManagerImpl
 import uz.alphazet.domain.repositories.AuthRepo
 import uz.alphazet.domain.repositories.HomeRepo
+import uz.alphazet.domain.repositories.NotificationDataSource
 import uz.alphazet.domain.repositories.OrderRepo
 import uz.alphazet.domain.repositories.PaymentServiceRepo
 import uz.alphazet.domain.repositories.ProfileRepo
@@ -67,6 +69,7 @@ object Modules {
         single { provideQrCodeService(get()) }
         single { provideSubscriptionService(get()) }
         single { providePaymentService(get()) }
+        single { provideNotificationService(get()) }
     }
 
     val repositoryModule = module {
@@ -78,6 +81,7 @@ object Modules {
         factory { QRCodeRepo(get()) }
         factory { SubscriptionRepo(get()) }
         factory { PaymentServiceRepo(get()) }
+        factory { NotificationDataSource(get()) }
     }
 
     private fun provideAuthService(retrofit: Retrofit) = retrofit.create(AuthService::class.java)
@@ -95,6 +99,9 @@ object Modules {
 
     private fun providePaymentService(retrofit: Retrofit) =
         retrofit.create(PaymentService::class.java)
+
+    private fun provideNotificationService(retrofit: Retrofit) =
+        retrofit.create(NotificationService::class.java)
 
     private fun provideAppCacheSharedPreferences(
         context: Context

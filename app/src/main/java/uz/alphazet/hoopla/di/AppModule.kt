@@ -3,6 +3,7 @@ package uz.alphazet.hoopla.di
 import org.koin.dsl.module
 import uz.alphazet.hoopla.ui.auth.AuthVM
 import uz.alphazet.hoopla.ui.home.HomeVM
+import uz.alphazet.hoopla.ui.home.NotificationVM
 import uz.alphazet.hoopla.ui.order.OrderVM
 import uz.alphazet.hoopla.ui.profile.ProfileVM
 import uz.alphazet.hoopla.ui.profile.payment.PaymentVM
@@ -21,6 +22,7 @@ object AppModule {
         factory { QRCodeVM(get(), get()) }
         factory { SubscriptionVM(get()) }
         factory { PaymentVM(get()) }
+        factory { NotificationVM(get()) }
     }
 
 }

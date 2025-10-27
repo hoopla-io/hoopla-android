@@ -101,6 +101,10 @@
             android:name=".ui.profile.payment.PaymentServicesActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.home.NotificationsScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".ui.auth.MySMSBroadcastReceiver"
