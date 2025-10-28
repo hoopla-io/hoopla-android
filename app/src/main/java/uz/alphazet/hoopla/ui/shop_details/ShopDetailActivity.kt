@@ -104,7 +104,7 @@ class ShopDetailActivity : BaseActivity() {
         workTimeAdapter.submitList(data?.workingHours)
 
         drinksAdapter.setOnItemClickListener {
-            if (data?.canAcceptOrders == true) {
+            if (data?.canAcceptOrders == true && drinksAdapter.isClickable) {
                 val intent1 = Intent(this, OrderActivity::class.java)
                 intent1.putExtra(SHOP_ID, shopId)
                 intent1.putExtra(SHOP_NAME, binding.toolbar.title.toString())
@@ -183,6 +183,8 @@ class ShopDetailActivity : BaseActivity() {
 
         val isOpen = isNowWorking(todayWorkHour?.openAt, todayWorkHour?.closeAt)
 
+        drinksAdapter.isClickable = isOpen
+
         if (isOpen) {
             binding.hours.text = todayWorkHour?.openAt?.plus(" - ")?.plus(todayWorkHour.closeAt)
             binding.hours.setTextColorRes(R.color.green_300)
@@ -197,42 +199,29 @@ class ShopDetailActivity : BaseActivity() {
 
     }
 
-    private fun isNowWorking(openAt: String?, closeAt: String?): Boolean {
+    fun isNowWorking(openAt: String?, closeAt: String?): Boolean {
         if (openAt == null || closeAt == null) return false
 
-        val format = SimpleDateFormat("HH:mm", Locale.getDefault())
-
+        val format = SimpleDateFormat("HH:mm", Locale.ENGLISH)
         val now = Calendar.getInstance()
-        val openTime = Calendar.getInstance()
-        val closeTime = Calendar.getInstance()
 
-        openTime.time = format.parse(openAt) ?: return false
-        closeTime.time = format.parse(closeAt) ?: return false
+        val nowTime = format.format(now.time)
 
-        // Ish vaqti tonggacha bo‘lsa (ya'ni yopilish vaqti ochilish vaqtidan oldin)
-        val isOvernight = closeTime.before(openTime)
+        val open = format.parse(openAt) ?: return false
+        val close = format.parse(closeAt) ?: return false
+        val current = format.parse(nowTime) ?: return false
 
-        // openTime va closeTime ni bugungi kun vaqtlariga moslashtiramiz
-        openTime.set(
-            now.get(Calendar.YEAR),
-            now.get(Calendar.MONTH),
-            now.get(Calendar.DAY_OF_MONTH)
-        )
-        if (isOvernight) {
-            closeTime.set(
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH) + 1 // ertangi kun
-            )
+        val openCal = Calendar.getInstance().apply { time = open }
+        val closeCal = Calendar.getInstance().apply { time = close }
+        val currentCal = Calendar.getInstance().apply { time = current }
+
+        val overnight = closeCal.before(openCal)
+
+        return if (overnight) {
+            currentCal.after(openCal) || currentCal.before(closeCal)
         } else {
-            closeTime.set(
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH)
-            )
+            currentCal.after(openCal) && currentCal.before(closeCal)
         }
-
-        return now.after(openTime) && now.before(closeTime)
     }
 
     companion object {

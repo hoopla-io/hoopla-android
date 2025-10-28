@@ -2,6 +2,7 @@ package uz.alphazet.hoopla.ui.profile.subscriptions
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -63,6 +64,7 @@ class SubscriptionActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListene
     private fun collectData(t: UIResource<List<SubscriptionItemData>>) = t.collect {
         binding.swipeRefreshLayout.isRefreshing = false
         adapter.submitList(it)
+        binding.lottie.isVisible = it.isNullOrEmpty()
     }
 
     private fun collectBuySubscriptionData(t: UIResource<Any>, item: SubscriptionItemData) =

@@ -85,7 +85,7 @@
                 android:layout_marginTop="16dp"
                 android:fontFamily="@font/inter_bold"
                 android:gravity="start"
-                android:text="Drink size:"
+                android:text="@string/drink_size_"
                 android:textColor="@color/black_300"
                 android:textSize="16sp"
                 app:layout_constraintTop_toBottomOf="@id/image" />
@@ -122,7 +122,7 @@
                     android:layout_marginTop="16dp"
                     android:fontFamily="@font/inter_bold"
                     android:gravity="start"
-                    android:text="Sugar:"
+                    android:text="@string/sugar_"
                     android:textColor="@color/black_300"
                     android:textSize="16sp" />
 

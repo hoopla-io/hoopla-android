@@ -17,6 +17,8 @@ class DrinksAdapter : BaseAdapter<DrinkItemData>() {
 
     override fun getItemViewType(position: Int): Int = R.layout.item_drink_vertical
 
+    var isClickable = true
+
     inner class VH(private val binding: ItemDrinkVerticalBinding) : BaseVH(binding.root) {
 
         override fun bind(position: Int) {

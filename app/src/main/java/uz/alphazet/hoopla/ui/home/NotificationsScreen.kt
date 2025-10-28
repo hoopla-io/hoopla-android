@@ -22,6 +22,10 @@ class NotificationsScreen : BaseActivity() {
 
         binding.notificationRv.adapter = adapter
 
+        binding.toolbar.setNavigationOnClickListener {
+            finish()
+        }
+
         launch {
             viewModel.getNotificationsPager().collectLatest(::collectData)
         }

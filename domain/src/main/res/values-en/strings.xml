@@ -96,6 +96,10 @@
     <string name="label_by_shop">by %1$s</string>
 
     <string name="unknown">Unknown</string>
+    <string name="coming_soon">Coming soon…</string>
+    <string name="sugar_">Sugar:</string>
+    <string name="drink_size_">Drink size:</string>
+    <string name="notifications">Notifications</string>
 
     <string-array name="genders">
         <item>Male</item>

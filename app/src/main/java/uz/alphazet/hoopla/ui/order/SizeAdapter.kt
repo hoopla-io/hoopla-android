@@ -5,6 +5,7 @@ import android.view.View
 import uz.alphazet.data.models.order.OrderDetails.ModificationItem
 import uz.alphazet.domain.rv.BaseAdapter
 import uz.alphazet.domain.rv.BaseVH
+import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.setBackgroundTintColor
 import uz.alphazet.domain.utils.setTextColorRes
 import uz.alphazet.hoopla.R
@@ -47,7 +48,7 @@ class SizeAdapter : BaseAdapter<ModificationItem>() {
             }
 
             binding.sizeName.text = itemData.modificationName
-            binding.summa.text = "+${itemData.modificationPrice} UZS"
+            binding.summa.text = "+${itemData.modificationPrice?.formatToPrice()} UZS"
         }
     }
 

@@ -19,9 +19,20 @@ class ProfileVM(private val repo: ProfileRepo) : BaseVM() {
     val userDataFlow: StateFlow<UIResource<UserData>> get() = userDataEmitter
 
     fun getUser() {
-        launch {
-            userDataEmitter.load { repo.getMe() }
-        }
+        launch { userDataEmitter.load { repo.getMe() } }
+    }
+
+    fun editMe() {
+        launch { userDataEmitter.load { repo.editMe() } }
+    }
+
+    suspend fun updateMe(
+        name: String?,
+        gender: String?,
+        dateOfBirth: String?
+    ): SharedFlow<UIResource<Any>> {
+        return repo.updateMe(name, gender, dateOfBirth)
+            .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
     suspend fun logout(): SharedFlow<UIResource<Any>> {

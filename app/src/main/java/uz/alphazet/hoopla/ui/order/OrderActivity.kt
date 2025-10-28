@@ -16,6 +16,7 @@ import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.utils.formatToPrice
+import uz.alphazet.domain.utils.gone
 import uz.alphazet.hoopla.databinding.ScreenOrderBinding
 import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
@@ -127,6 +128,9 @@ class OrderActivity : BaseActivity() {
             (binding.sugars.layoutManager as GridLayoutManager).spanCount = sugars.size
             sugarAdapter.submitList(sugars)
             sugarAdapter.selectItem(sugars.firstOrNull()?.modificationId ?: "")
+        } else {
+            binding.sugars.gone()
+            binding.sugarTitle.gone()
         }
 
         val sizes = data?.modifications?.size
@@ -134,6 +138,9 @@ class OrderActivity : BaseActivity() {
             (binding.sizes.layoutManager as GridLayoutManager).spanCount = sizes.size
             sizeAdapter.submitList(sizes)
             sizeAdapter.selectItem(sizes.firstOrNull()?.modificationId ?: "")
+        } else {
+            binding.sizes.gone()
+            binding.sizeTitle.gone()
         }
 
     }

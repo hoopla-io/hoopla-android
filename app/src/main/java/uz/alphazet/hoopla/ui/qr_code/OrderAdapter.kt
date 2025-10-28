@@ -59,7 +59,7 @@ class OrderAdapter : BaseAdapter<OrderItemData>() {
                 }
 
 
-                "canceled" -> {
+                "canceled", "cancelled" -> {
                     binding.status.setTextStringRes(uz.alphazet.domain.R.string.cancelled)
                     binding.status.setBackgroundTintColor(uz.alphazet.domain.R.color.error_50)
                     binding.status.setTextColorRes(uz.alphazet.domain.R.color.error_300)

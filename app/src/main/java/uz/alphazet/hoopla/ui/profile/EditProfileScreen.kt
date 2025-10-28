@@ -109,7 +109,7 @@ class EditProfileScreen : BaseActivity() {
         val datePickerDialog = DatePickerDialog(
             this,
             { _, selectedYear, selectedMonth, selectedDay ->
-                val date = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                val date = "$selectedYear-${selectedMonth + 1}-$selectedDay"
                 binding.inputBirth.text = date
                 onChangedUserData()
             },
