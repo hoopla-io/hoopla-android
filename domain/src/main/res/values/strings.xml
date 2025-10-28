@@ -99,4 +99,11 @@
     <string name="order_details">Подробности заказа</string>
     <string name="label_by_shop">от %1$s</string>
 
+    <string name="unknown">Неизвестный</string>
+
+    <string-array name="genders">
+        <item>Мужской</item>
+        <item>Женский</item>
+    </string-array>
+
 </resources>

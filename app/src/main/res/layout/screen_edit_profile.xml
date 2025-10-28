@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <View
+        android:id="@+id/status_bar_view"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@color/primary"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary"
+        app:layout_constraintTop_toBottomOf="@id/status_bar_view"
+        app:navigationContentDescription="Orqaga"
+        app:navigationIcon="@drawable/ic_arrow_left_back"
+        app:title="Edit profile"
+        app:titleTextAppearance="@style/ToolbarTitleTextStyle"
+        app:titleTextColor="@color/white" />
+
+    <TextView
+        android:id="@+id/your_name_desc"
+        style="@style/TopDescriptionTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:text="Name:"
+        app:layout_constraintBottom_toTopOf="@id/input_name_layout"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <uz.alphazet.domain.ui.views.CustomTextInputLayout
+        android:id="@+id/input_name_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.InputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/input_name"
+            style="@style/InputStyle"
+            android:inputType="textPersonName" />
+
+    </uz.alphazet.domain.ui.views.CustomTextInputLayout>
+
+    <TextView
+        android:id="@+id/your_gender_desc"
+        style="@style/TopDescriptionTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:text="Gender:"
+        app:layout_constraintBottom_toTopOf="@id/gender_spinner"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.skydoves.powerspinner.PowerSpinnerView
+        android:id="@+id/gender_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/bg_corner14_grey200"
+        android:fontFamily="@font/inter_medium"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="16dp"
+        android:textColor="@color/black_400"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@id/input_name_layout"
+        app:spinner_arrow_tint="@color/black_400"
+        app:spinner_divider_color="@color/black_400"
+        app:spinner_item_array="@array/genders"
+        app:spinner_popup_background="@drawable/bg_corner14_grey200" />
+
+    <TextView
+        android:id="@+id/your_birth_desc"
+        style="@style/TopDescriptionTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:text="Birth day:"
+        app:layout_constraintBottom_toTopOf="@id/input_birth"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/input_birth"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/bg_corner14_grey200"
+        android:fontFamily="@font/inter_medium"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="16dp"
+        android:textColor="@color/black_400"
+        android:textSize="15sp"
+        app:layout_constraintTop_toBottomOf="@id/gender_spinner" />
+
+    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+        android:id="@+id/btSend"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_marginTop="15dp"
+        android:text="@string/continue_"
+        android:textAllCaps="false"
+        app:finalCornerAngle="10dp"
+        app:initialCornerAngle="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_birth"
+        app:spinning_bar_color="@color/white"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

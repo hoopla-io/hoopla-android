@@ -50,6 +50,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
     override fun initialize() {
 
+        binding.edit.setOnClickListener(this)
         binding.selectTariff.setOnClickListener(this)
         binding.subscription.setOnClickListener(this)
         binding.topUp.setOnClickListener(this)
@@ -97,6 +98,11 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
     override fun onClick(view: View) {
         when (view.id) {
+            R.id.edit -> {
+                val intent1 = Intent(requireActivity(), EditProfileScreen::class.java)
+                authListener.launch(intent1)
+            }
+
             R.id.select_tariff, R.id.subscription -> {
                 val intent1 = Intent(requireActivity(), SubscriptionActivity::class.java)
                 subscriptionListener.launch(intent1)

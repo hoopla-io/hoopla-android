@@ -5,6 +5,8 @@ data class UserData(
     val phoneNumber: String?,
     val balance: Double?,
     val currency: String?,
+    val gender: String?,
+    val dateOfBirth: String?,
     val userId: Int?,
     val subscription: SubscriptionData?,
 )

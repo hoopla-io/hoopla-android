@@ -95,4 +95,11 @@
     <string name="order_details">Buyurtma tafsilotlari</string>
     <string name="label_by_shop">%1$s tomonidan</string>
 
+    <string name="unknown">Noma\'lum</string>
+
+    <string-array name="genders">
+        <item>Erkak</item>
+        <item>Ayol</item>
+    </string-array>
+
 </resources>

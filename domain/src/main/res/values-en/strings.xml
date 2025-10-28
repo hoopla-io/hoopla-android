@@ -94,4 +94,11 @@
     <string name="search">Search</string>
     <string name="order_details">Order details</string>
     <string name="label_by_shop">by %1$s</string>
+
+    <string name="unknown">Unknown</string>
+
+    <string-array name="genders">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
 </resources>

@@ -99,4 +99,6 @@ dependencies {
 
     api("com.yandex.android:maps.mobile:4.24.0-lite")
 
+    api("com.github.skydoves:powerspinner:1.2.7")
+
 }

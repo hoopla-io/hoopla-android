@@ -90,6 +90,17 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:text="Jamoliddin Esonboyev" />
 
+                    <androidx.appcompat.widget.AppCompatImageButton
+                        android:id="@+id/edit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ripple_round"
+                        android:padding="6dp"
+                        android:src="@drawable/ic_edit"
+                        app:layout_constraintBottom_toBottomOf="@id/name"
+                        app:layout_constraintEnd_toEndOf="@id/name"
+                        app:layout_constraintTop_toTopOf="@id/name" />
+
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/phone_number_title"
                         android:layout_width="wrap_content"
