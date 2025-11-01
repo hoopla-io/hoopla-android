@@ -17,6 +17,7 @@ data class OrderDetails(
 
     data class ModificationItem(
         val modificationId: String?,
+        val modificationGroupId: String?,
         val modificationName: String?,
         val modificationKey: String?,
         val modificationPrice: Double?

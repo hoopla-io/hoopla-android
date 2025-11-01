@@ -69,6 +69,7 @@ class OrderActivity : BaseActivity() {
                 modifiers.add(
                     ModifierItemData(
                         size.modificationId ?: "",
+                        size.modificationGroupId,
                         size.modificationKey ?: "",
                         size.modificationPrice ?: 0.0
                     )
@@ -80,6 +81,7 @@ class OrderActivity : BaseActivity() {
                 modifiers.add(
                     ModifierItemData(
                         sugar.modificationId ?: "",
+                        sugar.modificationGroupId,
                         sugar.modificationName ?: "",
                         sugar.modificationPrice ?: 0.0
                     )

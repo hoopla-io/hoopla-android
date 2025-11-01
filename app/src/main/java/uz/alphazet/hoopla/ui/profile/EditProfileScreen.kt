@@ -1,8 +1,10 @@
 package uz.alphazet.hoopla.ui.profile
 
-import android.app.DatePickerDialog
 import android.os.Bundle
 import androidx.core.widget.doOnTextChanged
+import com.google.android.material.datepicker.CalendarConstraints
+import com.google.android.material.datepicker.DateValidatorPointBackward
+import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
@@ -11,7 +13,9 @@ import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.utils.disable
 import uz.alphazet.domain.utils.enable
 import uz.alphazet.hoopla.databinding.ScreenEditProfileBinding
-import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class EditProfileScreen : BaseActivity() {
 
@@ -50,8 +54,10 @@ class EditProfileScreen : BaseActivity() {
             null -> binding.genderSpinner.text = getString(uz.alphazet.domain.R.string.unknown)
         }
 
+        binding.genderSpinner.dismissWhenNotifiedItemSelected = true
+
         binding.inputBirth.setOnClickListener {
-            showDatePickerDialog()
+            showDatePickerDialog(data?.dateOfBirth)
         }
 
         binding.genderSpinner.setOnSpinnerItemSelectedListener<String> { oldIndex, oldItem, newIndex, newText ->
@@ -100,23 +106,36 @@ class EditProfileScreen : BaseActivity() {
         }
     }
 
-    private fun showDatePickerDialog() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
+    private fun showDatePickerDialog(birthday: String?) {
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-        val datePickerDialog = DatePickerDialog(
-            this,
-            { _, selectedYear, selectedMonth, selectedDay ->
-                val date = "$selectedYear-${selectedMonth + 1}-$selectedDay"
-                binding.inputBirth.text = date
-                onChangedUserData()
-            },
-            year, month, day
-        )
+        val selectedDate = birthday?.let {
+            try {
+                sdf.parse(it)?.time ?: MaterialDatePicker.todayInUtcMilliseconds()
+            } catch (e: Exception) {
+                MaterialDatePicker.todayInUtcMilliseconds()
+            }
+        } ?: MaterialDatePicker.todayInUtcMilliseconds()
 
-        datePickerDialog.show()
+        val today = MaterialDatePicker.todayInUtcMilliseconds()
+        val constraints = CalendarConstraints.Builder()
+            .setEnd(today)
+            .setValidator(DateValidatorPointBackward.now())
+            .build()
+
+        val datePicker = MaterialDatePicker.Builder.datePicker()
+            .setTitleText("Select your birthday")
+            .setSelection(selectedDate)
+            .setCalendarConstraints(constraints)
+            .build()
+
+        datePicker.addOnPositiveButtonClickListener { selection ->
+            val formatted = sdf.format(Date(selection))
+            binding.inputBirth.text = formatted
+            onChangedUserData()
+        }
+
+        datePicker.show(supportFragmentManager, "BIRTHDAY_PICKER")
     }
 
     companion object {

@@ -11,9 +11,6 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.ShopData
-import uz.alphazet.data.models.UrlTypes.URL_TYPE_FACEBOOK
-import uz.alphazet.data.models.UrlTypes.URL_TYPE_INSTAGRAM
-import uz.alphazet.data.models.UrlTypes.URL_TYPE_WEB
 import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
@@ -53,6 +50,7 @@ class ShopDetailActivity : BaseActivity() {
     private val imagesAdapter = ImagesAdapter()
     private val drinksAdapter = DrinksAdapter()
     private val workTimeAdapter = WorkTimeAdapter()
+    private val urlAdapter = UrlAdapter()
 
     private val orderListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -72,6 +70,7 @@ class ShopDetailActivity : BaseActivity() {
         binding.imageViewPager.adapter = imagesAdapter
         binding.drinkRv.adapter = drinksAdapter
         binding.workTimeRv.adapter = workTimeAdapter
+        binding.urlRv.adapter = urlAdapter
 
         binding.toolbar.setNavigationOnClickListener { finish() }
 
@@ -81,6 +80,10 @@ class ShopDetailActivity : BaseActivity() {
             ) { view, image ->
                 view.load(image.pictureUrl)
             }.withStartPosition(position).show()
+        }
+
+        urlAdapter.setOnItemClickListener { item ->
+            intentToBrowser(item.url.toString())
         }
 
         launch {
@@ -146,30 +149,13 @@ class ShopDetailActivity : BaseActivity() {
             binding.phoneNumber.text = getString(R.string.not_specified)
         }
 
-        data?.urls?.forEach { item ->
-            when (item.urlType) {
-                URL_TYPE_WEB -> {
-                    binding.web.visible()
-                    binding.web.setOnClickListener {
-                        intentToBrowser(item.url.toString())
-                    }
-                }
-
-                URL_TYPE_INSTAGRAM -> {
-                    binding.instagram.visible()
-                    binding.instagram.setOnClickListener {
-                        intentToBrowser(item.url.toString())
-                    }
-                }
-
-                URL_TYPE_FACEBOOK -> {
-                    binding.facebook.visible()
-                    binding.facebook.setOnClickListener {
-                        intentToBrowser(item.url.toString())
-                    }
-                }
-
-            }
+        if (data?.urls.isNullOrEmpty()) {
+            binding.contactsLabel.gone()
+            binding.urlRv.gone()
+        } else {
+            binding.contactsLabel.visible()
+            binding.urlRv.visible()
+            urlAdapter.submitList(data.urls)
         }
     }
 

@@ -34,6 +34,8 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
                     modifiers.forEach {
                         put(JSONObject().apply {
                             put("modifierId", it.modifierId)
+                            if (!it.modifierGroupId.isNullOrEmpty())
+                                put("modifierGroupId", it.modifierGroupId)
                             put("modifierKey", it.modifierKey)
                             put("modifierPrice", it.modifierPrice)
                         })

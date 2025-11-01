@@ -20,7 +20,9 @@ data class PartnerData(
     data class UrlData(
         val url: String?,
         val urlType: String?
-    )
+    ) : BaseItem {
+        override val uniqueId: String = url.toString()
+    }
 }
 
 @Parcelize
