@@ -5,8 +5,8 @@ import uz.alphazet.domain.network.BaseRepo
 
 class HomeRepo(private val homeService: HomeService) : BaseRepo() {
 
-    suspend fun getPartners() = handleFlow {
-        homeService.getPartners()
+    suspend fun getLoyaltyCard() = handleFlow {
+        homeService.getLoyaltyCard()
     }
 
     suspend fun getNearShops(lat: Double, long: Double, name: String?) = handleFlow {

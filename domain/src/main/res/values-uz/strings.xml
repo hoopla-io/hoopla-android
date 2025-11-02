@@ -100,6 +100,10 @@
     <string name="sugar_">Shakar:</string>
     <string name="drink_size_">Ichimlik o\'lchami:</string>
     <string name="notifications">Bildirishnomalar</string>
+    <string name="label_my_rewards_">Mening yutuqlarim(%1$s/%2$s)</string>
+    <string name="label_cup_">%1$s Ichimlik</string>
+    <string name="free">Bepul</string>
+    <string name="nearby_cafe">Atrofdagi kafelar</string>
 
     <string-array name="genders">
         <item>Erkak</item>

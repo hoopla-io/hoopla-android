@@ -66,57 +66,110 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inputSearchLayout">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/partners_rv"
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
-            android:paddingBottom="120dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:itemCount="0"
-            tools:listitem="@layout/item_partner" />
+            android:fillViewport="true"
+            android:paddingTop="6dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/loyalty_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="@string/label_my_rewards_"
+                    android:textColor="@color/black_400"
+                    android:textSize="20sp"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/loyalty_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="14dp"
+                    android:paddingTop="12dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/loyalty_title"
+                    tools:listitem="@layout/item_loyalty" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/nearly_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:text="@string/nearby_cafe"
+                    android:textColor="@color/black_400"
+                    android:textSize="20sp"
+                    app:layout_constraintTop_toBottomOf="@id/loyalty_rv"
+                    app:layout_goneMarginTop="6dp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/partners_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingBottom="120dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintTop_toBottomOf="@id/nearly_title"
+                    tools:itemCount="0"
+                    tools:listitem="@layout/item_partner" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/turnOnGPSContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@drawable/bg_corner14_grey200"
+                    android:backgroundTint="@color/error_75"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="14dp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/nearly_title"
+                    app:layout_constraintVertical_bias="0.05">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/locationDesc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/please_turn_on_gps"
+                        android:textColor="@color/error_400"
+                        android:textSize="20sp"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/turnOnGPS"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_bold"
+                        android:gravity="end"
+                        android:paddingVertical="6dp"
+                        android:text="@string/turn_on"
+                        android:textColor="@color/error_400"
+                        android:textSize="20sp"
+                        app:layout_constraintTop_toBottomOf="@id/locationDesc" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/turnOnGPSContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:background="@drawable/bg_corner14_grey200"
-        android:backgroundTint="@color/error_75"
-        android:foreground="?attr/selectableItemBackground"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="14dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_layout"
-        app:layout_constraintVertical_bias="0.2">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/locationDesc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_medium"
-            android:text="@string/please_turn_on_gps"
-            android:textColor="@color/error_400"
-            android:textSize="20sp"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/turnOnGPS"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/inter_bold"
-            android:gravity="end"
-            android:paddingVertical="6dp"
-            android:text="@string/turn_on"
-            android:textColor="@color/error_400"
-            android:textSize="20sp"
-            app:layout_constraintTop_toBottomOf="@id/locationDesc" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/scan"

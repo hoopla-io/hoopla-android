@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
+import uz.alphazet.data.models.LoyaltyItemData
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.ui.BaseFragment
@@ -54,6 +55,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
     private val permissionManager: PermissionManager by inject()
 
     private val adapter = NearShopAdapter()
+    private val loyaltyAdapter = LoyaltyAdapter()
 
     private var currentLocation: Location? = null
     private var locationCallback: LocationCallback? = null
@@ -99,6 +101,11 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         binding.swipeRefreshLayout.setOnRefreshListener(this)
         binding.partnersRv.adapter = adapter
+        binding.loyaltyRv.adapter = loyaltyAdapter
+
+        launch {
+            viewModel.getLoyaltyCard().collectLatest(::collectLoyalty)
+        }
 
         if (checkPermissionForLocationIsGranted()) {
             runLocationListener()
@@ -146,6 +153,23 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             }
         }
 
+    }
+
+    private fun collectLoyalty(t: UIResource<List<LoyaltyItemData>>) = t.collect { list ->
+        if (list.isNullOrEmpty()) {
+            binding.loyaltyRv.gone()
+            binding.loyaltyTitle.gone()
+        } else {
+            binding.loyaltyRv.visible()
+            binding.loyaltyTitle.visible()
+            loyaltyAdapter.submitList(list)
+            val filledCount = list?.filter { it.isFilled }?.size
+            binding.loyaltyTitle.text = getString(
+                uz.alphazet.domain.R.string.label_my_rewards_,
+                filledCount.toString(),
+                list.size.toString()
+            )
+        }
     }
 
     private fun collectNearShopsData(t: UIResource<List<ShopItemData>>) = t.collect {
@@ -311,6 +335,9 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
                     null
                 ).collectLatest(::collectNearShopsData)
             }
+        launch {
+            viewModel.getLoyaltyCard().collectLatest(::collectLoyalty)
+        }
     }
 
     override fun onDestroy() {

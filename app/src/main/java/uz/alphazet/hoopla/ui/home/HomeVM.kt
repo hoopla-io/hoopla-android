@@ -5,15 +5,15 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 import uz.alphazet.data.UIResource
-import uz.alphazet.data.models.PartnerItemData
+import uz.alphazet.data.models.LoyaltyItemData
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.repositories.HomeRepo
 import uz.alphazet.domain.ui.BaseVM
 
 class HomeVM(private val homeRepo: HomeRepo) : BaseVM() {
 
-    suspend fun getPartners(): SharedFlow<UIResource<List<PartnerItemData>>> {
-        return homeRepo.getPartners()
+    suspend fun getLoyaltyCard(): SharedFlow<UIResource<List<LoyaltyItemData>>> {
+        return homeRepo.getLoyaltyCard()
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 

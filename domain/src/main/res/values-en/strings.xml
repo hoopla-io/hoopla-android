@@ -100,6 +100,10 @@
     <string name="sugar_">Sugar:</string>
     <string name="drink_size_">Drink size:</string>
     <string name="notifications">Notifications</string>
+    <string name="label_my_rewards_">My Rewards(%1$s/%2$s)</string>
+    <string name="label_cup_">Cup %1$s</string>
+    <string name="free">Free</string>
+    <string name="nearby_cafe">Nearby cafe</string>
 
     <string-array name="genders">
         <item>Male</item>

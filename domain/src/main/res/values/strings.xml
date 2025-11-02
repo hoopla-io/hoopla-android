@@ -104,6 +104,10 @@
     <string name="sugar_">Сахар:</string>
     <string name="drink_size_">Размер напитка:</string>
     <string name="notifications">Уведомления</string>
+    <string name="label_my_rewards_">Мои награды(%1$s/%2$s)</string>
+    <string name="label_cup_">%1$s Чашка</string>
+    <string name="free">Бесплатно</string>
+    <string name="nearby_cafe">Ближайшее кафе</string>
 
     <string-array name="genders">
         <item>Мужской</item>
