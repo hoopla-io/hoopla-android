@@ -1,5 +1,6 @@
 package uz.alphazet.hoopla.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.collectLatest
@@ -24,6 +25,12 @@ class NotificationsScreen : BaseActivity() {
 
         binding.toolbar.setNavigationOnClickListener {
             finish()
+        }
+
+        adapter.setOnItemClickListener {
+            val intent1 = Intent(this, NotificationDetailScreen::class.java)
+            intent1.putExtra("id", it?.notificationId)
+            startActivity(intent1)
         }
 
         launch {

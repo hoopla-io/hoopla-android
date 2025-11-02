@@ -82,7 +82,7 @@ class OrderActivity : BaseActivity() {
                     ModifierItemData(
                         sugar.modificationId ?: "",
                         sugar.modificationGroupId,
-                        sugar.modificationName ?: "",
+                        sugar.modificationKey ?: "",
                         sugar.modificationPrice ?: 0.0
                     )
                 )

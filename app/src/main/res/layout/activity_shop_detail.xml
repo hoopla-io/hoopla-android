@@ -23,7 +23,7 @@
         app:navigationIcon="@drawable/ic_arrow_left_back"
         app:titleTextAppearance="@style/ToolbarTitleTextStyle"
         app:titleTextColor="@color/white"
-        tools:title="Qahvachi" />
+        tools:title="@string/app_name" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"

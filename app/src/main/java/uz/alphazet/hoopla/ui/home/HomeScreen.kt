@@ -32,6 +32,7 @@ import uz.alphazet.data.models.LoyaltyItemData
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.ui.BaseFragment
+import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.log
@@ -139,6 +140,14 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             shopListener.launch(intent)
         }
 
+        binding.loyaltyInfo.setOnClickListener {
+            showMessageDF(
+                getString(uz.alphazet.domain.R.string.hoopla_loyalty),
+                getString(uz.alphazet.domain.R.string.loyalty_system_info_description),
+                "OK"
+            ) {}
+        }
+
         binding.inputSearch.doAfterTextChanged { text ->
             if (!text.isNullOrEmpty() && currentLocation != null) {
                 launch {
@@ -159,9 +168,11 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         if (list.isNullOrEmpty()) {
             binding.loyaltyRv.gone()
             binding.loyaltyTitle.gone()
+            binding.loyaltyInfo.gone()
         } else {
             binding.loyaltyRv.visible()
             binding.loyaltyTitle.visible()
+            binding.loyaltyInfo.visible()
             loyaltyAdapter.submitList(list)
             val filledCount = list?.filter { it.isFilled }?.size
             binding.loyaltyTitle.text = getString(
@@ -181,6 +192,11 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             viewModel.getNearShops(location.latitude, location.longitude, null)
                 .collectLatest(::collectNearShopsData)
         }
+    }
+
+    override fun onUnauthorizedException(message: String?, code: Int) {
+        binding.loyaltyRv.gone()
+        binding.loyaltyTitle.gone()
     }
 
     private fun checkPermissionForLocationIsGranted(): Boolean = ContextCompat.checkSelfPermission(

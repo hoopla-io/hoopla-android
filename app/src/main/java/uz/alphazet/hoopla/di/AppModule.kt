@@ -22,7 +22,7 @@ object AppModule {
         factory { QRCodeVM(get(), get()) }
         factory { SubscriptionVM(get()) }
         factory { PaymentVM(get()) }
-        factory { NotificationVM(get()) }
+        factory { NotificationVM(get(), get()) }
     }
 
 }

@@ -39,6 +39,7 @@ import uz.alphazet.domain.permission.PermissionManagerImpl
 import uz.alphazet.domain.repositories.AuthRepo
 import uz.alphazet.domain.repositories.HomeRepo
 import uz.alphazet.domain.repositories.NotificationDataSource
+import uz.alphazet.domain.repositories.NotificationRepo
 import uz.alphazet.domain.repositories.OrderRepo
 import uz.alphazet.domain.repositories.PaymentServiceRepo
 import uz.alphazet.domain.repositories.ProfileRepo
@@ -82,6 +83,7 @@ object Modules {
         factory { SubscriptionRepo(get()) }
         factory { PaymentServiceRepo(get()) }
         factory { NotificationDataSource(get()) }
+        factory { NotificationRepo(get()) }
     }
 
     private fun provideAuthService(retrofit: Retrofit) = retrofit.create(AuthService::class.java)

@@ -104,6 +104,8 @@
     <string name="label_cup_">Cup %1$s</string>
     <string name="free">Free</string>
     <string name="nearby_cafe">Nearby cafe</string>
+    <string name="loyalty_system_info_description">Enjoy your favorite Hoopla coffee — after 9 purchases, 10th is on us! Your loyalty means the world to us.</string>
+    <string name="hoopla_loyalty">Hoopla Loyalty</string>
 
     <string-array name="genders">
         <item>Male</item>
