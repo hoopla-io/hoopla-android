@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Looper
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.core.widget.doAfterTextChanged
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -42,6 +41,7 @@ import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenHomeBinding
 import uz.alphazet.hoopla.ui.MainActivity
 import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
+import uz.alphazet.hoopla.ui.search.SearchScreen
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DISTANCE
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_ID
@@ -148,18 +148,9 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             ) {}
         }
 
-        binding.inputSearch.doAfterTextChanged { text ->
-            if (!text.isNullOrEmpty() && currentLocation != null) {
-                launch {
-                    viewModel.getNearShops(
-                        currentLocation?.latitude ?: 0.0,
-                        currentLocation?.longitude ?: 0.0,
-                        text.toString()
-                    ).collectLatest(::collectNearShopsData)
-                }
-            } else if (currentLocation != null) {
-                getNearShops(currentLocation!!)
-            }
+        binding.search.setOnClickListener {
+            val intent1 = Intent(requireContext(), SearchScreen::class.java)
+            shopListener.launch(intent1)
         }
 
     }

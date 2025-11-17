@@ -84,6 +84,11 @@
         </activity>
 
         <activity
+            android:name=".ui.search.SearchScreen"
+            android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.auth.AuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
