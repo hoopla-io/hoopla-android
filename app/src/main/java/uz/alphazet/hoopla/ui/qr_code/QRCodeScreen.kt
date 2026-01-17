@@ -23,14 +23,15 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DailyDrinksStatData
-import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.data.models.QRCodeAccessData
 import uz.alphazet.data.models.UserData
+import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenQrCodeBinding
+import uz.alphazet.hoopla.ui.qr_code.OrderInfoBD.Companion.showOrderInfoBD
 
 class QRCodeScreen : BaseFragment(R.layout.screen_qr_code), SwipeRefreshLayout.OnRefreshListener {
 
@@ -60,6 +61,10 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code), SwipeRefreshLayout.O
 
         launch {
             viewModel.getOrders().collectLatest(::collectOrdersData)
+        }
+
+        orderAdapter.setOnItemClickListener {
+            showOrderInfoBD(it)
         }
 
     }

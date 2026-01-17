@@ -106,6 +106,8 @@
     <string name="nearby_cafe">Nearby cafe</string>
     <string name="loyalty_system_info_description">Enjoy your favorite Hoopla coffee — after 9 purchases, 10th is on us! Your loyalty means the world to us.</string>
     <string name="hoopla_loyalty">Hoopla Loyalty</string>
+    <string name="receipt">Receipt</string>
+    <string name="close">Close</string>
 
     <string-array name="genders">
         <item>Male</item>

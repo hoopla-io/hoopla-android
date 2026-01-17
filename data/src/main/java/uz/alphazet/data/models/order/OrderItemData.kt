@@ -9,7 +9,9 @@ data class OrderItemData(
     val purchasedAt: String?,
     val purchasedAtUnix: Long?,
     val drinkName: String?,
-    val orderStatus: String?
+    val orderStatus: String?,
+    val productPrice: Double?,
+    val fiscalLink: String?
 ) : BaseItem {
     override val uniqueId: String
         get() = id.toString()

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/bg_bottom_sheet_dialog_fragment"
+    android:elevation="2dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="36dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_bold"
+        android:textColor="@color/black_300"
+        android:textSize="18sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Safia" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_corner20_white"
+        android:backgroundTint="@color/error_50"
+        android:drawablePadding="8dp"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:textColor="@color/error_300"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/shop_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/shop_name"
+        app:lineHeight="30sp"
+        tools:text="@string/cancelled" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/shop_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/inter_medium"
+        android:lineHeight="20sp"
+        android:lines="1"
+        android:maxLines="1"
+        android:paddingHorizontal="16dp"
+        android:textColor="@color/black_300"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@id/status"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        tools:text="Safia Tashkent city" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="5dp"
+        android:textColor="@color/black_300"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/shop_name"
+        tools:text="24 Dec 2024 12:04" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/inter_medium"
+        android:lineHeight="20sp"
+        android:lines="1"
+        android:maxLines="1"
+        android:paddingHorizontal="16dp"
+        android:textColor="@color/black_300"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@id/status"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/time"
+        tools:text="12 000 sum" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/check"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/grey_200"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="16dp"
+        android:text="@string/receipt"
+        android:textColor="@color/black_300"
+        android:textSize="16sp"
+        app:drawableEndCompat="@drawable/ic_arrow_right_black300"
+        app:layout_constraintTop_toBottomOf="@id/price" />
+
+    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+        android:id="@+id/close"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_marginTop="15dp"
+        android:text="@string/close"
+        android:textAllCaps="false"
+        app:finalCornerAngle="10dp"
+        app:initialCornerAngle="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/check"
+        app:spinning_bar_color="@color/white"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

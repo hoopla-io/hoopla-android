@@ -110,6 +110,8 @@
     <string name="nearby_cafe">Ближайшее кафе</string>
     <string name="loyalty_system_info_description">Наслаждайтесь любимым кофе Hoopla — после 9 покупок 10-й в подарок! Ваша преданность — наша главная награда.</string>
     <string name="hoopla_loyalty">Hoopla Лояльность</string>
+    <string name="receipt">Чек</string>
+    <string name="close">Закрыть</string>
 
     <string-array name="genders">
         <item>Мужской</item>

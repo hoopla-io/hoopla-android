@@ -106,6 +106,8 @@
     <string name="nearby_cafe">Atrofdagi kafelar</string>
     <string name="loyalty_system_info_description">Sevimli Hoopla qahvangizni iching — 9 ta xariddan so\'ng 10-si sizga sovg\'a! Sizning sodiqligingiz biz uchun eng katta mukofot.</string>
     <string name="hoopla_loyalty">Hoopla Sodiqlik sistemasi</string>
+    <string name="receipt">Chek</string>
+    <string name="close">Yopish</string>
 
     <string-array name="genders">
         <item>Erkak</item>
