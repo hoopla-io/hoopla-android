@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="PillSizeSelectorView">
+        <attr name="pillBackgroundColor" format="color"/>
+        <attr name="pillIndicatorColor" format="color"/>
+        <attr name="pillTextColor" format="color"/>
+        <attr name="pillSelectedTextColor" format="color"/>
+        <attr name="pillCornerRadius" format="dimension"/>
+        <attr name="pillElevation" format="dimension"/>
+    </declare-styleable>
+
     <declare-styleable name="TyperTextView">
         <attr name="typerSpeed" format="integer" />
         <attr name="charIncrease" format="integer" />
