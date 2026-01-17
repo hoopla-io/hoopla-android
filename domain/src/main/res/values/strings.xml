@@ -112,6 +112,8 @@
     <string name="hoopla_loyalty">Hoopla Лояльность</string>
     <string name="receipt">Чек</string>
     <string name="close">Закрыть</string>
+    <string name="milk_">Молоко:</string>
+    <string name="syrup_">Сироп:</string>
 
     <string-array name="genders">
         <item>Мужской</item>

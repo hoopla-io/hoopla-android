@@ -2,8 +2,10 @@ package uz.alphazet.hoopla.ui.order
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -36,6 +38,8 @@ class OrderActivity : BaseActivity() {
 
     private val sizeAdapter = SizeAdapter()
     private val sugarAdapter = SizeAdapter()
+    private val milkAdapter = SizeAdapter()
+    private val syrupAdapter = SizeAdapter()
 
     private val authListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -58,6 +62,8 @@ class OrderActivity : BaseActivity() {
 
         binding.sizes.adapter = sizeAdapter
         binding.sugars.adapter = sugarAdapter
+        binding.milkTypes.adapter = milkAdapter
+        binding.syrups.adapter = syrupAdapter
 
         binding.toolbar.setNavigationOnClickListener { finish() }
 
@@ -104,6 +110,16 @@ class OrderActivity : BaseActivity() {
             val price = calculatePrice()
             binding.order.text = price.formatToPrice().plus(" UZS")
         }
+        milkAdapter.setOnItemClickListener { item ->
+            milkAdapter.selectItem(item.modificationId ?: "")
+            val price = calculatePrice()
+            binding.order.text = price.formatToPrice().plus(" UZS")
+        }
+        syrupAdapter.setOnItemClickListener { item ->
+            syrupAdapter.selectItem(item.modificationId ?: "")
+            val price = calculatePrice()
+            binding.order.text = price.formatToPrice().plus(" UZS")
+        }
 
     }
 
@@ -125,26 +141,43 @@ class OrderActivity : BaseActivity() {
         viewModel.defaultPrice = data?.drink?.amount
         binding.order.text = data?.drink?.amount?.formatToPrice().plus(" UZS")
 
-        val sugars = data?.modifications?.sugar
-        if (!sugars.isNullOrEmpty()) {
-            (binding.sugars.layoutManager as GridLayoutManager).spanCount = sugars.size
-            sugarAdapter.submitList(sugars)
-            sugarAdapter.selectItem(sugars.firstOrNull()?.modificationId ?: "")
-        } else {
-            binding.sugars.gone()
-            binding.sugarTitle.gone()
-        }
+        initModification(
+            binding.sugarTitle,
+            binding.sugars,
+            sugarAdapter,
+            data?.modifications?.sugar
+        )
+        initModification(binding.sizeTitle, binding.sizes, sizeAdapter, data?.modifications?.size)
+        initModification(
+            binding.milkTitle,
+            binding.milkTypes,
+            milkAdapter,
+            data?.modifications?.milk
+        )
+        initModification(
+            binding.syrupTitle,
+            binding.syrups,
+            syrupAdapter,
+            data?.modifications?.syrup
+        )
 
-        val sizes = data?.modifications?.size
-        if (!sizes.isNullOrEmpty()) {
-            (binding.sizes.layoutManager as GridLayoutManager).spanCount = sizes.size
-            sizeAdapter.submitList(sizes)
-            sizeAdapter.selectItem(sizes.firstOrNull()?.modificationId ?: "")
-        } else {
-            binding.sizes.gone()
-            binding.sizeTitle.gone()
-        }
+    }
 
+    private fun initModification(
+        title: View,
+        recyclerView: RecyclerView,
+        adapter: SizeAdapter,
+        modifications: List<OrderDetails.ModificationItem?>?
+    ) {
+        if (!modifications.isNullOrEmpty()) {
+            val spanCount = if (modifications.size > 2) 2 else modifications.size
+            (recyclerView.layoutManager as GridLayoutManager).spanCount = spanCount
+            adapter.submitList(modifications)
+            adapter.selectItem(modifications.firstOrNull()?.modificationId ?: "")
+        } else {
+            recyclerView.gone()
+            title.gone()
+        }
     }
 
     private fun collectData(t: UIResource<OrderInfoData>) = t.collect { data ->

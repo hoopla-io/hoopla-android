@@ -108,6 +108,8 @@
     <string name="hoopla_loyalty">Hoopla Loyalty</string>
     <string name="receipt">Receipt</string>
     <string name="close">Close</string>
+    <string name="milk_">Milk:</string>
+    <string name="syrup_">Syrup:</string>
 
     <string-array name="genders">
         <item>Male</item>

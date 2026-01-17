@@ -13,6 +13,8 @@ data class OrderDetails(
     data class Modification(
         val size: List<ModificationItem?>?,
         val sugar: List<ModificationItem?>?,
+        val milk: List<ModificationItem?>?,
+        val syrup: List<ModificationItem?>?,
     )
 
     data class ModificationItem(

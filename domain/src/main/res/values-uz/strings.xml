@@ -108,6 +108,8 @@
     <string name="hoopla_loyalty">Hoopla Sodiqlik sistemasi</string>
     <string name="receipt">Chek</string>
     <string name="close">Yopish</string>
+    <string name="milk_">Sut:</string>
+    <string name="syrup_">Sirop:</string>
 
     <string-array name="genders">
         <item>Erkak</item>
