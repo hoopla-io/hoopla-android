@@ -11,8 +11,8 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.domain.R
-import uz.alphazet.domain.utils.log
 
 class PillSizeSelectorView @JvmOverloads constructor(
     context: Context,
@@ -26,9 +26,9 @@ class PillSizeSelectorView @JvmOverloads constructor(
     private val textSelectedLabel: TextView
     private val textSelectedVolume: TextView
 
-    private var options: List<CoffeeSize> = emptyList()
-    private var selectedOption: CoffeeSize? = null
-    private var onOptionSelectedListener: ((CoffeeSize) -> Unit)? = null
+    private var options: List<OrderDetails.ModificationItem> = emptyList()
+    private var selectedOption: OrderDetails.ModificationItem? = null
+    private var onOptionSelectedListener: ((OrderDetails.ModificationItem) -> Unit)? = null
 
     // Attributes
     private var pillBackgroundColor: Int = Color.WHITE
@@ -83,7 +83,10 @@ class PillSizeSelectorView @JvmOverloads constructor(
         // Volume text color could be derived or fixed
     }
 
-    fun setOptions(newOptions: List<CoffeeSize>, defaultSelection: CoffeeSize? = null) {
+    fun setOptions(
+        newOptions: List<OrderDetails.ModificationItem>,
+        defaultSelection: OrderDetails.ModificationItem? = null
+    ) {
         this.options = newOptions
         optionsContainer.removeAllViews()
         optionsContainer.weightSum = newOptions.size.toFloat()
@@ -106,7 +109,7 @@ class PillSizeSelectorView @JvmOverloads constructor(
                 ).apply {
                     gravity = Gravity.CENTER
                 }
-                text = size.label
+                text = size.modificationName?.first()?.uppercase()
                 textSize = 16f
                 setTextColor(pillTextColor)
                 typeface = Typeface.DEFAULT_BOLD
@@ -125,11 +128,11 @@ class PillSizeSelectorView @JvmOverloads constructor(
         }
     }
 
-    fun setOnOptionSelectedListener(listener: (CoffeeSize) -> Unit) {
+    fun setOnOptionSelectedListener(listener: (OrderDetails.ModificationItem) -> Unit) {
         this.onOptionSelectedListener = listener
     }
 
-    private fun selectOption(option: CoffeeSize, animate: Boolean = true) {
+    private fun selectOption(option: OrderDetails.ModificationItem, animate: Boolean = true) {
         if (selectedOption == option && animate) return
         selectedOption = option
 
@@ -137,13 +140,13 @@ class PillSizeSelectorView @JvmOverloads constructor(
         if (index == -1) return
 
         // Update selected text
-        textSelectedLabel.text = option.label
-        textSelectedVolume.text = "${option.volume}ml"
+        textSelectedLabel.text = option.modificationName?.first()?.uppercase()
+        textSelectedVolume.text = "+${option.modificationPrice}"
 
         // Calculate position
         val segmentWidth =
             (width - rootContainer.paddingStart - rootContainer.paddingEnd) / options.size
-        val targetX = (segmentWidth * index).toFloat() + rootContainer.paddingStart
+        val targetX = (segmentWidth * index).toFloat()
 
         // Animate
         if (animate) {
@@ -163,12 +166,14 @@ class PillSizeSelectorView @JvmOverloads constructor(
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         if (options.isNotEmpty()) {
-            val segmentWidth = w / options.size
+            val segmentWidth =
+                (w - rootContainer.paddingStart - rootContainer.paddingEnd) / options.size
 
             // Re-position if needed
             selectedOption?.let {
                 val index = options.indexOf(it)
-                indicatorCard.translationX = (segmentWidth * index).toFloat()
+                indicatorCard.translationX =
+                    (segmentWidth * index).toFloat()
             }
         }
     }

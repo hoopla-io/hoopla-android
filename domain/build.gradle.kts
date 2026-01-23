@@ -101,4 +101,6 @@ dependencies {
 
     api("com.github.skydoves:powerspinner:1.2.7")
 
+    api("com.qmdeve.blurview:core:1.1.3")
+
 }

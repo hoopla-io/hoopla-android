@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rootContainer"
     android:layout_width="match_parent"
-    android:layout_height="90dp"
+    android:layout_height="80dp"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:paddingStart="16dp"
@@ -13,9 +13,10 @@
     <LinearLayout
         android:id="@+id/optionsContainer"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="46dp"
         android:layout_gravity="center_vertical"
         android:background="@drawable/bg_pill_container"
+        android:elevation="1dp"
         android:orientation="horizontal"
         android:weightSum="1">
         <!-- Views added dynamically in code -->
@@ -24,12 +25,12 @@
     <!-- Layer 2: Sliding Indicator -->
     <androidx.cardview.widget.CardView
         android:id="@+id/indicatorCard"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_gravity="center_vertical"
         app:cardBackgroundColor="#FFFFFF"
-        app:cardCornerRadius="36dp"
-        app:cardElevation="4dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="3dp"
         app:cardPreventCornerOverlap="false">
 
         <LinearLayout
@@ -42,8 +43,9 @@
                 android:id="@+id/textSelectedLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_bold"
                 android:text="M"
-                android:textColor="#D79965"
+                android:textColor="@color/primary_300"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -51,8 +53,9 @@
                 android:id="@+id/textSelectedVolume"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
                 android:text="300ml"
-                android:textColor="#808080"
+                android:textColor="@color/black_300"
                 android:textSize="10sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>

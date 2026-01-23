@@ -28,7 +28,9 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         android:fillViewport="true"
+        android:paddingBottom="200dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
@@ -77,42 +79,40 @@
                 app:layout_constraintStart_toEndOf="@id/image"
                 app:layout_constraintTop_toBottomOf="@id/name" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/size_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/inter_bold"
-                android:gravity="start"
-                android:text="@string/drink_size_"
-                android:textColor="@color/black_300"
-                android:textSize="16sp"
-                app:layout_constraintTop_toBottomOf="@id/image" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/sizes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/bg_tab_layout"
-                android:clipToPadding="false"
-                android:orientation="vertical"
-                android:paddingHorizontal="2dp"
-                android:paddingVertical="2dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/size_title"
-                app:spanCount="3"
-                tools:itemCount="3"
-                tools:listitem="@layout/item_drink_size" />
-
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sizes">
+                app:layout_constraintTop_toBottomOf="@id/image">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/size_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:gravity="start"
+                    android:text="@string/drink_size_"
+                    android:textColor="@color/black_300"
+                    android:textSize="16sp" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/sizes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_tab_layout"
+                    android:clipToPadding="false"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="2dp"
+                    android:paddingVertical="2dp"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="3"
+                    tools:itemCount="3"
+                    tools:listitem="@layout/item_drink_size" />
 
                 <TextView
                     android:id="@+id/sugar_title"
@@ -155,22 +155,29 @@
                     android:textColor="@color/black_300"
                     android:textSize="16sp" />
 
+                <RadioGroup
+                    android:id="@+id/milk_types_rg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:clipToPadding="false"
+                    android:paddingHorizontal="16dp">
+
+
+                </RadioGroup>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/milk_types"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_tab_layout"
                     android:clipToPadding="false"
                     android:orientation="vertical"
-                    android:paddingHorizontal="2dp"
-                    android:paddingVertical="2dp"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintTop_toBottomOf="@id/size_title"
-                    app:spanCount="3"
                     tools:itemCount="5"
-                    tools:listitem="@layout/item_drink_size" />
+                    tools:listitem="@layout/item_drink_modification" />
 
                 <TextView
                     android:id="@+id/syrup_title"
@@ -190,38 +197,37 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_tab_layout"
                     android:clipToPadding="false"
                     android:orientation="vertical"
-                    android:paddingHorizontal="2dp"
-                    android:paddingVertical="2dp"
-                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintTop_toBottomOf="@id/size_title"
-                    app:spanCount="3"
-                    tools:itemCount="3"
-                    tools:listitem="@layout/item_drink_size" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
-
-                <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
-                    android:id="@+id/order"
-                    style="@style/PrimaryColorButtonStyle"
-                    android:layout_gravity="bottom"
-                    android:layout_marginTop="15dp"
-                    android:text="@string/order"
-                    android:textAllCaps="false"
-                    app:finalCornerAngle="10dp"
-                    app:initialCornerAngle="10dp"
-                    app:spinning_bar_color="@color/white"
-                    app:spinning_bar_padding="6dp"
-                    app:spinning_bar_width="4dp" />
+                    tools:itemCount="7"
+                    tools:listitem="@layout/item_drink_modification" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@drawable/bg_bottom_sheet_dialog_fragment"
+        android:elevation="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@id/order" />
+
+    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+        android:id="@+id/order"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_gravity="bottom"
+        android:text="@string/order"
+        android:textAllCaps="false"
+        app:finalCornerAngle="10dp"
+        app:initialCornerAngle="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:spinning_bar_color="@color/white"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

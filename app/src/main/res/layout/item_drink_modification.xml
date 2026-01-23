@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="1dp"
+    android:layout_marginVertical="1dp"
+    android:foreground="@drawable/ripple_corner12"
+    android:orientation="horizontal"
+    android:paddingVertical="3dp">
+
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:buttonTint="@color/primary_300"
+        android:clickable="false" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/size_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_medium"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="12dp"
+        android:textColor="@color/black_300"
+        android:textSize="16sp"
+        tools:text="Medium" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/summa"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/inter_medium"
+        android:gravity="end"
+        android:textColor="@color/black_300"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@id/size_name"
+        tools:text="+5000 UZS" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

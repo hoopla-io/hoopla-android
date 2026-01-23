@@ -38,8 +38,8 @@ class OrderActivity : BaseActivity() {
 
     private val sizeAdapter = SizeAdapter()
     private val sugarAdapter = SizeAdapter()
-    private val milkAdapter = SizeAdapter()
-    private val syrupAdapter = SizeAdapter()
+    private val milkAdapter = ModificationAdapter()
+    private val syrupAdapter = ModificationAdapter()
 
     private val authListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -70,7 +70,7 @@ class OrderActivity : BaseActivity() {
         binding.order.setOnClickListener {
             val modifiers = ArrayList<ModifierItemData>()
 
-            val size = sizeAdapter.getSelectedItemItem()
+            val size = sizeAdapter.getSelectedItem()
             if (size != null) {
                 modifiers.add(
                     ModifierItemData(
@@ -82,7 +82,7 @@ class OrderActivity : BaseActivity() {
                 )
             }
 
-            val sugar = sugarAdapter.getSelectedItemItem()
+            val sugar = sugarAdapter.getSelectedItem()
             if (sugar != null) {
                 modifiers.add(
                     ModifierItemData(
@@ -148,18 +148,24 @@ class OrderActivity : BaseActivity() {
             data?.modifications?.sugar
         )
         initModification(binding.sizeTitle, binding.sizes, sizeAdapter, data?.modifications?.size)
-        initModification(
-            binding.milkTitle,
-            binding.milkTypes,
-            milkAdapter,
-            data?.modifications?.milk
-        )
-        initModification(
-            binding.syrupTitle,
-            binding.syrups,
-            syrupAdapter,
-            data?.modifications?.syrup
-        )
+
+        val milkItems = data?.modifications?.milk
+        if (milkItems.isNullOrEmpty()) {
+            binding.milkTypes.gone()
+            binding.milkTitle.gone()
+        } else {
+            milkAdapter.submitList(milkItems)
+            milkAdapter.selectItem(milkItems.firstOrNull()?.modificationId ?: "")
+        }
+
+        val syrupItems = data?.modifications?.syrup
+        if (syrupItems.isNullOrEmpty()) {
+            binding.syrups.gone()
+            binding.syrupTitle.gone()
+        } else {
+            syrupAdapter.submitList(syrupItems)
+            syrupAdapter.selectItem(syrupItems.firstOrNull()?.modificationId ?: "")
+        }
 
     }
 
@@ -193,11 +199,15 @@ class OrderActivity : BaseActivity() {
 
     private fun calculatePrice(): Double {
         var price = viewModel.defaultPrice ?: 0.0
-        val size = sizeAdapter.getSelectedItemItem()
-        val sugar = sugarAdapter.getSelectedItemItem()
+        val size = sizeAdapter.getSelectedItem()
+        val sugar = sugarAdapter.getSelectedItem()
+        val milk = milkAdapter.getSelectedItem()
+        val syrup = syrupAdapter.getSelectedItem()
 
         if (size != null) price += size.modificationPrice ?: 0.0
         if (sugar != null) price += sugar.modificationPrice ?: 0.0
+        if (milk != null) price += milk.modificationPrice ?: 0.0
+        if (syrup != null) price += syrup.modificationPrice ?: 0.0
 
         return price
     }
