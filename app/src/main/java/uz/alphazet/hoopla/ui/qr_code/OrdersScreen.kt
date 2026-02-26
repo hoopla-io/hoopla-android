@@ -30,12 +30,12 @@ import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
-import uz.alphazet.hoopla.databinding.ScreenQrCodeBinding
+import uz.alphazet.hoopla.databinding.ScreenOrdersBinding
 import uz.alphazet.hoopla.ui.qr_code.OrderInfoBD.Companion.showOrderInfoBD
 
-class QRCodeScreen : BaseFragment(R.layout.screen_qr_code), SwipeRefreshLayout.OnRefreshListener {
+class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.OnRefreshListener {
 
-    private val binding by viewBinding(ScreenQrCodeBinding::bind)
+    private val binding by viewBinding(ScreenOrdersBinding::bind)
     private val viewModel: QRCodeVM by viewModel()
 
     private val orderAdapter = OrderAdapter()
@@ -180,7 +180,7 @@ class QRCodeScreen : BaseFragment(R.layout.screen_qr_code), SwipeRefreshLayout.O
         return TAG
     }
 
-    companion object {
+    companion object Companion {
         const val TAG = "QRCodeScreen"
     }
 

@@ -31,7 +31,6 @@ import uz.alphazet.data.models.LoyaltyItemData
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.ui.BaseFragment
-import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.log
@@ -74,7 +73,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             when (result.resultCode) {
                 RESULT_ORDER_CREATED -> {
-                    (requireActivity() as? MainActivity)?.navigateToQRScreen()
+                    (requireActivity() as? MainActivity)?.navigateToOrdersScreen()
                 }
             }
         }
@@ -102,11 +101,11 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         binding.swipeRefreshLayout.setOnRefreshListener(this)
         binding.partnersRv.adapter = adapter
-        binding.loyaltyRv.adapter = loyaltyAdapter
+//        binding.loyaltyRv.adapter = loyaltyAdapter
 
-        launch {
-            viewModel.getLoyaltyCard().collectLatest(::collectLoyalty)
-        }
+//        launch {
+//            viewModel.getLoyaltyCard().collectLatest(::collectLoyalty)
+//        }
 
         if (checkPermissionForLocationIsGranted()) {
             runLocationListener()
@@ -140,13 +139,13 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             shopListener.launch(intent)
         }
 
-        binding.loyaltyInfo.setOnClickListener {
-            showMessageDF(
-                getString(uz.alphazet.domain.R.string.hoopla_loyalty),
-                getString(uz.alphazet.domain.R.string.loyalty_system_info_description),
-                "OK"
-            ) {}
-        }
+//        binding.loyaltyInfo.setOnClickListener {
+//            showMessageDF(
+//                getString(uz.alphazet.domain.R.string.hoopla_loyalty),
+//                getString(uz.alphazet.domain.R.string.loyalty_system_info_description),
+//                "OK"
+//            ) {}
+//        }
 
         binding.search.setOnClickListener {
             val intent1 = Intent(requireContext(), SearchScreen::class.java)
@@ -156,22 +155,22 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
     }
 
     private fun collectLoyalty(t: UIResource<List<LoyaltyItemData>>) = t.collect { list ->
-        if (list.isNullOrEmpty()) {
-            binding.loyaltyRv.gone()
-            binding.loyaltyTitle.gone()
-            binding.loyaltyInfo.gone()
-        } else {
-            binding.loyaltyRv.visible()
-            binding.loyaltyTitle.visible()
-            binding.loyaltyInfo.visible()
-            loyaltyAdapter.submitList(list)
-            val filledCount = list?.filter { it.isFilled }?.size
-            binding.loyaltyTitle.text = getString(
-                uz.alphazet.domain.R.string.label_my_rewards_,
-                filledCount.toString(),
-                list.size.toString()
-            )
-        }
+//        if (list.isNullOrEmpty()) {
+//            binding.loyaltyRv.gone()
+//            binding.loyaltyTitle.gone()
+//            binding.loyaltyInfo.gone()
+//        } else {
+//            binding.loyaltyRv.visible()
+//            binding.loyaltyTitle.visible()
+//            binding.loyaltyInfo.visible()
+//            loyaltyAdapter.submitList(list)
+//            val filledCount = list?.filter { it.isFilled }?.size
+//            binding.loyaltyTitle.text = getString(
+//                uz.alphazet.domain.R.string.label_my_rewards_,
+//                filledCount.toString(),
+//                list.size.toString()
+//            )
+//        }
     }
 
     private fun collectNearShopsData(t: UIResource<List<ShopItemData>>) = t.collect {
@@ -186,8 +185,8 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
     }
 
     override fun onUnauthorizedException(message: String?, code: Int) {
-        binding.loyaltyRv.gone()
-        binding.loyaltyTitle.gone()
+//        binding.loyaltyRv.gone()
+//        binding.loyaltyTitle.gone()
     }
 
     private fun checkPermissionForLocationIsGranted(): Boolean = ContextCompat.checkSelfPermission(
@@ -342,9 +341,9 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
                     null
                 ).collectLatest(::collectNearShopsData)
             }
-        launch {
-            viewModel.getLoyaltyCard().collectLatest(::collectLoyalty)
-        }
+//        launch {
+//            viewModel.getLoyaltyCard().collectLatest(::collectLoyalty)
+//        }
     }
 
     override fun onDestroy() {

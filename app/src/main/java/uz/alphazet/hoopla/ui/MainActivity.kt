@@ -15,7 +15,7 @@ import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.home.HomeScreen
 import uz.alphazet.hoopla.ui.map.MapScreen
 import uz.alphazet.hoopla.ui.profile.ProfileScreen
-import uz.alphazet.hoopla.ui.qr_code.QRCodeScreen
+import uz.alphazet.hoopla.ui.qr_code.OrdersScreen
 
 class MainActivity : BaseActivity() {
 
@@ -43,7 +43,7 @@ class MainActivity : BaseActivity() {
 
         binding.bottomNav.setOnItemReselectedListener { }
         binding.bottomNav.setOnItemSelectedListener { menuItem ->
-            if (menuItem.itemId == R.id.qr_code && cache.accessToken.isNullOrEmpty()) {
+            if (menuItem.itemId == R.id.orders && cache.accessToken.isNullOrEmpty()) {
                 showRequestDF(
                     getString(uz.alphazet.domain.R.string.sign_in),
                     getString(uz.alphazet.domain.R.string.you_r_not_logged_in),
@@ -79,9 +79,9 @@ class MainActivity : BaseActivity() {
         supportFragmentManager.executePendingTransactions()
     }
 
-    fun navigateToQRScreen() {
-        binding.bottomNav.selectedItemId = R.id.qr_code
-//        selectTab(R.id.qr_code)
+    fun navigateToOrdersScreen() {
+        binding.bottomNav.selectedItemId = R.id.orders
+//        selectTab(R.id.orders)
     }
 
     private fun selectTab(itemId: Int) {
@@ -106,7 +106,7 @@ class MainActivity : BaseActivity() {
         return when (itemId) {
             R.id.home -> HomeScreen()
             R.id.map -> MapScreen()
-            R.id.qr_code -> QRCodeScreen()
+            R.id.orders -> OrdersScreen()
             R.id.profile -> ProfileScreen()
             else -> HomeScreen()
         }

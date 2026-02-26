@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_50"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/status_bar_view"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@color/primary"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary"
+        app:layout_constraintTop_toBottomOf="@id/status_bar_view"
+        app:navigationContentDescription="Orqaga"
+        app:navigationIcon="@drawable/ic_arrow_left_back"
+        app:title="@string/order_details"
+        app:titleTextAppearance="@style/ToolbarTitleTextStyle"
+        app:titleTextColor="@color/white" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="-40dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/balance_container"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/image"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="16dp"
+                android:background="@color/grey_500"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.5"
+                app:shapeAppearanceOverlay="@style/ImageAppearanceCorner20" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_bold"
+                android:paddingHorizontal="16dp"
+                android:text="Cappuccino"
+                android:textColor="@color/black_400"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toTopOf="@id/cafe_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toTopOf="@id/image"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/cafe_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:paddingHorizontal="16dp"
+                android:text="@string/label_by_shop"
+                android:textColor="@color/black_400"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toBottomOf="@id/image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/name" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/image"
+                app:layout_constraintVertical_bias="0">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    android:paddingVertical="7.5dp">
+
+                    <TextView
+                        android:id="@+id/name2"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="Total:"
+                        android:textColor="@color/grey_350"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/drink_summa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/grey_350"
+                        android:textSize="16sp"
+                        tools:text="+32 000 UZS" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/info_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="4"
+                    tools:listitem="@layout/item_summa_info" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/using_cashback_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="7.5dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/cashback_"
+                        android:textColor="@color/grey_350"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/using_cashback"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/grey_350"
+                        android:textSize="16sp"
+                        tools:text="-2 000 UZS" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7.5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/total_"
+                        android:textColor="@color/black_300"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/total_summa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/black_300"
+                        android:textSize="20sp"
+                        tools:text="44 000 UZS" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/balance_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_bottom_sheet_dialog_fragment"
+        android:elevation="2dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+        <!--            android:id="@+id/cashback_container"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginHorizontal="16dp"-->
+        <!--            android:background="@drawable/bg_cashback"-->
+        <!--            android:padding="16dp">-->
+
+        <!--            <androidx.appcompat.widget.AppCompatImageView-->
+        <!--                android:id="@+id/coin_icon"-->
+        <!--                android:layout_width="42dp"-->
+        <!--                android:layout_height="42dp"-->
+        <!--                android:paddingHorizontal="4dp"-->
+        <!--                android:scaleType="centerInside"-->
+        <!--                android:src="@drawable/ic_money_cashback"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintStart_toStartOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent" />-->
+
+        <!--            <androidx.appcompat.widget.AppCompatTextView-->
+        <!--                android:id="@+id/available_title"-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                android:layout_weight="1"-->
+        <!--                android:fontFamily="@font/inter_regular"-->
+        <!--                android:gravity="center_vertical"-->
+        <!--                android:paddingHorizontal="8dp"-->
+        <!--                android:text="@string/cashback_"-->
+        <!--                android:textColor="@color/white"-->
+        <!--                android:textSize="14sp"-->
+        <!--                app:layout_constraintBottom_toTopOf="@id/available"-->
+        <!--                app:layout_constraintStart_toEndOf="@id/coin_icon"-->
+        <!--                app:layout_constraintTop_toTopOf="parent" />-->
+
+        <!--            <androidx.appcompat.widget.AppCompatTextView-->
+        <!--                android:id="@+id/available"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                android:fontFamily="@font/inter_medium"-->
+        <!--                android:gravity="center_vertical"-->
+        <!--                android:paddingHorizontal="8dp"-->
+        <!--                android:textColor="@color/white"-->
+        <!--                android:textSize="16sp"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintStart_toEndOf="@id/coin_icon"-->
+        <!--                app:layout_constraintTop_toBottomOf="@id/available_title"-->
+        <!--                app:layout_constraintVertical_chainStyle="packed"-->
+        <!--                tools:text="1 000 000" />-->
+
+        <!--            <androidx.appcompat.widget.AppCompatTextView-->
+        <!--                android:id="@+id/used_title"-->
+        <!--                android:layout_width="0dp"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                android:layout_weight="1"-->
+        <!--                android:fontFamily="@font/inter_regular"-->
+        <!--                android:gravity="center_vertical"-->
+        <!--                android:paddingHorizontal="8dp"-->
+        <!--                android:text="Used:"-->
+        <!--                android:textColor="@color/white"-->
+        <!--                android:textSize="14sp"-->
+        <!--                app:layout_constraintBottom_toTopOf="@id/available"-->
+        <!--                app:layout_constraintEnd_toStartOf="@id/arrow_right"-->
+        <!--                app:layout_constraintTop_toTopOf="parent" />-->
+
+        <!--            <androidx.appcompat.widget.AppCompatTextView-->
+        <!--                android:id="@+id/used"-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                android:fontFamily="@font/inter_medium"-->
+        <!--                android:gravity="center_vertical"-->
+        <!--                android:paddingHorizontal="8dp"-->
+        <!--                android:textColor="@color/white"-->
+        <!--                android:textSize="16sp"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintEnd_toStartOf="@id/arrow_right"-->
+        <!--                app:layout_constraintTop_toBottomOf="@id/available_title"-->
+        <!--                app:layout_constraintVertical_chainStyle="packed"-->
+        <!--                tools:text="30 000" />-->
+
+        <!--            <androidx.appcompat.widget.AppCompatImageView-->
+        <!--                android:id="@+id/arrow_right"-->
+        <!--                android:layout_width="24dp"-->
+        <!--                android:layout_height="24dp"-->
+        <!--                android:src="@drawable/ic_arrow_right_black300"-->
+        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--                app:layout_constraintEnd_toEndOf="parent"-->
+        <!--                app:layout_constraintTop_toTopOf="parent"-->
+        <!--                app:tint="@color/white" />-->
+
+        <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:background="@drawable/bg_cashback"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/inter_regular"
+                android:text="@string/cashback_"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/available"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                tools:text="10 000 UZS" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/use_cashback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="4dp"
+            android:background="@drawable/ripple_corner14"
+            android:fontFamily="@font/inter_medium"
+            android:paddingHorizontal="16dp"
+            android:text="Use cashback"
+            android:textColor="@color/black_300"
+            android:textSize="16sp" />
+
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/order"
+            style="@style/PrimaryColorButtonStyle"
+            android:layout_gravity="bottom"
+            android:text="@string/order"
+            android:textAllCaps="false"
+            app:finalCornerAngle="10dp"
+            app:initialCornerAngle="10dp"
+            app:spinning_bar_color="@color/white"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="4dp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

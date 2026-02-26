@@ -21,6 +21,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import uz.alphazet.data.UIResource
+import uz.alphazet.data.models.order.PaymentRequiredExceptionData
 import uz.alphazet.domain.R
 import uz.alphazet.domain.cache.AppCache
 import uz.alphazet.domain.network.BadRequestException
@@ -143,7 +144,12 @@ abstract class BaseBottomSheetDF(
         throwable.log("REMOTE_ERROR")
         when (throwable) {
             is UnauthorizedException -> onUnauthorizedException(throwable.message, throwable.code)
-            is PaymentException -> onPaymentException(throwable.message, throwable.code)
+            is PaymentException -> onPaymentException(
+                throwable.errorData,
+                throwable.message,
+                throwable.code
+            )
+
             is PreconditionRequiredException -> onPreconditionRequiredException(
                 throwable.message,
                 throwable.code
@@ -171,7 +177,11 @@ abstract class BaseBottomSheetDF(
         showErrorMessage(message)
     }
 
-    override fun onPaymentException(message: String?, code: Int) {
+    override fun onPaymentException(
+        errorData: PaymentRequiredExceptionData?,
+        message: String?,
+        code: Int
+    ) {
         showErrorMessage(message)
     }
 

@@ -13,6 +13,7 @@ import uz.alphazet.data.models.DrinkItemData
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.data.models.order.OrderInfoData
+import uz.alphazet.data.models.order.PaymentRequiredExceptionData
 import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
@@ -146,8 +147,12 @@ class OrderActivity2 : BaseActivity() {
         binding.order.revertAnimation()
     }
 
-    override fun onPaymentException(message: String?, code: Int) {
-        super.onPaymentException(message, code)
+    override fun onPaymentException(
+        errorData: PaymentRequiredExceptionData?,
+        message: String?,
+        code: Int
+    ) {
+        super.onPaymentException(errorData, message, code)
         val intent1 = Intent(this, SubscriptionActivity::class.java)
         subscriptionListener.launch(intent1)
     }

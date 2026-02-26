@@ -4,6 +4,7 @@
     <string name="home">Главная</string>
     <string name="profile">Профиль</string>
     <string name="qr_code">QR Code</string>
+    <string name="orders">Заказы</string>
 
     <string name="skip">Пропустить</string>
     <string name="welcome_to_hoopla">Добро пожаловать в Hoopla</string>
@@ -56,8 +57,13 @@
     <string name="created">Созданный</string>
     <string name="pending">В ожидании</string>
     <string name="preparing">Подготовка</string>
+    <string name="paid">Оплачено</string>
     <string name="completed">Готово</string>
     <string name="cancelled">Отменено</string>
+    <string name="pending_payment">Ожидается оплата</string>
+    <string name="payment_failed">Платеж не удался</string>
+    <string name="payment_expired">Платеж истек</string>
+    <string name="error">Ошибка</string>
 
     <string name="log_out">Выйти</string>
     <string name="question_log_out">Вы действительно хотите выйти из аккаунта?</string>
@@ -114,6 +120,11 @@
     <string name="close">Закрыть</string>
     <string name="milk_">Молоко:</string>
     <string name="syrup_">Сироп:</string>
+    <string name="use">Использовать</string>
+    <string name="available_">Доступный:</string>
+    <string name="label_use_cashback_description">Вы можете использовать до %1$s сум</string>
+    <string name="cashback_">Cashback:</string>
+    <string name="total_">Total:</string>
 
     <string-array name="genders">
         <item>Мужской</item>

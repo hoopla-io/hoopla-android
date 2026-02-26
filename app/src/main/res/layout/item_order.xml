@@ -15,25 +15,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/inter_bold"
-        android:paddingHorizontal="16dp"
+        android:paddingHorizontal="12dp"
         android:textColor="@color/black_300"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Safia" />
+        tools:text="Latte" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="12dp"
         android:background="@drawable/bg_corner20_white"
         android:backgroundTint="@color/error_50"
-        android:drawablePadding="8dp"
+        android:drawablePadding="4dp"
         android:fontFamily="@font/inter_regular"
         android:gravity="center"
         android:paddingHorizontal="16dp"
         android:textColor="@color/error_300"
-        android:textSize="16sp"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@id/drink_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/drink_name"
@@ -45,27 +45,53 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:fontFamily="@font/inter_medium"
-        android:lineHeight="20sp"
+        android:fontFamily="@font/inter_regular"
         android:lines="1"
         android:maxLines="1"
-        android:paddingHorizontal="16dp"
-        android:textColor="@color/black_300"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="5dp"
+        android:textColor="@color/grey_400"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/drink_name"
         tools:text="Safia Tashkent city" />
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/time"
+        android:id="@+id/cashback_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:ellipsize="end"
         android:fontFamily="@font/inter_regular"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="5dp"
+        android:lines="1"
+        android:maxLines="1"
+        android:paddingHorizontal="12dp"
+        android:text="@string/cashback_"
+        android:textColor="@color/grey_400"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/shop_name" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/cashback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_medium"
+        android:gravity="center_vertical|end"
+        android:paddingHorizontal="12dp"
         android:textColor="@color/black_300"
         android:textSize="14sp"
         app:layout_constraintTop_toBottomOf="@id/shop_name"
+        tools:text="+10 000 UZS" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_medium"
+        android:gravity="center_vertical|end"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="5dp"
+        android:textColor="@color/black_300"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/cashback"
         tools:text="24 Dec 2024 12:04" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

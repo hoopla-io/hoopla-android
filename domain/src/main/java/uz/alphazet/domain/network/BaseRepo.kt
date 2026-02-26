@@ -10,6 +10,7 @@ import retrofit2.Response
 import uz.alphazet.data.BaseErrorResponse
 import uz.alphazet.data.BaseResponseData
 import uz.alphazet.data.UIResource
+import uz.alphazet.data.models.order.PaymentRequiredExceptionData
 import java.net.ConnectException
 import java.net.UnknownHostException
 
@@ -90,7 +91,19 @@ abstract class BaseRepo {
         throw return when (code) {
             400 -> BadRequestException(errorData?.message ?: message, code)
             401 -> UnauthorizedException(errorData?.message ?: message, code)
-            402 -> PaymentException(errorData?.message ?: message, code)
+            402 -> {
+                val errorBody = try {
+                    Gson().fromJson<BaseResponseData<PaymentRequiredExceptionData>>(
+                        errorBodyJson,
+                        object :
+                            TypeToken<BaseResponseData<PaymentRequiredExceptionData>>() {}.type
+                    )
+                } catch (e: Throwable) {
+                    null
+                }
+                PaymentException(errorBody?.data, errorData?.message ?: message, code)
+            }
+
             403 -> ForbiddenException(errorData?.message ?: message, code)
             404 -> NotFoundException(errorData?.message ?: message, code)
             409 -> ConflictException(errorData?.message ?: message, code)

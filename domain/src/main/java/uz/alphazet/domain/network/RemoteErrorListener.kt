@@ -1,9 +1,11 @@
 package uz.alphazet.domain.network
 
+import uz.alphazet.data.models.order.PaymentRequiredExceptionData
+
 interface RemoteErrorListener {
     fun onRemoteException(message: String?, code: Int)
     fun onUnauthorizedException(message: String?, code: Int)
-    fun onPaymentException(message: String?, code: Int)
+    fun onPaymentException(errorData: PaymentRequiredExceptionData?, message: String?, code: Int)
     fun onPreconditionRequiredException(message: String?, code: Int)
     fun onValidationException(message: String?, code: Int)
     fun onBadRequestException(message: String?, code: Int)

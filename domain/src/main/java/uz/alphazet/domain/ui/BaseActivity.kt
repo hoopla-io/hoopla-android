@@ -21,6 +21,7 @@ import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import uz.alphazet.data.UIResource
+import uz.alphazet.data.models.order.PaymentRequiredExceptionData
 import uz.alphazet.domain.network.BadRequestException
 import uz.alphazet.domain.network.ConflictException
 import uz.alphazet.domain.network.ForbiddenException
@@ -139,7 +140,12 @@ abstract class BaseActivity : AppCompatActivity(), RemoteErrorListener {
         throwable.log("REMOTE_ERROR")
         when (throwable) {
             is UnauthorizedException -> onUnauthorizedException(throwable.message, throwable.code)
-            is PaymentException -> onPaymentException(throwable.message, throwable.code)
+            is PaymentException -> onPaymentException(
+                throwable.errorData,
+                throwable.message,
+                throwable.code
+            )
+
             is PreconditionRequiredException -> onPreconditionRequiredException(
                 throwable.message,
                 throwable.code
@@ -167,7 +173,11 @@ abstract class BaseActivity : AppCompatActivity(), RemoteErrorListener {
         showErrorMessage(message)
     }
 
-    override fun onPaymentException(message: String?, code: Int) {
+    override fun onPaymentException(
+        errorData: PaymentRequiredExceptionData?,
+        message: String?,
+        code: Int
+    ) {
         showErrorMessage(message)
     }
 

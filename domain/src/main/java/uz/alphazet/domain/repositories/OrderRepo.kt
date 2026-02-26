@@ -48,4 +48,35 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
             service.createOrder(requestBody)
         }
 
+    suspend fun createOrderRahmat(
+        shopId: Int,
+        drinkId: Int,
+        modifiers: ArrayList<ModifierItemData>,
+        useCashback: Boolean,
+        cashbackAmount: Double
+    ) =
+        handleFlow {
+            val json = JSONObject().apply {
+                put("shopId", shopId)
+                put("drinkId", drinkId)
+                put("use_cashback", useCashback)
+                put("cashback_amount", cashbackAmount)
+                put("modifiers", JSONArray().apply {
+                    modifiers.forEach {
+                        put(JSONObject().apply {
+                            put("modifierId", it.modifierId)
+                            put("modifierGroupId", it.modifierGroupId)
+                            put("modifierKey", it.modifierKey)
+                            put("modifierPrice", it.modifierPrice)
+                        })
+                    }
+                })
+            }
+
+            val requestBody = json.toString()
+                .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+            service.createOrderRahmat(requestBody)
+        }
+
 }

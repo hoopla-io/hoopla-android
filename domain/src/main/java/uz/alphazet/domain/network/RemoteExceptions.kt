@@ -1,5 +1,7 @@
 package uz.alphazet.domain.network
 
+import uz.alphazet.data.models.order.PaymentRequiredExceptionData
+
 open class RemoteException(
     override val message: String?,
     open val code: Int
@@ -13,6 +15,7 @@ class UnauthorizedException(
 
 //402
 class PaymentException(
+    val errorData: PaymentRequiredExceptionData?,
     override val message: String?,
     override val code: Int
 ) : RemoteException(message, code)

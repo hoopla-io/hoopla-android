@@ -18,7 +18,7 @@ object AppModule {
         factory { HomeVM(get()) }
         factory { ProfileVM(get()) }
         factory { ShopVM(get()) }
-        factory { OrderVM(get()) }
+        factory { OrderVM(get(), get()) }
         factory { QRCodeVM(get(), get()) }
         factory { SubscriptionVM(get()) }
         factory { PaymentVM(get()) }

@@ -4,6 +4,7 @@
     <string name="home">Home</string>
     <string name="profile">Profile</string>
     <string name="qr_code">QR Code</string>
+    <string name="orders">Orders</string>
 
     <string name="skip">Skip</string>
     <string name="welcome_to_hoopla">Welcome to Hoopla</string>
@@ -55,8 +56,13 @@
     <string name="created">Created</string>
     <string name="pending">Pending</string>
     <string name="preparing">Preparing</string>
+    <string name="paid">Paid</string>
     <string name="completed">Completed</string>
     <string name="cancelled">Cancelled</string>
+    <string name="pending_payment">Pending payment</string>
+    <string name="payment_failed">Payment failed</string>
+    <string name="payment_expired">Payment expired</string>
+    <string name="error">Error</string>
 
     <string name="log_out">Log out</string>
     <string name="question_log_out">Are you sure log out from the app?</string>
@@ -110,6 +116,11 @@
     <string name="close">Close</string>
     <string name="milk_">Milk:</string>
     <string name="syrup_">Syrup:</string>
+    <string name="use">Use</string>
+    <string name="available_">Available:</string>
+    <string name="label_use_cashback_description">You can use cashback up to %1$s sum</string>
+    <string name="cashback_">Cashback:</string>
+    <string name="total_">Total:</string>
 
     <string-array name="genders">
         <item>Male</item>

@@ -73,7 +73,7 @@ class MapScreen : BaseFragment(R.layout.screen_map), MapObjectTapListener,
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             when (result.resultCode) {
                 RESULT_ORDER_CREATED -> {
-                    (requireActivity() as? MainActivity)?.navigateToQRScreen()
+                    (requireActivity() as? MainActivity)?.navigateToOrdersScreen()
                 }
             }
         }

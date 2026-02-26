@@ -26,6 +26,9 @@ class ModificationAdapter : BaseAdapter<ModificationItem>() {
             currentList.indexOfFirst { item -> item.modificationId.equals(selectedItemId) }
         val newItemIndex = currentList.indexOfFirst { item -> item.modificationId.equals(id) }
         selectedItemId = id
+        if (lastItemIndex == newItemIndex)
+            selectedItemId = ""
+
         if (lastItemIndex != -1) notifyItemChanged(lastItemIndex)
         if (newItemIndex != -1) notifyItemChanged(newItemIndex)
     }

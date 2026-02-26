@@ -4,6 +4,7 @@
     <string name="home">Bosh sahifa</string>
     <string name="profile">Profil</string>
     <string name="qr_code">QR Kod</string>
+    <string name="orders">Buyurtmalar</string>
 
     <string name="skip">O\'tkazib yuborish</string>
     <string name="welcome_to_hoopla">Hooplaga xush kelibsiz</string>
@@ -55,8 +56,13 @@
     <string name="created">Yaratildi</string>
     <string name="pending">Kutilmoqda</string>
     <string name="preparing">Tayyorlanmoqda</string>
+    <string name="paid">To\'landi</string>
     <string name="completed">Tayyor</string>
     <string name="cancelled">Bekor qilindi</string>
+    <string name="pending_payment">To\'lov kutilmoqda</string>
+    <string name="payment_failed">To\'lov amalga oshmadi</string>
+    <string name="payment_expired">To\'lov muddati tugadi</string>
+    <string name="error">Xatolik</string>
 
     <string name="log_out">Tizimdan chiqish</string>
     <string name="question_log_out">Rostdan ham ilovadan chiqmoqchimisiz?</string>
@@ -110,6 +116,11 @@
     <string name="close">Yopish</string>
     <string name="milk_">Sut:</string>
     <string name="syrup_">Sirop:</string>
+    <string name="use">Foydalanish</string>
+    <string name="available_">Mavjud:</string>
+    <string name="label_use_cashback_description">Siz %1$s so\'mgacha keshbekdan foydalanishingiz mumkin</string>
+    <string name="cashback_">Cashback:</string>
+    <string name="total_">Total:</string>
 
     <string-array name="genders">
         <item>Erkak</item>

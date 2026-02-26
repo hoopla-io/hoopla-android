@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@drawable/bg_bottom_sheet_dialog_fragment"
+    android:elevation="2dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="36dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/available_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_regular"
+        android:paddingHorizontal="16dp"
+        android:text="@string/available_"
+        android:textColor="@color/black_300"
+        android:textSize="20sp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/cashback_balance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_medium"
+        android:paddingHorizontal="16dp"
+        android:textColor="@color/primary_300"
+        android:textSize="32sp"
+        app:layout_constraintTop_toBottomOf="@id/available_title"
+        tools:text="30 000 UZS" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/summa_selector"
+        android:layout_width="match_parent"
+        android:layout_height="68dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/bg_select_cashback"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/cashback_balance">
+
+        <ImageButton
+            android:id="@+id/minus"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginHorizontal="12dp"
+            android:background="@drawable/ripple_round"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_minus" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/current_summa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@color/black_300"
+            android:textSize="32sp"
+            app:autoSizeMaxTextSize="32sp"
+            app:autoSizeMinTextSize="16sp"
+            app:autoSizeStepGranularity="1sp"
+            app:autoSizeTextType="uniform"
+            tools:text="5 000 UZS" />
+
+        <ImageButton
+            android:id="@+id/plus"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical|end"
+            android:layout_marginHorizontal="12dp"
+            android:background="@drawable/ripple_round"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_plus" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="20dp"
+        android:drawablePadding="12dp"
+        android:fontFamily="@font/inter_regular"
+        android:text="@string/label_use_cashback_description"
+        android:textColor="@color/grey_400"
+        android:textSize="16sp"
+        app:drawableStartCompat="@drawable/ic_info"
+        app:layout_constraintTop_toBottomOf="@id/summa_selector" />
+
+    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+        android:id="@+id/reset"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_width="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="4dp"
+        android:text="Reset"
+        android:textAllCaps="false"
+        app:finalCornerAngle="10dp"
+        app:initialCornerAngle="10dp"
+        app:layout_constraintEnd_toStartOf="@id/use"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/description"
+        app:spinning_bar_color="@color/white"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp" />
+
+    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+        android:id="@+id/use"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_width="0dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/use"
+        android:textAllCaps="false"
+        app:finalCornerAngle="10dp"
+        app:initialCornerAngle="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/reset"
+        app:layout_constraintTop_toBottomOf="@id/description"
+        app:spinning_bar_color="@color/white"
+        app:spinning_bar_padding="6dp"
+        app:spinning_bar_width="4dp" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

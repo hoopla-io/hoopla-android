@@ -14,9 +14,11 @@ import uz.alphazet.data.models.DrinkItemData
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.data.models.order.OrderInfoData
+import uz.alphazet.data.models.order.PaymentRequiredExceptionData
 import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
+import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.hoopla.databinding.ScreenOrderBinding
@@ -51,6 +53,14 @@ class OrderActivity : BaseActivity() {
 
         }
 
+    private val checkoutListener =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == OrderActivity2.Companion.RESULT_ORDER_CREATED) {
+                setResult(result.resultCode)
+                finish()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ScreenOrderBinding.inflate(layoutInflater)
@@ -66,39 +76,6 @@ class OrderActivity : BaseActivity() {
         binding.syrups.adapter = syrupAdapter
 
         binding.toolbar.setNavigationOnClickListener { finish() }
-
-        binding.order.setOnClickListener {
-            val modifiers = ArrayList<ModifierItemData>()
-
-            val size = sizeAdapter.getSelectedItem()
-            if (size != null) {
-                modifiers.add(
-                    ModifierItemData(
-                        size.modificationId ?: "",
-                        size.modificationGroupId,
-                        size.modificationKey ?: "",
-                        size.modificationPrice ?: 0.0
-                    )
-                )
-            }
-
-            val sugar = sugarAdapter.getSelectedItem()
-            if (sugar != null) {
-                modifiers.add(
-                    ModifierItemData(
-                        sugar.modificationId ?: "",
-                        sugar.modificationGroupId,
-                        sugar.modificationKey ?: "",
-                        sugar.modificationPrice ?: 0.0
-                    )
-                )
-            }
-
-            launch {
-                viewModel.createOrder(shopId, drinkData?.id ?: -1, modifiers)
-                    .collectLatest(::collectData)
-            }
-        }
 
         sizeAdapter.setOnItemClickListener { item ->
             sizeAdapter.selectItem(item.modificationId ?: "")
@@ -135,9 +112,6 @@ class OrderActivity : BaseActivity() {
         binding.image.load(data?.drink?.imageUrl)
         binding.name.text = data?.drink?.name
         binding.cafeName.text = getString(R.string.label_by_shop, data?.shop?.name)
-//        binding.time.text = (System.currentTimeMillis() / 1000L).getDateDMMMMYYYYHHmm()
-//        binding.shopName.text = data?.shop?.name
-//        binding.drinksName.text = data?.drink?.name
         viewModel.defaultPrice = data?.drink?.amount
         binding.order.text = data?.drink?.amount?.formatToPrice().plus(" UZS")
 
@@ -155,7 +129,7 @@ class OrderActivity : BaseActivity() {
             binding.milkTitle.gone()
         } else {
             milkAdapter.submitList(milkItems)
-            milkAdapter.selectItem(milkItems.firstOrNull()?.modificationId ?: "")
+//            milkAdapter.selectItem(milkItems.firstOrNull()?.modificationId ?: "")
         }
 
         val syrupItems = data?.modifications?.syrup
@@ -164,7 +138,71 @@ class OrderActivity : BaseActivity() {
             binding.syrupTitle.gone()
         } else {
             syrupAdapter.submitList(syrupItems)
-            syrupAdapter.selectItem(syrupItems.firstOrNull()?.modificationId ?: "")
+//            syrupAdapter.selectItem(syrupItems.firstOrNull()?.modificationId ?: "")
+        }
+
+        val price = calculatePrice()
+        binding.order.text = price.formatToPrice().plus(" UZS")
+
+        binding.order.setOnClickListener {
+            val modifiers = ArrayList<ModifierItemData>()
+
+            val size = sizeAdapter.getSelectedItem()
+            if (size != null) {
+                modifiers.add(
+                    ModifierItemData(
+                        size.modificationId ?: "",
+                        size.modificationGroupId,
+                        size.modificationKey ?: "",
+                        size.modificationPrice ?: 0.0,
+                        size.modificationName
+                    )
+                )
+            }
+
+            val sugar = sugarAdapter.getSelectedItem()
+            if (sugar != null) {
+                modifiers.add(
+                    ModifierItemData(
+                        sugar.modificationId ?: "",
+                        sugar.modificationGroupId,
+                        sugar.modificationKey ?: "",
+                        sugar.modificationPrice ?: 0.0,
+                        sugar.modificationName
+                    )
+                )
+            }
+
+            val milk = milkAdapter.getSelectedItem()
+            if (milk != null) {
+                modifiers.add(
+                    ModifierItemData(
+                        milk.modificationId ?: "",
+                        milk.modificationGroupId,
+                        milk.modificationKey ?: "",
+                        milk.modificationPrice ?: 0.0,
+                        milk.modificationName
+                    )
+                )
+            }
+
+            val syrup = syrupAdapter.getSelectedItem()
+            if (syrup != null) {
+                modifiers.add(
+                    ModifierItemData(
+                        syrup.modificationId ?: "",
+                        syrup.modificationGroupId,
+                        syrup.modificationKey ?: "",
+                        syrup.modificationPrice ?: 0.0,
+                        syrup.modificationName
+                    )
+                )
+            }
+
+            val intent1 = Intent(this, CheckoutActivity::class.java)
+            intent1.putExtra(Constants.DATA, data)
+            intent1.putExtra(Constants.MODIFIERS, modifiers)
+            checkoutListener.launch(intent1)
         }
 
     }
@@ -220,8 +258,12 @@ class OrderActivity : BaseActivity() {
         binding.order.revertAnimation()
     }
 
-    override fun onPaymentException(message: String?, code: Int) {
-        super.onPaymentException(message, code)
+    override fun onPaymentException(
+        errorData: PaymentRequiredExceptionData?,
+        message: String?,
+        code: Int
+    ) {
+        super.onPaymentException(errorData, message, code)
         val intent1 = Intent(this, SubscriptionActivity::class.java)
         subscriptionListener.launch(intent1)
     }

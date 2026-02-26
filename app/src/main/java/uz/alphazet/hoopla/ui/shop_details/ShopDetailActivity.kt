@@ -185,7 +185,7 @@ class ShopDetailActivity : BaseActivity() {
 
     }
 
-    fun isNowWorking(openAt: String?, closeAt: String?): Boolean {
+    private fun isNowWorking(openAt: String?, closeAt: String?): Boolean {
         if (openAt == null || closeAt == null) return false
 
         val format = SimpleDateFormat("HH:mm", Locale.ENGLISH)
