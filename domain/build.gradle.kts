@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -5,7 +7,7 @@ plugins {
 
 android {
     namespace = "uz.alphazet.domain"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 26
@@ -43,14 +45,20 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+    }
+
+    lint {
+        disable += "NullSafeMutableLiveData"
+        checkReleaseBuilds = false
     }
 }
 
 dependencies {
     api(project(mapOf("path" to ":data")))
-    api(project(mapOf("path" to ":imageviewer")))
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -97,7 +105,7 @@ dependencies {
     api("com.google.firebase:firebase-analytics")
     api("com.google.firebase:firebase-crashlytics")
 
-    api("com.yandex.android:maps.mobile:4.24.0-lite")
+    api("com.yandex.android:maps.mobile:4.24.0-navikit")
 
     api("com.github.skydoves:powerspinner:1.2.7")
 

@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import coil3.load
-import com.example.imageviewer.StfalconImageViewer
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
@@ -14,6 +13,7 @@ import uz.alphazet.data.models.ShopData
 import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
+import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
 import uz.alphazet.domain.utils.formatDistance
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.gone

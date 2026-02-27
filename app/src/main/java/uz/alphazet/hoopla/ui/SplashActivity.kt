@@ -18,6 +18,7 @@ import uz.alphazet.hoopla.ui.on_boarding.OnBoardingScreen
 class SplashActivity : BaseActivity() {
 
     private val cache: AppCache by inject()
+    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +26,7 @@ class SplashActivity : BaseActivity() {
 
         val imageView = findViewById<ImageView>(R.id.logo_img)
 
-        Handler(Looper.getMainLooper()).postDelayed({
+        handler.postDelayed({
             when {
                 cache.isFirstTime -> {
                     cache.isFirstTime = false
@@ -43,6 +44,11 @@ class SplashActivity : BaseActivity() {
             }
 
         }, 1000)
+    }
+
+    override fun onDestroy() {
+        handler.removeCallbacksAndMessages(null)
+        super.onDestroy()
     }
 
 }

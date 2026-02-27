@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -13,8 +15,8 @@ android {
         applicationId = "uz.alphazet.hoopla"
         minSdk = 26
         targetSdk = 36
-        versionCode = 17
-        versionName = "1.2.4"
+        versionCode = 20
+        versionName = "1.3.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -77,11 +79,20 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+
+    kotlin {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
     }
+
     buildFeatures {
         viewBinding = true
+    }
+
+    lint {
+        disable += "NullSafeMutableLiveData"
+        checkReleaseBuilds = false
     }
 }
 

@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import coil3.load
-import com.example.imageviewer.StfalconImageViewer
 import com.github.alexzhirkevich.customqrgenerator.QrData
 import com.github.alexzhirkevich.customqrgenerator.style.BitmapScale
 import com.github.alexzhirkevich.customqrgenerator.vector.QrCodeDrawable
@@ -27,6 +26,7 @@ import uz.alphazet.data.models.QRCodeAccessData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.domain.ui.BaseFragment
+import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R

@@ -1,7 +1,7 @@
 package uz.alphazet.data.models.order
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import uz.alphazet.data.rv.BaseItem
 
 @Parcelize

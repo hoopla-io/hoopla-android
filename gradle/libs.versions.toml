@@ -13,7 +13,7 @@ loadingButtonAndroid = "2.3.0"
 material = "1.12.0"
 
 koinVersion="3.4.3"
-navigationFragmentKtx = "2.8.5"
+navigationFragmentKtx = "2.9.7"
 pinview = "1.4.4"
 retrofitVersion="2.9.0"
 okhttp="4.11.0"
