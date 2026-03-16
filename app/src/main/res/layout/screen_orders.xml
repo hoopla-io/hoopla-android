@@ -20,7 +20,7 @@
             android:ellipsize="marquee"
             android:fontFamily="@font/inter_bold"
             android:gravity="center"
-            android:text="@string/qr_code"
+            android:text="@string/order_history"
             android:textColor="@color/white"
             android:textSize="16sp" />
 
@@ -35,6 +35,7 @@
         android:background="@android:color/transparent"
         android:clipToPadding="false"
         android:elevation="2dp"
+        android:visibility="gone"
         app:layout_constraintDimensionRatio="16:9"
         app:layout_constraintTop_toBottomOf="@id/header_layout">
 
@@ -108,9 +109,9 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
-        android:visibility="gone"
         android:background="@drawable/bg_corner14_grey200"
         android:backgroundTint="@color/grey_300"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/qr_code_container">
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -169,26 +170,12 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/order_history_label"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:fontFamily="@font/inter_bold"
-        android:paddingVertical="4dp"
-        android:paddingStart="16dp"
-        android:text="@string/order_history_"
-        android:textColor="@color/black_300"
-        android:textSize="21sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/information_container" />
-
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/order_history_label">
+        app:layout_constraintTop_toBottomOf="@id/header_layout">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/order_rv"

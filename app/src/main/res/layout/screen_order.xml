@@ -56,14 +56,14 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_bold"
                 android:paddingHorizontal="16dp"
-                android:text="Cappuccino"
                 android:textColor="@color/black_400"
                 android:textSize="24sp"
                 app:layout_constraintBottom_toTopOf="@id/cafe_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/image"
                 app:layout_constraintTop_toTopOf="@id/image"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="Cappuccino" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/cafe_name"
@@ -71,19 +71,18 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_medium"
                 android:paddingHorizontal="16dp"
-                android:text="@string/label_by_shop"
                 android:textColor="@color/black_400"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="@id/image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/image"
-                app:layout_constraintTop_toBottomOf="@id/name" />
+                app:layout_constraintTop_toBottomOf="@id/name"
+                tools:text="@string/label_by_shop" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/image">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -220,6 +219,7 @@
     <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
         android:id="@+id/order"
         style="@style/PrimaryColorButtonStyle"
+        android:layout_width="match_parent"
         android:layout_gravity="bottom"
         android:text="@string/order"
         android:textAllCaps="false"

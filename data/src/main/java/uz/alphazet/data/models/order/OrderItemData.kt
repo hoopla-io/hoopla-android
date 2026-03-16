@@ -5,13 +5,13 @@ import uz.alphazet.data.rv.BaseItem
 
 data class OrderItemData(
     val id: Int?,
-    val partnerName: String?,
     val shopName: String?,
-    val purchasedAt: String?,
-    val purchasedAtUnix: Long?,
+    val shopIconUrl: String?,
     val drinkName: String?,
     val orderStatus: String?,
     val productPrice: Double?,
+    val purchasedAt: String?,
+    val purchasedAtUnix: Long?,
     @SerializedName("cashback_earned")
     val cashbackEarned: Double?,
     @SerializedName("cashback_used")

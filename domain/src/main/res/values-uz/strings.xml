@@ -49,6 +49,7 @@
     //QR code screen
     <string name="available_time_">Foydalanish vaqti:</string>
     <string name="order_history_">Buyurtmalar tarixi:</string>
+    <string name="order_history">Buyurtmalar tarixi</string>
     <string name="label_used">Ichildi: %1$s ta</string>
     <string name="label_total">Jami: %1$s ta</string>
     <string name="daily_limit">Kunlik limit</string>
@@ -119,8 +120,14 @@
     <string name="use">Foydalanish</string>
     <string name="available_">Mavjud:</string>
     <string name="label_use_cashback_description">Siz %1$s so\'mgacha keshbekdan foydalanishingiz mumkin</string>
-    <string name="cashback_">Cashback:</string>
-    <string name="total_">Total:</string>
+    <string name="cashback_">Keshbek:</string>
+    <string name="total_">Umumiy:</string>
+    <string name="order_cancelled">Buyurtma bekor qilindi!</string>
+    <string name="cancel_order">Buyurtmani bekor qilish</string>
+    <string name="continue_payment">To\'lov qilish</string>
+    <string name="do_u_want_to_cancel_your_order">Buyurtmangizni bekor qilmoqchimisiz??</string>
+    <string name="no_keep">Yo\'q, qolsin</string>
+    <string name="yes_cancel">Ha, bekor qilinsin</string>
 
     <string-array name="genders">
         <item>Erkak</item>

@@ -49,6 +49,7 @@
     //QR code screen
     <string name="available_time_">Available time:</string>
     <string name="order_history_">Order history:</string>
+    <string name="order_history">Order history</string>
     <string name="label_used">Used: %1$s</string>
     <string name="label_total">Total: %1$s</string>
     <string name="daily_limit">Daily limit</string>
@@ -121,6 +122,12 @@
     <string name="label_use_cashback_description">You can use cashback up to %1$s sum</string>
     <string name="cashback_">Cashback:</string>
     <string name="total_">Total:</string>
+    <string name="order_cancelled">Order cancelled!</string>
+    <string name="cancel_order">Cancel order</string>
+    <string name="continue_payment">Continue payment</string>
+    <string name="do_u_want_to_cancel_your_order">Do you want to cancel your order?</string>
+    <string name="no_keep">No, keep</string>
+    <string name="yes_cancel">Yes, cancel</string>
 
     <string-array name="genders">
         <item>Male</item>

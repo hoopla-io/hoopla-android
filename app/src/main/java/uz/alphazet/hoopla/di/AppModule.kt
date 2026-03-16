@@ -19,7 +19,7 @@ object AppModule {
         factory { ProfileVM(get()) }
         factory { ShopVM(get()) }
         factory { OrderVM(get(), get()) }
-        factory { QRCodeVM(get(), get()) }
+        factory { QRCodeVM(get(), get(), get()) }
         factory { SubscriptionVM(get()) }
         factory { PaymentVM(get()) }
         factory { NotificationVM(get(), get()) }

@@ -50,6 +50,7 @@
     //QR code screen
     <string name="available_time_">Доступное время:</string>
     <string name="order_history_">История заказов:</string>
+    <string name="order_history">История заказов</string>
     <string name="label_used">Использовал: %1$s</string>
     <string name="label_total">Общее: %1$s</string>
     <string name="daily_limit">Дневной лимит</string>
@@ -123,8 +124,14 @@
     <string name="use">Использовать</string>
     <string name="available_">Доступный:</string>
     <string name="label_use_cashback_description">Вы можете использовать до %1$s сум</string>
-    <string name="cashback_">Cashback:</string>
-    <string name="total_">Total:</string>
+    <string name="cashback_">Кэшбэк:</string>
+    <string name="total_">Итого:</string>
+    <string name="order_cancelled">Заказ отменен!</string>
+    <string name="cancel_order">Отменить заказ</string>
+    <string name="continue_payment">Продолжить оплату</string>
+    <string name="do_u_want_to_cancel_your_order">Вы хотите отменить свой заказ?</string>
+    <string name="no_keep">Нет, продолжай</string>
+    <string name="yes_cancel">Да, отменить</string>
 
     <string-array name="genders">
         <item>Мужской</item>

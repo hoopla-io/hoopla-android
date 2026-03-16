@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary_50">
+
+    <View
+        android:id="@+id/status_bar_view"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:background="@color/primary"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/primary"
+        app:layout_constraintTop_toBottomOf="@id/status_bar_view"
+        app:navigationContentDescription="Orqaga"
+        app:navigationIcon="@drawable/ic_arrow_left_back"
+        app:title="@string/order_details"
+        app:titleTextAppearance="@style/ToolbarTitleTextStyle"
+        app:titleTextColor="@color/white" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/image"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="16dp"
+                android:background="@color/grey_500"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.5"
+                app:shapeAppearanceOverlay="@style/ImageAppearanceCorner20" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_bold"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/black_400"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toTopOf="@id/shop_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toTopOf="@id/image"
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="Cappuccino" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/shop_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/black_400"
+                android:textSize="18sp"
+                app:layout_constraintBottom_toTopOf="@id/status"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/name"
+                tools:text="@string/label_by_shop" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/error_300"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@id/image"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/shop_name"
+                app:lineHeight="30sp"
+                tools:text="@string/cancelled" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/image"
+                app:layout_constraintVertical_bias="0">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/info_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="4"
+                    tools:listitem="@layout/item_summa_info" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7.5dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/total_"
+                        android:textColor="@color/black_300"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/total_summa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/black_300"
+                        android:textSize="20sp"
+                        tools:text="44 000 UZS" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/using_cashback_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="7.5dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/cashback_"
+                        android:textColor="@color/grey_350"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/using_cashback"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/green_300"
+                        android:textSize="16sp"
+                        tools:text="+2 000 UZS" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/check"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_width="match_parent"
+        android:background="@drawable/bg_corner14_width_primary300"
+        android:text="@string/receipt"
+        android:textColor="@color/primary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/cancel_order"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_corner14_width_primary300"
+        android:text="@string/cancel_order"
+        android:textColor="@color/primary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/continue_payment" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/continue_payment"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_width="match_parent"
+        android:background="@drawable/bg_corner14_width_orange60"
+        android:text="@string/continue_payment"
+        android:textColor="@color/orange_60"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

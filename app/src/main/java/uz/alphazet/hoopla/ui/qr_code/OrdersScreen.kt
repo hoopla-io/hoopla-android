@@ -1,10 +1,14 @@
 package uz.alphazet.hoopla.ui.qr_code
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
+import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import coil3.load
 import com.github.alexzhirkevich.customqrgenerator.QrData
@@ -27,11 +31,11 @@ import uz.alphazet.data.models.UserData
 import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
+import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenOrdersBinding
-import uz.alphazet.hoopla.ui.qr_code.OrderInfoBD.Companion.showOrderInfoBD
 
 class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.OnRefreshListener {
 
@@ -42,29 +46,60 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
 
     private var imageViewer: StfalconImageViewer<Drawable>? = null
 
+    private val resultListener =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            launch {
+                viewModel.getOrderHistoryPager().collectLatest(::collectOrdersData)
+            }
+        }
+
     override fun initialize() {
 
         binding.swipeRefreshLayout.setOnRefreshListener(this)
         binding.orderRv.adapter = orderAdapter
 
+//        launch {
+//            viewModel.qrCodeDataFlow.collectLatest(::collectQRCodeData)
+//        }
+
+//        launch {
+//            viewModel.drinksStatDataFlow.collectLatest(::collectDrinksStat)
+//        }
+
+//        launch {
+//            viewModel.userDataFlow.collectLatest(::collectUserData)
+//        }
+
         launch {
-            viewModel.qrCodeDataFlow.collectLatest(::collectQRCodeData)
+            viewModel.getOrderHistoryPager().collectLatest(::collectOrdersData)
         }
 
         launch {
-            viewModel.drinksStatDataFlow.collectLatest(::collectDrinksStat)
-        }
+            orderAdapter.loadStateFlow.collectLatest { loadState ->
+                when (loadState.refresh) {
 
-        launch {
-            viewModel.userDataFlow.collectLatest(::collectUserData)
-        }
+                    is LoadState.NotLoading -> {
+                        binding.swipeRefreshLayout.isRefreshing = false
+                    }
 
-        launch {
-            viewModel.getOrders().collectLatest(::collectOrdersData)
+                    is LoadState.Loading -> {
+                        binding.swipeRefreshLayout.isRefreshing = true
+                    }
+
+                    is LoadState.Error -> {
+                        binding.swipeRefreshLayout.isRefreshing = false
+                        val throwable = (loadState.refresh as LoadState.Error).error
+                        showErrorMessage(throwable.message)
+                    }
+
+                }
+            }
         }
 
         orderAdapter.setOnItemClickListener {
-            showOrderInfoBD(it)
+            val intent = Intent(requireActivity(), OrderInfoScreen::class.java)
+            intent.putExtra(Constants.ID, it?.id ?: -1)
+            resultListener.launch(intent)
         }
 
     }
@@ -106,8 +141,8 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
         binding.progress.progress = it?.used ?: 0
     }
 
-    private fun collectOrdersData(t: UIResource<List<OrderItemData>>) = t.collect {
-        orderAdapter.submitList(it)
+    private suspend fun collectOrdersData(t: PagingData<OrderItemData>) {
+        orderAdapter.submitData(t)
     }
 
     private fun generateQRCodeImage(data: String): Drawable {
@@ -169,11 +204,11 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
 
     override fun onRefresh() {
         launch {
-            viewModel.getOrders().collectLatest(::collectOrdersData)
+            viewModel.getOrderHistoryPager().collectLatest(::collectOrdersData)
         }
 
-        viewModel.getDrinksStat()
-        viewModel.generateQRCode()
+//        viewModel.getDrinksStat()
+//        viewModel.generateQRCode()
     }
 
     override fun toString(): String {

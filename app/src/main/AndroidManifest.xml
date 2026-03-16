@@ -102,7 +102,10 @@
             android:name=".ui.order.CheckoutActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
-
+        <activity
+            android:name=".ui.qr_code.OrderInfoScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.order.OrderActivity2"
             android:configChanges="orientation|keyboardHidden|screenSize"

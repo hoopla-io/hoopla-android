@@ -3,7 +3,6 @@ package uz.alphazet.data
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 import retrofit2.Response
-import kotlin.math.ceil
 
 //typealias Any = Response<Any>
 typealias AnyResponse = Response<BaseResponseData<Any>>
@@ -30,9 +29,8 @@ data class BaseResponseData<T>(
         val itemsPerPage: Int?,
         @SerializedName("currentPage")
         val currentPage: Int?,
-        @SerializedName("totalPages")
-        val totalPages: Int =
-            ceil((totalItems?.toDouble() ?: 0.0) / (currentPage?.toDouble() ?: 0.0)).toInt()
+        @SerializedName("lastPage")
+        val lastPage: Int?
     )
 }
 

@@ -42,7 +42,7 @@ abstract class BasePagingDataSource<Value : Any> : PagingSource<Int, Value>() {
         return if (response.isSuccessful) {
             if (data != null) {
                 val page = res.meta?.currentPage ?: 0
-                val allPageCount = res.meta?.totalPages ?: 0
+                val allPageCount = res.meta?.lastPage ?: 0
 
                 val nextKey = if (page >= allPageCount) null else page + 1
                 val prevKey = if (page == 1) null else page - 1
