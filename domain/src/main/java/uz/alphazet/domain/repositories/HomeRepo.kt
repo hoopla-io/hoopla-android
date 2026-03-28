@@ -15,7 +15,7 @@ class HomeRepo(private val homeService: HomeService) : BaseRepo() {
 
     suspend fun getPendingFeedbacks() = handle { homeService.getPendingFeedbacks() }
 
-    suspend fun submitFeedback(orderId: Int, rating: Int, comment: String?) = handle {
+    suspend fun submitFeedback(orderId: Int, rating: Int, comment: String?) = handleFlow {
         val body = buildMap<String, Any> {
             put("rating", rating)
             if (!comment.isNullOrBlank()) put("comment", comment)

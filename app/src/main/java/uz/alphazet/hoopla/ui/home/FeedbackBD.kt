@@ -1,13 +1,11 @@
 package uz.alphazet.hoopla.ui.home
 
-import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.FeedbackDetail
-import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.BaseBottomSheetDF
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.getDateDDMMMMYYYYHHmm
 import uz.alphazet.domain.viewbinding.viewBinding
@@ -23,7 +21,8 @@ class FeedbackBD(
     private val viewModel: HomeVM by viewModel()
 
     override fun initialize() {
-        binding.drinkName.text = feedbackDetail.drinkName ?: getString(uz.alphazet.domain.R.string.unknown)
+        binding.drinkName.text =
+            feedbackDetail.drinkName ?: getString(uz.alphazet.domain.R.string.unknown)
         binding.partnerName.text = buildString {
             if (!feedbackDetail.partnerName.isNullOrBlank()) append(feedbackDetail.partnerName)
             if (!feedbackDetail.shopName.isNullOrBlank()) {
@@ -38,11 +37,13 @@ class FeedbackBD(
         binding.btSubmit.setOnClickListener {
             val rating = binding.ratingBar.rating.toInt()
             val comment = binding.commentInput.text?.toString()
-            viewModel.submitFeedback(feedbackDetail.id ?: return@setOnClickListener, rating, comment)
-        }
-
-        lifecycleScope.launch {
-            viewModel.submitFeedbackFlow.collectLatest(::collectSubmit)
+            launch {
+                viewModel.submitFeedback(
+                    feedbackDetail.id ?: -1,
+                    rating,
+                    comment
+                ).collectLatest(::collectSubmit)
+            }
         }
     }
 
@@ -52,13 +53,13 @@ class FeedbackBD(
     }
 
     override fun showLoading() {
-//        binding.btSubmit.isClickable = false
-//        binding.btSubmit.startAnimation()
+        binding.btSubmit.isClickable = false
+        binding.btSubmit.startAnimation()
     }
 
     override fun hideLoading() {
-//        binding.btSubmit.isClickable = true
-//        binding.btSubmit.revertAnimation()
+        binding.btSubmit.isClickable = true
+        binding.btSubmit.revertAnimation()
     }
 
     companion object {

@@ -34,16 +34,17 @@ class HomeVM(private val homeRepo: HomeRepo) : BaseVM() {
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
-    private val submitFeedbackEmitter: MutableStateFlow<UIResource<Any>> =
-        MutableStateFlow(UIResource.Loading)
-    val submitFeedbackFlow: StateFlow<UIResource<Any>> get() = submitFeedbackEmitter
-
     fun getPendingFeedbacks() {
         launch { pendingFeedbackEmitter.load { homeRepo.getPendingFeedbacks() } }
     }
 
-    fun submitFeedback(orderId: Int, rating: Int, comment: String?) {
-        launch { submitFeedbackEmitter.load { homeRepo.submitFeedback(orderId, rating, comment) } }
+    suspend fun submitFeedback(
+        orderId: Int,
+        rating: Int,
+        comment: String?
+    ): SharedFlow<UIResource<Any>> {
+        return homeRepo.submitFeedback(orderId, rating, comment)
+            .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
 }
