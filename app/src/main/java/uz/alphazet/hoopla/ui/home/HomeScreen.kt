@@ -28,6 +28,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.FeedbackDetail
+import uz.alphazet.hoopla.ui.home.FeedbackBD.Companion.showFeedbackBD
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.ui.BaseFragment
@@ -153,7 +154,9 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
     }
 
     private fun collectPendingFeedback(t: UIResource<FeedbackDetail>) = t.collect { data ->
-
+        if (data != null) {
+            showFeedbackBD(data) { viewModel.getPendingFeedbacks() }
+        }
     }
 
     private fun collectNearShopsData(t: UIResource<List<ShopItemData>>) = t.collect {

@@ -135,6 +135,11 @@
     <string name="used_cashback_">Использованный кэшбэк:</string>
     <string name="order_number_">Номер заказа:</string>
 
+    <string name="feedback_title">Оцените ваш заказ</string>
+    <string name="feedback_rate_label">Ваша оценка:</string>
+    <string name="feedback_comment_hint">Комментарий (необязательно)</string>
+    <string name="feedback_submit">Отправить отзыв</string>
+
     <string-array name="genders">
         <item>Мужской</item>
         <item>Женский</item>

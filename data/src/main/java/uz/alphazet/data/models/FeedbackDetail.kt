@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 data class FeedbackDetail(
     @SerializedName("cashback_earned")
-    val cashbackEarned: Int?,
+    val cashbackEarned: Double?,
     @SerializedName("cashback_used")
-    val cashbackUsed: Int?,
+    val cashbackUsed: Double?,
     @SerializedName("drinkName")
     val drinkName: String?,
     @SerializedName("id")
@@ -16,11 +16,11 @@ data class FeedbackDetail(
     @SerializedName("partnerName")
     val partnerName: String?,
     @SerializedName("productPrice")
-    val productPrice: Int?,
+    val productPrice: Double?,
     @SerializedName("purchasedAt")
     val purchasedAt: String?,
     @SerializedName("purchasedAtUnix")
-    val purchasedAtUnix: Int?,
+    val purchasedAtUnix: Long?,
     @SerializedName("shopName")
     val shopName: String?
 )

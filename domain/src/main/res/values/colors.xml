@@ -48,7 +48,9 @@
     <color name="grey_50">#FEFEFE</color>
     <color name="grey_75">#F9FAFA</color>
     <color name="grey_100">#F6F9F9</color>
+    <color name="grey_150">#F8F9FE</color>
     <color name="grey_200">#F3F6F6</color>
+    <color name="grey_250">#C5C6CC</color>
     <color name="grey_300">#F0F4F4</color>
     <color name="grey_350">#8F9098</color>
     <color name="grey_400">#71727A</color>
