@@ -132,6 +132,8 @@
     <string name="do_u_want_to_cancel_your_order">Вы хотите отменить свой заказ?</string>
     <string name="no_keep">Нет, продолжай</string>
     <string name="yes_cancel">Да, отменить</string>
+    <string name="used_cashback_">Использованный кэшбэк:</string>
+    <string name="order_number_">Номер заказа:</string>
 
     <string-array name="genders">
         <item>Мужской</item>

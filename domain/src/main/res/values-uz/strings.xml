@@ -128,6 +128,8 @@
     <string name="do_u_want_to_cancel_your_order">Buyurtmangizni bekor qilmoqchimisiz??</string>
     <string name="no_keep">Yo\'q, qolsin</string>
     <string name="yes_cancel">Ha, bekor qilinsin</string>
+    <string name="used_cashback_">Ishlatilgan cashback:</string>
+    <string name="order_number_">Buyurtma raqami:</string>
 
     <string-array name="genders">
         <item>Erkak</item>

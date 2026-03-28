@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
-import uz.alphazet.data.models.LoyaltyItemData
+import uz.alphazet.data.models.FeedbackDetail
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.ui.BaseFragment
@@ -107,6 +107,12 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 //            viewModel.getLoyaltyCard().collectLatest(::collectLoyalty)
 //        }
 
+        viewModel.getPendingFeedbacks()
+
+        launch {
+            viewModel.pendingFeedbackFlow.collectLatest(::collectPendingFeedback)
+        }
+
         if (checkPermissionForLocationIsGranted()) {
             runLocationListener()
         } else {
@@ -139,14 +145,6 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             shopListener.launch(intent)
         }
 
-//        binding.loyaltyInfo.setOnClickListener {
-//            showMessageDF(
-//                getString(uz.alphazet.domain.R.string.hoopla_loyalty),
-//                getString(uz.alphazet.domain.R.string.loyalty_system_info_description),
-//                "OK"
-//            ) {}
-//        }
-
         binding.search.setOnClickListener {
             val intent1 = Intent(requireContext(), SearchScreen::class.java)
             shopListener.launch(intent1)
@@ -154,23 +152,8 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
     }
 
-    private fun collectLoyalty(t: UIResource<List<LoyaltyItemData>>) = t.collect { list ->
-//        if (list.isNullOrEmpty()) {
-//            binding.loyaltyRv.gone()
-//            binding.loyaltyTitle.gone()
-//            binding.loyaltyInfo.gone()
-//        } else {
-//            binding.loyaltyRv.visible()
-//            binding.loyaltyTitle.visible()
-//            binding.loyaltyInfo.visible()
-//            loyaltyAdapter.submitList(list)
-//            val filledCount = list?.filter { it.isFilled }?.size
-//            binding.loyaltyTitle.text = getString(
-//                uz.alphazet.domain.R.string.label_my_rewards_,
-//                filledCount.toString(),
-//                list.size.toString()
-//            )
-//        }
+    private fun collectPendingFeedback(t: UIResource<FeedbackDetail>) = t.collect { data ->
+
     }
 
     private fun collectNearShopsData(t: UIResource<List<ShopItemData>>) = t.collect {
@@ -184,10 +167,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         }
     }
 
-    override fun onUnauthorizedException(message: String?, code: Int) {
-//        binding.loyaltyRv.gone()
-//        binding.loyaltyTitle.gone()
-    }
+    override fun onUnauthorizedException(message: String?, code: Int) {}
 
     private fun checkPermissionForLocationIsGranted(): Boolean = ContextCompat.checkSelfPermission(
         requireContext(),

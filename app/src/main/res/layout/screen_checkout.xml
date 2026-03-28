@@ -127,7 +127,7 @@
                     tools:listitem="@layout/item_summa_info" />
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/using_cashback_container"
+                    android:id="@+id/used_cashback_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -144,7 +144,7 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/using_cashback"
+                        android:id="@+id/used_cashback"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/inter_regular"

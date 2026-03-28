@@ -53,12 +53,21 @@ class OrderInfoScreen : BaseActivity() {
         binding.name.text = orderInfo.drinkName
         binding.totalSumma.text = orderInfo.productPrice?.formatToPrice().plus(" UZS")
 
+        binding.orderNumber.text = orderInfo.id.toString()
+
+        if ((orderInfo.cashbackUsed ?: 0.0) > 0) {
+            binding.usedCashbackContainer.visible()
+            binding.usedCashback.text =
+                "-".plus(orderInfo.cashbackEarned?.formatToPrice()).plus(" UZS")
+        } else
+            binding.usedCashbackContainer.gone()
+
         if ((orderInfo.cashbackEarned ?: 0.0) > 0) {
-            binding.usingCashbackContainer.visible()
-            binding.usingCashback.text =
+            binding.earnedCashbackContainer.visible()
+            binding.earnedCashback.text =
                 "+".plus(orderInfo.cashbackEarned?.formatToPrice()).plus(" UZS")
         } else
-            binding.usingCashbackContainer.gone()
+            binding.earnedCashbackContainer.gone()
 
         val modifiers = ArrayList<ModifierItemData>()
         orderInfo.items?.forEach { item ->

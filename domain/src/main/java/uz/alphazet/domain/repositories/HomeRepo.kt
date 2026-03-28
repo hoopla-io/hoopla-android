@@ -13,4 +13,6 @@ class HomeRepo(private val homeService: HomeService) : BaseRepo() {
         homeService.getNearShops(lat, long, name)
     }
 
+    suspend fun getPendingFeedbacks() = handle { homeService.getPendingFeedbacks() }
+
 }

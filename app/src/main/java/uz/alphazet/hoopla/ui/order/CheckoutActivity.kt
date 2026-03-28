@@ -164,11 +164,11 @@ class CheckoutActivity : BaseActivity() {
 
         if (usingCashBack > 0) {
             price -= usingCashBack
-            binding.usingCashback.text = "-".plus(usingCashBack.formatToPrice()).plus(" UZS")
-            binding.usingCashbackContainer.visible()
+            binding.usedCashback.text = "-".plus(usingCashBack.formatToPrice()).plus(" UZS")
+            binding.usedCashbackContainer.visible()
         } else {
             binding.useCashback.isChecked = false
-            binding.usingCashbackContainer.gone()
+            binding.usedCashbackContainer.gone()
         }
 
         return price

@@ -11,6 +11,7 @@ import android.util.Patterns
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import uz.alphazet.domain.BuildConfig
 
 fun Context.intentToBrowser(link: String) {
     if (Patterns.WEB_URL.matcher(link).matches()) {
@@ -54,6 +55,7 @@ fun BottomSheetDialogFragment.hideKeyboard() {
 
 
 inline fun <reified T> T.log(tag: String = "Hoopla") {
-    Log.d(tag, "${(T::class.java).simpleName} ${this.toString()}")
+    if (BuildConfig.DEBUG)
+        Log.d(tag, "${(T::class.java).simpleName} ${this.toString()}")
 //    Timber.tag(tag).d("${(T::class.java).simpleName} ${this.toString()}")
 }

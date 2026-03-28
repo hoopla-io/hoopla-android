@@ -128,6 +128,8 @@
     <string name="do_u_want_to_cancel_your_order">Do you want to cancel your order?</string>
     <string name="no_keep">No, keep</string>
     <string name="yes_cancel">Yes, cancel</string>
+    <string name="used_cashback_">Used cashback:</string>
+    <string name="order_number_">Order number:</string>
 
     <string-array name="genders">
         <item>Male</item>
