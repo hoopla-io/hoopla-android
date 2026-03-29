@@ -131,9 +131,12 @@
     <string name="used_cashback_">Ishlatilgan cashback:</string>
     <string name="order_number_">Buyurtma raqami:</string>
 
-    <string name="feedback_title">Buyurtmangizni baholang</string>
+    <string name="no_orders_yet">Hali buyurtmalar yo\'q</string>
+    <string name="no_orders_yet_desc">Buyurtmalar tarixingiz bu yerda ko\'rsatiladi</string>
+
+    <string name="feedback_title">Buyurtmani baholang\*</string>
     <string name="feedback_rate_label">Bahoyingiz:</string>
-    <string name="feedback_comment_hint">Izoh (ixtiyoriy)</string>
+    <string name="feedback_comment_hint">O\'z fikringizni bildiring</string>
     <string name="feedback_submit">Fikr bildirish</string>
 
     <string-array name="genders">

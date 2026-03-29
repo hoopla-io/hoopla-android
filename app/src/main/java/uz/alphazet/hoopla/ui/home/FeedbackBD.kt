@@ -1,5 +1,6 @@
 package uz.alphazet.hoopla.ui.home
 
+import coil3.load
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
@@ -21,14 +22,11 @@ class FeedbackBD(
     private val viewModel: HomeVM by viewModel()
 
     override fun initialize() {
+        binding.image.load(feedbackDetail.drinkImage)
         binding.drinkName.text =
             feedbackDetail.drinkName ?: getString(uz.alphazet.domain.R.string.unknown)
         binding.partnerName.text = buildString {
-            if (!feedbackDetail.partnerName.isNullOrBlank()) append(feedbackDetail.partnerName)
-            if (!feedbackDetail.shopName.isNullOrBlank()) {
-                if (isNotEmpty()) append(" · ")
-                append(feedbackDetail.shopName)
-            }
+            if (!feedbackDetail.shopName.isNullOrBlank()) append(feedbackDetail.shopName)
         }
         val price = feedbackDetail.productPrice
         binding.price.text = if (price != null) price.formatToPrice().plus(" UZS") else ""

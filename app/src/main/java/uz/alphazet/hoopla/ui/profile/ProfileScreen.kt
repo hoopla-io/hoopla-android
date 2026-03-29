@@ -143,7 +143,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
             }
 
             R.id.support -> {
-                requireContext().intentToBrowser("https://t.me/alphazzet")
+                requireContext().intentToBrowser("https://t.me/hoopla_support")
             }
 
             R.id.termOfUse -> {

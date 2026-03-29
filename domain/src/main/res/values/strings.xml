@@ -135,9 +135,12 @@
     <string name="used_cashback_">Использованный кэшбэк:</string>
     <string name="order_number_">Номер заказа:</string>
 
-    <string name="feedback_title">Оцените ваш заказ</string>
+    <string name="no_orders_yet">Заказов пока нет</string>
+    <string name="no_orders_yet_desc">Здесь будет отображаться история ваших заказов</string>
+
+    <string name="feedback_title">Оцените заказ\*</string>
     <string name="feedback_rate_label">Ваша оценка:</string>
-    <string name="feedback_comment_hint">Комментарий (необязательно)</string>
+    <string name="feedback_comment_hint">Поделитесь впечатлением</string>
     <string name="feedback_submit">Отправить отзыв</string>
 
     <string-array name="genders">

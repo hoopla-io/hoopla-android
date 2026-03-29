@@ -33,6 +33,8 @@ import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
 import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatPhoneNumber
+import uz.alphazet.domain.utils.gone
+import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenOrdersBinding
@@ -77,9 +79,13 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
         launch {
             orderAdapter.loadStateFlow.collectLatest { loadState ->
                 when (loadState.refresh) {
-
                     is LoadState.NotLoading -> {
                         binding.swipeRefreshLayout.isRefreshing = false
+                        if (orderAdapter.itemCount == 0) {
+                            binding.emptyState.visible()
+                        } else {
+                            binding.emptyState.gone()
+                        }
                     }
 
                     is LoadState.Loading -> {
@@ -89,7 +95,16 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
                     is LoadState.Error -> {
                         binding.swipeRefreshLayout.isRefreshing = false
                         val throwable = (loadState.refresh as LoadState.Error).error
-                        showErrorMessage(throwable.message)
+                        if (throwable !is NullPointerException)
+                            showErrorMessage(
+                                throwable.message ?: getString(uz.alphazet.domain.R.string.error)
+                            )
+                        else
+                            if (orderAdapter.itemCount == 0) {
+                                binding.emptyState.visible()
+                            } else {
+                                binding.emptyState.gone()
+                            }
                     }
 
                 }

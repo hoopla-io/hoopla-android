@@ -104,7 +104,7 @@ abstract class BasePagingDataSource<Value : Any> : PagingSource<Int, Value>() {
 
     private fun handleDeviceException(e: Throwable): Throwable {
         return when (e) {
-            is UnknownHostException,
+            is UnknownHostException, is NullPointerException,
             is ConnectException -> ConnectionErrorException(e.message, e.hashCode())
 
             else -> RemoteException(e.message, -1)

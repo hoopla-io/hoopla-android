@@ -22,5 +22,7 @@ data class FeedbackDetail(
     @SerializedName("purchasedAtUnix")
     val purchasedAtUnix: Long?,
     @SerializedName("shopName")
-    val shopName: String?
+    val shopName: String?,
+    @SerializedName("drinkImage")
+    val drinkImage: String?
 )

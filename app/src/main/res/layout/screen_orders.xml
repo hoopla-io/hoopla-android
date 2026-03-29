@@ -67,12 +67,12 @@
             android:layout_marginHorizontal="12dp"
             android:fontFamily="@font/inter_medium"
             android:gravity="start"
-            android:text="Routine"
             android:textColor="@color/white"
             android:textSize="32sp"
             app:layout_constraintBottom_toTopOf="@id/phone_number"
             app:layout_constraintEnd_toStartOf="@id/qr_code"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Routine" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/phone_number"
@@ -81,12 +81,12 @@
             android:layout_marginHorizontal="12dp"
             android:fontFamily="@font/inter_regular"
             android:gravity="start"
-            android:text="+998 90 200 20 00"
             android:textColor="@color/white"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@id/qr_code"
             app:layout_constraintEnd_toStartOf="@id/qr_code"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="+998 90 200 20 00" />
 
         <ImageView
             android:id="@+id/qr_code"
@@ -188,5 +188,44 @@
             tools:listitem="@layout/item_order" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_layout">
+
+        <ImageView
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:src="@drawable/ic_coffee_cup"
+            android:contentDescription="@null"
+            android:alpha="0.35" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/inter_medium"
+            android:text="@string/no_orders_yet"
+            android:textColor="@color/black_300"
+            android:textSize="18sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/inter_regular"
+            android:gravity="center"
+            android:paddingHorizontal="32dp"
+            android:text="@string/no_orders_yet_desc"
+            android:textColor="@color/grey_400"
+            android:textSize="14sp" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
