@@ -133,6 +133,9 @@
 
     <string name="no_orders_yet">Hali buyurtmalar yo\'q</string>
     <string name="no_orders_yet_desc">Buyurtmalar tarixingiz bu yerda ko\'rsatiladi</string>
+    <string name="delete_account">Akkauntni o\'chirish</string>
+    <string name="delete_account_confirm_title">Akkauntni o\'chirasizmi?</string>
+    <string name="delete_account_confirm_desc">Bu amalni ortga qaytarib bo\'lmaydi. Barcha ma\'lumotlaringiz o\'chiriladi.</string>
 
     <string name="feedback_title">Buyurtmani baholang\*</string>
     <string name="feedback_rate_label">Bahoyingiz:</string>

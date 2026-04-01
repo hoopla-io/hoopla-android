@@ -15,8 +15,8 @@ android {
         applicationId = "uz.alphazet.hoopla"
         minSdk = 26
         targetSdk = 36
-        versionCode = 22
-        versionName = "1.3.4"
+        versionCode = 24
+        versionName = "1.3.5"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

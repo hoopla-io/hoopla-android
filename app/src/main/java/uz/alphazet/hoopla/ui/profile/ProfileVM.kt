@@ -40,4 +40,9 @@ class ProfileVM(private val repo: ProfileRepo) : BaseVM() {
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
+    suspend fun deactivate(): SharedFlow<UIResource<Any>> {
+        return repo.deactivate()
+            .shareIn(viewModelScope, SharingStarted.Lazily, 0)
+    }
+
 }

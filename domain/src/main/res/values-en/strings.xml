@@ -133,6 +133,9 @@
 
     <string name="no_orders_yet">No orders yet</string>
     <string name="no_orders_yet_desc">Your order history will appear here</string>
+    <string name="delete_account">Delete account</string>
+    <string name="delete_account_confirm_title">Delete account?</string>
+    <string name="delete_account_confirm_desc">This action is irreversible. All your data will be deleted.</string>
 
     <string name="feedback_title">Rate order\*</string>
     <string name="feedback_rate_label">Your rating:</string>

@@ -2,6 +2,7 @@ package uz.alphazet.data.services
 
 import okhttp3.RequestBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -21,5 +22,8 @@ interface ProfileService {
 
     @PUT("v1/user/update-me")
     suspend fun updateMe(@Body body: RequestBody): BaseResponse<Any>
+
+    @DELETE("v1/user/deactivate")
+    suspend fun deactivate(): BaseResponse<Any>
 
 }

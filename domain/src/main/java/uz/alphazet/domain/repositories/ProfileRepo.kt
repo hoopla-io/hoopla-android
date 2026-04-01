@@ -29,4 +29,8 @@ class ProfileRepo(private val api: ProfileService) : BaseRepo() {
         api.logout()
     }
 
+    suspend fun deactivate() = handleFlow {
+        api.deactivate()
+    }
+
 }

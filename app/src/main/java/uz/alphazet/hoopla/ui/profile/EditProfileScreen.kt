@@ -1,18 +1,23 @@
 package uz.alphazet.hoopla.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.UserData
+import uz.alphazet.domain.cache.AppCache
 import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.disable
 import uz.alphazet.domain.utils.enable
 import uz.alphazet.hoopla.databinding.ScreenEditProfileBinding
+import uz.alphazet.hoopla.ui.auth.AuthActivity
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -21,6 +26,7 @@ class EditProfileScreen : BaseActivity() {
 
     private lateinit var binding: ScreenEditProfileBinding
     private val viewModel: ProfileVM by viewModel()
+    private val cache: AppCache by inject()
 
     private var oldUserData: UserData? = null
 
@@ -80,11 +86,32 @@ class EditProfileScreen : BaseActivity() {
                 viewModel.updateMe(name, gender, birth).collectLatest(::collectUpdateData)
             }
         }
+
+        binding.btDeleteAccount.setOnClickListener {
+            showRequestDF(
+                title = getString(uz.alphazet.domain.R.string.delete_account_confirm_title),
+                message = getString(uz.alphazet.domain.R.string.delete_account_confirm_desc),
+                yes = getString(uz.alphazet.domain.R.string.yes),
+                no = getString(uz.alphazet.domain.R.string.cancel)
+            ) {
+                launch {
+                    viewModel.deactivate().collectLatest(::collectDeactivateData)
+                }
+            }
+        }
     }
 
     private fun collectUpdateData(t: UIResource<Any>) = t.collect {
         setResult(PROFILE_EDIT_RESULT)
         finish()
+    }
+
+    private fun collectDeactivateData(t: UIResource<Any>) = t.collect {
+        cache.clearTokens()
+        val intent = Intent(this, AuthActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        startActivity(intent)
     }
 
     private fun onChangedUserData() {
