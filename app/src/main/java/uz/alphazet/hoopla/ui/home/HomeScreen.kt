@@ -10,7 +10,9 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
 import android.os.Looper
+import android.view.animation.DecelerateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -147,10 +149,72 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         }
 
         binding.search.setOnClickListener {
-            val intent1 = Intent(requireContext(), SearchScreen::class.java)
-            shopListener.launch(intent1)
+            val intent = Intent(requireContext(), SearchScreen::class.java)
+            val options = ActivityOptionsCompat.makeCustomAnimation(
+                requireContext(),
+                R.anim.slide_in_right,
+                R.anim.slide_out_left
+            )
+            shopListener.launch(intent, options)
         }
 
+        animateEntrance()
+    }
+
+    private fun animateEntrance() {
+        val interpolator = DecelerateInterpolator(1.5f)
+        val duration = 450L
+
+        binding.logo.alpha = 0f
+        binding.logo.translationY = -20f
+        binding.logo.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(duration)
+            .setInterpolator(interpolator)
+            .start()
+
+        binding.notificationCard.alpha = 0f
+        binding.notificationCard.scaleX = 0.8f
+        binding.notificationCard.scaleY = 0.8f
+        binding.notificationCard.animate()
+            .alpha(1f)
+            .scaleX(1f)
+            .scaleY(1f)
+            .setDuration(duration)
+            .setStartDelay(100)
+            .setInterpolator(interpolator)
+            .start()
+
+        binding.searchCard.alpha = 0f
+        binding.searchCard.translationY = 30f
+        binding.searchCard.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(duration)
+            .setStartDelay(150)
+            .setInterpolator(interpolator)
+            .start()
+
+        binding.nearlyTitle.alpha = 0f
+        binding.nearlyTitle.translationY = 20f
+        binding.nearlyTitle.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(duration)
+            .setStartDelay(250)
+            .setInterpolator(interpolator)
+            .start()
+
+        binding.scan.alpha = 0f
+        binding.scan.translationY = 60f
+        binding.scan.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(500)
+            .setStartDelay(400)
+            .setInterpolator(interpolator)
+            .start()
     }
 
     private fun collectPendingFeedback(t: UIResource<FeedbackDetail>) = t.collect { data ->

@@ -10,6 +10,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.hoopla.R
 import uz.alphazet.domain.utils.showKeyboard
 import uz.alphazet.hoopla.databinding.ScreenSearchBinding
 import uz.alphazet.hoopla.ui.home.HomeVM
@@ -86,6 +87,12 @@ class SearchScreen : BaseActivity() {
             viewModel.getNearShops(location.latitude, location.longitude, null)
                 .collectLatest(::collectNearShopsData)
         }
+    }
+
+    override fun finish() {
+        super.finish()
+        @Suppress("DEPRECATION")
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
     override fun updateStatusBarViewHeight() {
