@@ -30,6 +30,7 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.FeedbackDetail
+import uz.alphazet.data.models.UserData
 import uz.alphazet.hoopla.ui.home.FeedbackBD.Companion.showFeedbackBD
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.permission.PermissionManager
@@ -81,6 +82,11 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             }
         }
 
+    private val notificationLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            viewModel.getUser()
+        }
+
     private val scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
         when (result) {
             is QRResult.QRSuccess -> {
@@ -111,9 +117,14 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 //        }
 
         viewModel.getPendingFeedbacks()
+        viewModel.getUser()
 
         launch {
             viewModel.pendingFeedbackFlow.collectLatest(::collectPendingFeedback)
+        }
+
+        launch {
+            viewModel.userDataFlow.collectLatest(::collectUserData)
         }
 
         if (checkPermissionForLocationIsGranted()) {
@@ -145,7 +156,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         binding.notification.setOnClickListener {
             val intent = Intent(requireContext(), NotificationsScreen::class.java)
-            shopListener.launch(intent)
+            notificationLauncher.launch(intent)
         }
 
         binding.search.setOnClickListener {
@@ -215,6 +226,16 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             .setStartDelay(400)
             .setInterpolator(interpolator)
             .start()
+    }
+
+    private fun collectUserData(t: UIResource<UserData>) = t.collect(onLoading = {}) { data ->
+        val unreadCount = data?.unreadNotifications ?: 0
+        if (unreadCount > 0) {
+            binding.notificationBadge.text = if (unreadCount > 99) "99+" else unreadCount.toString()
+            binding.notificationBadge.visible()
+        } else {
+            binding.notificationBadge.gone()
+        }
     }
 
     private fun collectPendingFeedback(t: UIResource<FeedbackDetail>) = t.collect { data ->

@@ -4,6 +4,7 @@ data class NotificationDetail(
     val countReads: Int?,
     val createdAt: String?,
     val files: Files?,
+    val isNew: Boolean?,
     val notificationDescription: String?,
     val notificationId: Int?,
     val notificationTitle: String?,

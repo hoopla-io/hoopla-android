@@ -27,6 +27,8 @@ class NotificationsScreen : BaseActivity() {
             finish()
         }
 
+        viewModel.markRead()
+
         adapter.setOnItemClickListener {
             val intent1 = Intent(this, NotificationDetailScreen::class.java)
             intent1.putExtra("id", it?.notificationId)

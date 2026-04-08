@@ -5,6 +5,7 @@ import uz.alphazet.data.rv.BaseItem
 data class NotificationItemData(
     val createdAt: String?,
     val files: Files?,
+    val isNew: Boolean?,
     val notificationDescription: String?,
     val notificationId: Int?,
     val notificationTitle: String?,

@@ -15,14 +15,14 @@ object AppModule {
 
     val viewModelModule = module {
         factory { AuthVM(get()) }
-        factory { HomeVM(get()) }
+        factory { HomeVM(get(), get()) }
         factory { ProfileVM(get()) }
         factory { ShopVM(get()) }
         factory { OrderVM(get(), get()) }
         factory { QRCodeVM(get(), get(), get()) }
         factory { SubscriptionVM(get()) }
         factory { PaymentVM(get()) }
-        factory { NotificationVM(get(), get()) }
+        factory { NotificationVM(get(), get(), get()) }
     }
 
 }

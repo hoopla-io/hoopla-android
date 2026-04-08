@@ -10,15 +10,28 @@ import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.FeedbackDetail
 import uz.alphazet.data.models.LoyaltyItemData
 import uz.alphazet.data.models.ShopItemData
+import uz.alphazet.data.models.UserData
 import uz.alphazet.domain.repositories.HomeRepo
+import uz.alphazet.domain.repositories.ProfileRepo
 import uz.alphazet.domain.ui.BaseVM
 import uz.alphazet.domain.ui.load
 
-class HomeVM(private val homeRepo: HomeRepo) : BaseVM() {
+class HomeVM(
+    private val homeRepo: HomeRepo,
+    private val profileRepo: ProfileRepo
+) : BaseVM() {
 
     private val pendingFeedbackEmitter: MutableStateFlow<UIResource<FeedbackDetail>> =
         MutableStateFlow(UIResource.Loading)
     val pendingFeedbackFlow: StateFlow<UIResource<FeedbackDetail>> get() = pendingFeedbackEmitter
+
+    private val userDataEmitter: MutableStateFlow<UIResource<UserData>> =
+        MutableStateFlow(UIResource.Loading)
+    val userDataFlow: StateFlow<UIResource<UserData>> get() = userDataEmitter
+
+    fun getUser() {
+        launch { userDataEmitter.load { profileRepo.getMe() } }
+    }
 
     suspend fun getLoyaltyCard(): SharedFlow<UIResource<List<LoyaltyItemData>>> {
         return homeRepo.getLoyaltyCard()

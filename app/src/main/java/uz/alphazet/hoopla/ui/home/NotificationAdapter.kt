@@ -5,6 +5,8 @@ import coil3.load
 import uz.alphazet.data.models.NotificationItemData
 import uz.alphazet.domain.rv.BasePagingAdapter
 import uz.alphazet.domain.rv.BaseVH
+import uz.alphazet.domain.utils.gone
+import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ItemNotificationBinding
 
@@ -23,6 +25,12 @@ class NotificationAdapter : BasePagingAdapter<NotificationItemData>() {
             binding.image.load(itemData.files?.imageUrl)
             binding.name.text = itemData.notificationTitle
             binding.desc.text = itemData.notificationDescription
+
+            if (itemData.isNew == true) {
+                binding.newIndicator.visible()
+            } else {
+                binding.newIndicator.gone()
+            }
         }
     }
 

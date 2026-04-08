@@ -13,6 +13,7 @@ data class UserData(
     val dateOfBirth: String?,
     val userId: Int?,
     val subscription: SubscriptionData?,
+    val unreadNotifications: Int?,
 )
 
 data class SubscriptionData(
