@@ -1,71 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/nsv"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:orientation="vertical">
+    android:fitsSystemWindows="true">
 
-    <View
-        android:id="@+id/status_bar_view"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:background="@color/primary" />
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary"
-        app:navigationContentDescription="Orqaga"
-        app:navigationIcon="@drawable/ic_arrow_left_back"
-        app:titleTextAppearance="@style/ToolbarTitleTextStyle"
-        app:titleTextColor="@color/white"
-        tools:title="@string/app_name" />
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="280dp"
+            android:fitsSystemWindows="true"
+            app:contentScrim="@color/primary"
+            app:collapsedTitleTextAppearance="@style/ToolbarTitleTextStyle"
+            app:collapsedTitleTextColor="@color/white"
+            app:expandedTitleTextColor="@android:color/transparent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+            app:statusBarScrim="@color/primary"
+            app:titleCollapseMode="fade">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/header_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_gravity="bottom"
+                android:background="@drawable/bg_header_gradient"
+                app:layout_collapseMode="parallax" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#18000000" />
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:navigationContentDescription="Orqaga"
+                app:navigationIcon="@drawable/ic_arrow_left_back"
+                app:titleTextColor="@color/white" />
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        <!-- Shop info: scrolls away with header -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/header_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="8dp"
+            app:layout_scrollFlags="scroll|snap">
+
+            <TextView
+                android:id="@+id/shop_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_bold"
+                android:textColor="@color/black_300"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toStartOf="@id/btn_call"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Costa Coffee" />
+
+            <LinearLayout
+                android:id="@+id/working_hours_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toStartOf="@id/btn_call"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/shop_name">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@drawable/ic_clock"
+                    app:tint="@color/grey_400" />
+
+                <TextView
+                    android:id="@+id/working_hours_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/inter_medium"
+                    android:textColor="@color/grey_400"
+                    android:textSize="13sp"
+                    tools:text="07:00 - 24:00" />
+
+            </LinearLayout>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_call"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:contentDescription="Call"
+                android:src="@drawable/ic_phone"
+                app:backgroundTint="@color/primary"
+                app:elevation="2dp"
+                app:fabCustomSize="42dp"
+                app:layout_constraintBottom_toBottomOf="@id/working_hours_row"
+                app:layout_constraintEnd_toStartOf="@id/btn_direction"
+                app:layout_constraintTop_toTopOf="@id/shop_name"
+                app:maxImageSize="20dp"
+                app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30"
+                app:tint="@color/white" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btn_direction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Direction"
+                android:src="@drawable/ic_location"
+                app:backgroundTint="@color/primary"
+                app:elevation="2dp"
+                app:fabCustomSize="42dp"
+                app:layout_constraintBottom_toBottomOf="@id/working_hours_row"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/shop_name"
+                app:maxImageSize="20dp"
+                app:shapeAppearanceOverlay="@style/ImageAppearanceCorner30"
+                app:tint="@color/white" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <!-- Category chips: PINNED (no scroll flags) -->
+        <HorizontalScrollView
+            android:id="@+id/category_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:clipToPadding="false"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="8dp"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/category_chip_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipSpacingHorizontal="8dp"
+                app:selectionRequired="true"
+                app:singleSelection="true" />
+
+        </HorizontalScrollView>
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:paddingBottom="60dp">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/image_view_pager"
+            <!-- Drinks section container -->
+            <LinearLayout
+                android:id="@+id/drinks_container"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginTop="20dp"
-                android:clipChildren="false"
-                android:clipToPadding="false"
-                android:orientation="horizontal"
-                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
-                app:layout_constraintDimensionRatio="16:10"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:itemCount="4"
-                tools:listitem="@layout/item_image" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="vertical" />
 
+            <!-- Working time expandable -->
             <LinearLayout
                 android:id="@+id/working_time_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="20dp"
                 android:background="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingHorizontal="20dp"
-                android:paddingVertical="12dp"
-                app:layout_constraintTop_toBottomOf="@id/image_view_pager">
+                android:paddingVertical="12dp">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="20dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="20dp"
                     android:background="@android:color/transparent"
                     android:scaleType="centerInside"
                     android:src="@drawable/ic_clock"
-                    app:shapeAppearanceOverlay="@style/ItemShopImageAppearance"
                     app:tint="@color/black_300" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -74,10 +214,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:fontFamily="@font/inter_medium"
-                    android:gravity="center_vertical"
                     android:text="Open today:"
                     android:textColor="@color/green_300"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -86,21 +225,21 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="12dp"
                     android:fontFamily="@font/inter_medium"
-                    android:gravity="center_vertical"
                     android:text="Closed today:"
                     android:textColor="@color/error_400"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:visibility="gone" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/hours"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
                     android:fontFamily="@font/inter_medium"
-                    android:gravity="center_vertical|end"
+                    android:gravity="end"
                     android:textColor="@color/black_300"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     tools:text="10:00 - 00:00" />
 
             </LinearLayout>
@@ -113,126 +252,25 @@
                 android:orientation="vertical"
                 android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/working_time_container"
                 tools:itemCount="7"
                 tools:listitem="@layout/item_work_time" />
 
-            <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/work_time_barrier"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="work_time_rv,working_time_container" />
-
-            <LinearLayout
-                android:id="@+id/location_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:orientation="horizontal"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="12dp"
-                app:layout_constraintTop_toBottomOf="@id/work_time_barrier">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_location"
-                    app:shapeAppearanceOverlay="@style/ItemShopImageAppearance" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:fontFamily="@font/inter_medium"
-                    android:gravity="center_vertical"
-                    android:text="Get direction"
-                    android:textColor="@color/black_300"
-                    android:textSize="16sp" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/distance"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:fontFamily="@font/inter_medium"
-                    android:gravity="center_vertical|end"
-                    android:textColor="@color/black_300"
-                    android:textSize="16sp"
-                    tools:text="1.2 km away" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/phone_number_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackground"
-                android:orientation="horizontal"
-                android:paddingHorizontal="20dp"
-                android:paddingVertical="12dp"
-                app:layout_constraintTop_toBottomOf="@id/location_container">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:layout_width="20dp"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:scaleType="centerInside"
-                    android:src="@drawable/ic_phone"
-                    app:shapeAppearanceOverlay="@style/ItemShopImageAppearance"
-                    app:tint="@color/black_300" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:fontFamily="@font/inter_medium"
-                    android:gravity="center_vertical"
-                    android:text="@string/phone_number__"
-                    android:textColor="@color/black_300"
-                    android:textSize="16sp" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/phone_number"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:fontFamily="@font/inter_medium"
-                    android:gravity="center_vertical|end"
-                    android:textColor="@color/black_300"
-                    android:textSize="16sp"
-                    tools:text="+998 90 001 23 34" />
-
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/drinks_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
-                android:fontFamily="@font/inter_bold"
-                android:text="@string/drinks_"
-                android:textColor="@color/black_300"
-                android:textSize="21sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/phone_number_container" />
-
+            <!-- Image carousel (other images) -->
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/drink_rv"
+                android:id="@+id/image_view_pager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:clipChildren="false"
                 android:clipToPadding="false"
-                android:orientation="vertical"
-                android:paddingHorizontal="10dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/drinks_label"
-                app:spanCount="2"
-                tools:itemCount="1"
-                tools:listitem="@layout/item_drink_vertical" />
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"
+                app:layout_constraintDimensionRatio="16:10"
+                tools:itemCount="4"
+                tools:listitem="@layout/item_image" />
 
+            <!--
             <TextView
                 android:id="@+id/contacts_label"
                 android:layout_width="wrap_content"
@@ -242,9 +280,7 @@
                 android:fontFamily="@font/inter_bold"
                 android:text="Additional information:"
                 android:textColor="@color/black_300"
-                android:textSize="21sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/drink_rv" />
+                android:textSize="21sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/url_rv"
@@ -254,12 +290,11 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="12dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintTop_toBottomOf="@id/contacts_label"
                 tools:listitem="@layout/item_url" />
+            -->
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
