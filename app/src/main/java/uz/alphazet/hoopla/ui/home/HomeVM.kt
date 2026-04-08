@@ -7,10 +7,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.shareIn
 import uz.alphazet.data.UIResource
+import uz.alphazet.data.models.CategoryData
 import uz.alphazet.data.models.FeedbackDetail
 import uz.alphazet.data.models.LoyaltyItemData
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.data.models.UserData
+import uz.alphazet.domain.repositories.CategoryRepo
 import uz.alphazet.domain.repositories.HomeRepo
 import uz.alphazet.domain.repositories.ProfileRepo
 import uz.alphazet.domain.ui.BaseVM
@@ -18,7 +20,8 @@ import uz.alphazet.domain.ui.load
 
 class HomeVM(
     private val homeRepo: HomeRepo,
-    private val profileRepo: ProfileRepo
+    private val profileRepo: ProfileRepo,
+    private val categoryRepo: CategoryRepo
 ) : BaseVM() {
 
     private val pendingFeedbackEmitter: MutableStateFlow<UIResource<FeedbackDetail>> =
@@ -29,8 +32,16 @@ class HomeVM(
         MutableStateFlow(UIResource.Loading)
     val userDataFlow: StateFlow<UIResource<UserData>> get() = userDataEmitter
 
+    private val categoriesEmitter: MutableStateFlow<UIResource<List<CategoryData>>> =
+        MutableStateFlow(UIResource.Loading)
+    val categoriesFlow: StateFlow<UIResource<List<CategoryData>>> get() = categoriesEmitter
+
     fun getUser() {
         launch { userDataEmitter.load { profileRepo.getMe() } }
+    }
+
+    fun getCategories() {
+        launch { categoriesEmitter.load { categoryRepo.getCategories() } }
     }
 
     suspend fun getLoyaltyCard(): SharedFlow<UIResource<List<LoyaltyItemData>>> {
@@ -42,8 +53,9 @@ class HomeVM(
         lat: Double,
         long: Double,
         name: String?,
+        categoryId: Int? = null,
     ): SharedFlow<UIResource<List<ShopItemData>>> {
-        return homeRepo.getNearShops(lat, long, name)
+        return homeRepo.getNearShops(lat, long, name, categoryId)
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 

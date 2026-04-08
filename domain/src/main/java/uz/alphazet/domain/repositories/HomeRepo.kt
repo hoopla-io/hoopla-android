@@ -9,8 +9,8 @@ class HomeRepo(private val homeService: HomeService) : BaseRepo() {
         homeService.getLoyaltyCard()
     }
 
-    suspend fun getNearShops(lat: Double, long: Double, name: String?) = handleFlow {
-        homeService.getNearShops(lat, long, name)
+    suspend fun getNearShops(lat: Double, long: Double, name: String?, categoryId: Int? = null) = handleFlow {
+        homeService.getNearShops(lat, long, name, categoryId)
     }
 
     suspend fun getPendingFeedbacks() = handle { homeService.getPendingFeedbacks() }

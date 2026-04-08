@@ -15,7 +15,7 @@ object AppModule {
 
     val viewModelModule = module {
         factory { AuthVM(get()) }
-        factory { HomeVM(get(), get()) }
+        factory { HomeVM(get(), get(), get()) }
         factory { ProfileVM(get()) }
         factory { ShopVM(get()) }
         factory { OrderVM(get(), get()) }

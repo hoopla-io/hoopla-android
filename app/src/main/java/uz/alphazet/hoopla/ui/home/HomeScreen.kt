@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
+import uz.alphazet.data.models.CategoryData
 import uz.alphazet.data.models.FeedbackDetail
 import uz.alphazet.data.models.UserData
 import uz.alphazet.hoopla.ui.home.FeedbackBD.Companion.showFeedbackBD
@@ -60,6 +61,9 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
     private val adapter = NearShopAdapter()
     private val loyaltyAdapter = LoyaltyAdapter()
+    private val categoryAdapter = CategoryAdapter()
+
+    private var selectedCategoryId: Int? = null
 
     private var currentLocation: Location? = null
     private var locationCallback: LocationCallback? = null
@@ -110,6 +114,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         binding.swipeRefreshLayout.setOnRefreshListener(this)
         binding.partnersRv.adapter = adapter
+        binding.categoriesRv.adapter = categoryAdapter
 //        binding.loyaltyRv.adapter = loyaltyAdapter
 
 //        launch {
@@ -118,6 +123,14 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         viewModel.getPendingFeedbacks()
         viewModel.getUser()
+        viewModel.getCategories()
+
+        categoryAdapter.setOnItemClickListener { category ->
+            val newId = if (selectedCategoryId == category.id) null else category.id
+            selectedCategoryId = newId
+            categoryAdapter.setSelectedId(newId)
+            currentLocation?.let { reloadNearShops(it) }
+        }
 
         launch {
             viewModel.pendingFeedbackFlow.collectLatest(::collectPendingFeedback)
@@ -125,6 +138,10 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         launch {
             viewModel.userDataFlow.collectLatest(::collectUserData)
+        }
+
+        launch {
+            viewModel.categoriesFlow.collectLatest(::collectCategories)
         }
 
         if (checkPermissionForLocationIsGranted()) {
@@ -238,6 +255,13 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         }
     }
 
+    private fun collectCategories(t: UIResource<List<CategoryData>>) = t.collect(onLoading = {}) { data ->
+        if (!data.isNullOrEmpty()) {
+            categoryAdapter.submitList(data)
+            binding.categoriesRv.visible()
+        }
+    }
+
     private fun collectPendingFeedback(t: UIResource<FeedbackDetail>) = t.collect { data ->
         if (data != null) {
             showFeedbackBD(data) { viewModel.getPendingFeedbacks() }
@@ -250,7 +274,14 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
     private fun getNearShops(location: Location) {
         launch {
-            viewModel.getNearShops(location.latitude, location.longitude, null)
+            viewModel.getNearShops(location.latitude, location.longitude, null, selectedCategoryId)
+                .collectLatest(::collectNearShopsData)
+        }
+    }
+
+    private fun reloadNearShops(location: Location) {
+        launch {
+            viewModel.getNearShops(location.latitude, location.longitude, null, selectedCategoryId)
                 .collectLatest(::collectNearShopsData)
         }
     }
@@ -401,12 +432,14 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
     }
 
     override fun onRefresh() {
+        viewModel.getCategories()
         if (currentLocation != null)
             launch {
                 viewModel.getNearShops(
                     currentLocation?.latitude ?: 0.0,
                     currentLocation?.longitude ?: 0.0,
-                    null
+                    null,
+                    selectedCategoryId
                 ).collectLatest(::collectNearShopsData)
             }
 //        launch {

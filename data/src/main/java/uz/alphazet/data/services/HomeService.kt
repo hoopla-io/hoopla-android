@@ -21,6 +21,7 @@ interface HomeService {
         @Query("lat") lat: Double,
         @Query("long") long: Double,
         @Query("name") name: String?,
+        @Query("categoryId") categoryId: Int? = null,
     ): BaseResponse<List<ShopItemData>>
 
     @GET("v1/orders/feedbacks/pending")
