@@ -27,7 +27,7 @@
         android:orientation="vertical"
         android:paddingHorizontal="10dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
+        app:spanCount="@integer/drink_span_count"
         tools:itemCount="4"
         tools:listitem="@layout/item_drink_vertical" />
 

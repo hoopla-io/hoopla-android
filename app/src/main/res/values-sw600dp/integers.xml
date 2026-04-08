@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tablet / large screen: 4 columns -->
+    <integer name="drink_span_count">4</integer>
+</resources>

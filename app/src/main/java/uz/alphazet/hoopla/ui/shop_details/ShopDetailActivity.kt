@@ -288,7 +288,6 @@ class ShopDetailActivity : BaseActivity() {
         val adapter = DrinksAdapter()
         adapter.isClickable = isClickable
         sectionBinding.categoryDrinksRv.adapter = adapter
-        sectionBinding.categoryDrinksRv.layoutManager = GridLayoutManager(this, 2)
         adapter.submitList(categoryDrinks)
 
         adapter.setOnItemClickListener { drink ->

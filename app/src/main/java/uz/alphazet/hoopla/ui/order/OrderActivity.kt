@@ -129,7 +129,7 @@ class OrderActivity : BaseActivity() {
             binding.milkTitle.gone()
         } else {
             milkAdapter.submitList(milkItems)
-//            milkAdapter.selectItem(milkItems.firstOrNull()?.modificationId ?: "")
+            milkAdapter.selectItem(milkItems.firstOrNull()?.modificationId ?: "")
         }
 
         val syrupItems = data?.modifications?.syrup
@@ -138,7 +138,7 @@ class OrderActivity : BaseActivity() {
             binding.syrupTitle.gone()
         } else {
             syrupAdapter.submitList(syrupItems)
-//            syrupAdapter.selectItem(syrupItems.firstOrNull()?.modificationId ?: "")
+            syrupAdapter.selectItem(syrupItems.firstOrNull()?.modificationId ?: "")
         }
 
         val price = calculatePrice()
