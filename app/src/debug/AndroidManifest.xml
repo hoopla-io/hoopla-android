@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Debug-only manifest overlay.
+    EmptyFragmentActivity is already declared by fragment-testing-manifest;
+    no additional entries are needed here.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />
