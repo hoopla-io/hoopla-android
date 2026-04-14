@@ -94,6 +94,11 @@ android {
         disable += "NullSafeMutableLiveData"
         checkReleaseBuilds = false
     }
+
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -103,6 +108,15 @@ dependencies {
     implementation(libs.play.services.location)
 
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.fragment.testing)
+    testImplementation(libs.koin.test.junit4)
+    debugImplementation(libs.fragment.testing.manifest)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.uiautomator)
 }

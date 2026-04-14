@@ -32,6 +32,13 @@ localeHelperAndroid = "1.5.1"
 localization = "1.2.11"
 playServicesLocation = "21.3.0"
 
+mockk = "1.13.13"
+turbine = "1.1.0"
+coroutinesTest = "1.9.0"
+robolectric = "4.13"
+androidxTestCore = "1.6.1"
+fragmentTesting = "1.8.5"
+uiautomator = "2.3.0"
 
 
 [libraries]
@@ -69,6 +76,17 @@ androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", v
 locale-helper-android = { module = "com.zeugmasolutions.localehelper:locale-helper-android", version.ref = "localeHelperAndroid" }
 localization = { module = "com.akexorcist:localization", version.ref = "localization" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutinesTest" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
+mockwebserver = { group = "com.squareup.okhttp3", name = "mockwebserver", version.ref = "okhttp" }
+fragment-testing = { group = "androidx.fragment", name = "fragment-testing", version.ref = "fragmentTesting" }
+fragment-testing-manifest = { group = "androidx.fragment", name = "fragment-testing-manifest", version.ref = "fragmentTesting" }
+uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
+koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koinVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
