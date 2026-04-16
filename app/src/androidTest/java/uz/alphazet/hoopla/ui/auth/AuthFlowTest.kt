@@ -7,8 +7,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,6 +18,9 @@ import uz.alphazet.hoopla.ui.BaseUiTest
  * Launches [AuthActivity] directly so the tests are isolated from
  * [uz.alphazet.hoopla.ui.MainActivity].
  *
+ * Each test delegates UI interactions to [AuthRobot], keeping the test body
+ * focused on intent rather than selector boilerplate.
+ *
  * Tested flows:
  *  1. Auth screen is visible — title "hoopla" and phone input are present.
  *  2. Continue button is disabled when no phone number is entered.
@@ -30,6 +31,8 @@ import uz.alphazet.hoopla.ui.BaseUiTest
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class AuthFlowTest : BaseUiTest() {
+
+    private val robot by lazy { AuthRobot(device) }
 
     @Before
     override fun setUp() {
@@ -43,7 +46,9 @@ class AuthFlowTest : BaseUiTest() {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }
         context.startActivity(intent)
-        device.wait(Until.hasObject(By.pkg(APP_PACKAGE).depth(0)), TIMEOUT_MS)
+        // Wait for the phone input to be fully drawn, not just the package window —
+        // ensures all subsequent tests can interact with inputPhone immediately.
+        device.wait(Until.hasObject(By.res(APP_PACKAGE, "inputPhone")), TIMEOUT_MS)
     }
 
     // -----------------------------------------------------------------------
@@ -52,13 +57,7 @@ class AuthFlowTest : BaseUiTest() {
 
     @Test
     fun auth_screen_shows_title_and_phone_input() {
-        // Title label "hoopla"
-        val title = device.wait(Until.findObject(By.text("hoopla")), TIMEOUT_MS)
-        assertNotNull("Title 'hoopla' not visible on auth screen", title)
-
-        // Phone input field
-        val phoneInput = device.wait(Until.findObject(By.res(APP_PACKAGE, "inputPhone")), TIMEOUT_MS)
-        assertNotNull("Phone input not visible on auth screen", phoneInput)
+        robot.assertAuthScreenVisible()
     }
 
     // -----------------------------------------------------------------------
@@ -67,9 +66,7 @@ class AuthFlowTest : BaseUiTest() {
 
     @Test
     fun continue_button_is_disabled_before_phone_entry() {
-        val continueBtn = waitForId("btSend")
-        assertFalse("Continue button must be disabled before entering a phone number",
-            continueBtn.isEnabled)
+        robot.assertContinueDisabled()
     }
 
     // -----------------------------------------------------------------------
@@ -78,23 +75,11 @@ class AuthFlowTest : BaseUiTest() {
 
     @Test
     fun typing_valid_phone_enables_continue_button() {
-        val phoneInput = waitForId("inputPhone")
-        // The mask prepends "998 "; we type the 9-digit local part.
-        // MaskedEditText accepts raw digit input.
-        phoneInput.click()
-        device.waitForIdle(IDLE_TIMEOUT_MS)
-        phoneInput.text = "901234567"
-        device.waitForIdle(IDLE_TIMEOUT_MS)
-
-        val continueBtn = waitForId("btSend")
-        // After entering 9 digits the button should be enabled
-        assertNotNull("Continue button not found after phone input", continueBtn)
-        // Note: MaskedEditText triggers doOnTextChanged which enables/disables the button.
-        // If the button is still disabled here it means the mask did not accept the text —
+        // The mask prepends "+998 "; we type the 9-digit local part.
+        // Note: MaskedEditText triggers doOnTextChanged which enables/disables
+        // the button. If still disabled, the mask did not accept the text —
         // that is a product bug, not a test bug.
-        assert(continueBtn.isEnabled) {
-            "Continue button should be enabled after entering a valid 9-digit phone suffix"
-        }
+        robot.typePhone("901234567").assertContinueEnabled()
     }
 
     // -----------------------------------------------------------------------
@@ -103,18 +88,7 @@ class AuthFlowTest : BaseUiTest() {
 
     @Test
     fun clearing_phone_disables_continue_button() {
-        val phoneInput = waitForId("inputPhone")
-        phoneInput.click()
-        phoneInput.text = "901234567"
-        device.waitForIdle(IDLE_TIMEOUT_MS)
-
-        // Clear the field
-        phoneInput.clear()
-        device.waitForIdle(IDLE_TIMEOUT_MS)
-
-        val continueBtn = waitForId("btSend")
-        assertFalse("Continue button must be disabled after clearing phone input",
-            continueBtn.isEnabled)
+        robot.typePhone("901234567").clearPhone().assertContinueDisabled()
     }
 
     // -----------------------------------------------------------------------
@@ -123,14 +97,6 @@ class AuthFlowTest : BaseUiTest() {
 
     @Test
     fun incomplete_phone_number_keeps_continue_button_disabled() {
-        val phoneInput = waitForId("inputPhone")
-        phoneInput.click()
-        // Only 4 digits — too short
-        phoneInput.text = "9012"
-        device.waitForIdle(IDLE_TIMEOUT_MS)
-
-        val continueBtn = waitForId("btSend")
-        assertFalse("Continue button must remain disabled for a partial phone number",
-            continueBtn.isEnabled)
+        robot.typePhone("9012").assertContinueDisabled()
     }
 }

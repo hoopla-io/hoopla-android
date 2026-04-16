@@ -9,7 +9,7 @@ The project has three layers of tests matching the three-module architecture.
 | Unit — core logic | `:domain` | JUnit 4 + MockK + Robolectric | JVM | **67** |
 | Unit — API / models | `:data` | JUnit 4 + MockWebServer | JVM | **70** |
 | Unit — ViewModels + UI | `:app` | JUnit 4 + MockK + Turbine + Robolectric | JVM | **47** |
-| UI Automation | `:app` | UI Automator | Device / Emulator | **14** |
+| UI Automation | `:app` | UI Automator | Device / Emulator | **23** |
 | **Total JVM** | | | | **184** |
 
 ---
@@ -379,52 +379,135 @@ abstract class BaseUiTest {
 
     @Before open fun setUp() {
         device = UiDevice.getInstance(...)
-        device.pressHome()     // dismiss any lingering system dialogs
+        // Seeds both language SharedPrefs (app_cache + localehelper) to match
+        // the device locale, bypasses first-launch onboarding, wakes screen.
+        device.pressHome()
     }
 
     protected fun launchApp()
     protected fun waitForId(resourceId: String, timeout: Long = 5_000): UiObject2
     protected fun waitForText(text: String, timeout: Long = 5_000): UiObject2
     protected fun waitForTextContains(substring: String, timeout: Long = 5_000): UiObject2
+
+    // Shared helpers available to all subclasses:
+    protected fun clearAuthTokens()               // removes accessToken + refreshToken from app_cache
+    protected fun prefs(name: String): SharedPreferences  // opens any named prefs file
+    protected fun resolveDeviceLang(): String      // OS locale → "uz" / "en" / "ru"
+    protected fun toSupportedLang(lang: String): String   // maps any tag to supported code
+    protected fun buildLocalizedContext(lang: String): Context  // Context locked to lang
 }
 ```
 
 Default timeout: **5 000 ms** per element lookup.
 
+### Robot classes
+
+The Robot Pattern separates test intent from `UiDevice` boilerplate. Every
+robot method returns `this` so calls chain naturally.
+
+| Class | Location | Used by |
+|-------|----------|---------|
+| `AuthRobot` | `ui/auth/AuthRobot.kt` | `AuthFlowTest` |
+| `ProfileRobot` | `ui/profile/ProfileRobot.kt` | `ProfileScreenTest` |
+
+**`AuthRobot` API:**
+
+| Method | Action |
+|--------|--------|
+| `typePhone(digits)` | Click `inputPhone`, type 9-digit suffix |
+| `clearPhone()` | Clear `inputPhone` |
+| `assertAuthScreenVisible()` | "hoopla" title + `inputPhone` visible |
+| `assertContinueEnabled()` | `btSend.isEnabled == true` |
+| `assertContinueDisabled()` | `btSend.isEnabled == false` |
+
+**`ProfileRobot` API:**
+
+| Method | Action |
+|--------|--------|
+| `navigateToProfile()` | Tap profile tab, wait for `swipe_refresh_layout` |
+| `readHeaderText()` | Return `header_title` text |
+| `assertHeaderText(expected)` | Assert `header_title == expected` |
+| `assertLoginButtonEnabledIfPresent()` | If `login` button exists, assert it is enabled |
+| `assertLanguagesRowVisible()` | `languages` view found |
+| `assertPrivacyPolicyRowVisible()` | `privacyPolicy` view found |
+| `assertOrdersTabVisible()` | `orders` nav item found |
+
 ### Test files
 
 #### `ui/MainActivityTest.kt` — 5 tests
 
+`setUp()` calls `clearAuthTokens()` before launching so tests always start
+in the logged-out state.
+
 | Test | Flow |
 |------|------|
 | `app_launches_and_home_screen_is_visible` | Launch → `bottom_nav` + `home` tab present |
-| `tapping_profile_tab_opens_profile_screen` | Tap `profile` tab → "Профиль" header visible |
-| `tapping_orders_tab_when_logged_out_shows_sign_in_dialog` | Tap `orders` while logged out → dialog with "авторизованы" text appears; dismisses via "Отмена" |
+| `tapping_profile_tab_opens_profile_screen` | Tap `profile` tab → `header_title` view visible |
+| `tapping_orders_tab_when_logged_out_shows_sign_in_dialog` | Tap `orders` while logged out → dialog with "авторизованы" text appears (unconditional assert); dismisses via "Отмена" |
 | `tapping_map_tab_shows_map_screen` | Tap `map` tab → `bottom_nav` still present |
 | `bottom_nav_is_visible_on_all_tabs` | Cycle home → map → profile; assert `bottom_nav` visible each time |
 
 #### `ui/auth/AuthFlowTest.kt` — 5 tests
 
-Launches `AuthActivity` directly (isolated from `MainActivity`).
+Launches `AuthActivity` directly (isolated from `MainActivity`). `launchAuthActivity()` waits for `inputPhone` to be drawn (not just the package window) before returning.
+
+All UI interactions are delegated to **`AuthRobot`** — test bodies are single-line chains.
+
+| Test | Robot call |
+|------|------------|
+| `auth_screen_shows_title_and_phone_input` | `robot.assertAuthScreenVisible()` |
+| `continue_button_is_disabled_before_phone_entry` | `robot.assertContinueDisabled()` |
+| `typing_valid_phone_enables_continue_button` | `robot.typePhone("901234567").assertContinueEnabled()` |
+| `clearing_phone_disables_continue_button` | `robot.typePhone("901234567").clearPhone().assertContinueDisabled()` |
+| `incomplete_phone_number_keeps_continue_button_disabled` | `robot.typePhone("9012").assertContinueDisabled()` |
+
+#### `ui/profile/ProfileScreenTest.kt` — 9 tests
+
+Navigates to Profile via bottom nav. Verifies four independent language
+sources simultaneously. UI interactions are delegated to **`ProfileRobot`**;
+language-source reads (SharedPrefs comparisons) stay in the test class.
+
+**Language sources tracked:**
+
+| Source | How it is read |
+|--------|----------------|
+| `deviceLang` | OS locale via `resolveDeviceLang()` (BaseUiTest) |
+| `prefLang` | `app_cache` SharedPrefs → key `lang` |
+| `localeLang` | localehelper SharedPrefs → key `Locale.Helper.Selected.Language` |
+| `uiLang` | reverse-mapped from `robot.readHeaderText()` |
+
+| Test | What it checks |
+|------|----------------|
+| `cache_lang_matches_localehelper_lang` | `prefLang == localeLang` |
+| `device_language_matches_sharedpref_language` | `deviceLang == prefLang` |
+| `ui_language_matches_sharedpref_language` | rendered header matches expected string for `prefLang` |
+| `all_language_sources_are_in_sync` | all four sources agree |
+| `profile_screen_shows_header_in_current_language` | `robot.assertHeaderText(expected)` |
+| `login_button_visible_when_logged_out` | `robot.assertLoginButtonEnabledIfPresent()` |
+| `languages_row_is_visible` | `robot.assertLanguagesRowVisible()` |
+| `privacy_policy_row_is_visible` | `robot.assertPrivacyPolicyRowVisible()` |
+| `orders_tab_label_matches_current_language` | `robot.assertOrdersTabVisible()` |
+
+#### `ui/auth/LoginE2ETest.kt` — 4 tests
+
+End-to-end login flow using a real test account and SMS API.
+
+**Requires:**
+- Real internet connection (SMS API call)
+- Physical/virtual SIM reachable at `+998 90 047-24-00`
+- `OTP_CODE` constant replaced with the actual received SMS code
+
+> `full_login_flow_with_real_phone_and_sms_code` is **automatically skipped**
+> (`Assume.assumeTrue`) when `OTP_CODE` equals the placeholder `"12345"`.
+> Replace the constant before running this test manually; do not run it in CI
+> without a real OTP injection mechanism.
 
 | Test | Flow |
 |------|------|
-| `auth_screen_shows_title_and_phone_input` | "hoopla" title + `inputPhone` visible |
-| `continue_button_is_disabled_before_phone_entry` | `btSend.isEnabled == false` on fresh launch |
-| `typing_valid_phone_enables_continue_button` | Type `901234567` → `btSend.isEnabled == true` |
-| `clearing_phone_disables_continue_button` | Enter then clear → `btSend.isEnabled == false` |
-| `incomplete_phone_number_keeps_continue_button_disabled` | Type `9012` → still disabled |
-
-#### `ui/profile/ProfileScreenTest.kt` — 4 tests
-
-Navigates to Profile via bottom nav.
-
-| Test | Flow |
-|------|------|
-| `profile_screen_shows_header` | "Профиль" text visible |
-| `login_button_visible_when_logged_out` | `login` view present and enabled (logged-out device) |
-| `languages_row_is_visible` | `languages` view present |
-| `privacy_policy_row_is_visible` | `privacyPolicy` view present |
+| `full_login_flow_with_real_phone_and_sms_code` | Full flow: enter phone → Continue → wait OTP screen → enter OTP → assert `bottom_nav` (skipped when OTP is placeholder) |
+| `phone_input_accepts_number_and_enables_continue` | Enter "900472400" → `btSend.isEnabled == true` |
+| `sms_request_leads_to_otp_screen` | Tap Continue → `inputCode` (PinView) + `phoneNumber` label appear |
+| `back_button_on_otp_screen_returns_to_phone_input` | On OTP screen → tap `backImg` → `inputPhone` reappears |
 
 ---
 
@@ -433,8 +516,9 @@ Navigates to Profile via bottom nav.
 ```
 ┌──────────────────────────────────────────────────────────┐
 │  UI Automator (androidTest)          real device/emulator │
-│  MainActivityTest, AuthFlowTest, ProfileScreenTest        │
-│  — full app installed, real Koin, real network optional   │
+│  MainActivityTest (5), AuthFlowTest (5),                  │
+│  ProfileScreenTest (9), LoginE2ETest (4) = 23 tests       │
+│  — full app installed, real Koin, network optional        │
 ├──────────────────────────────────────────────────────────┤
 │  Robolectric Fragment tests (test)              JVM only  │
 │  AuthScreenTest, ProfileScreenTest                        │
@@ -469,6 +553,18 @@ Navigates to Profile via bottom nav.
 
 ---
 
+## Recommended Improvements
+
+Identified during android-testing skill review. These require build.gradle / infrastructure changes and have not been applied yet.
+
+| Improvement | Effort | Details |
+|-------------|--------|---------|
+| **JUnit4 → JUnit5** | High | Add `junit-jupiter` to `libs.versions.toml`; replace `@Rule`/`TestWatcher` with `@BeforeEach`/`@AfterEach`; `MainDispatcherRule` becomes a plain setup/teardown pair |
+| **MockK → Fakes** | High | Create `FakeAuthRepo`, `FakeProfileRepo`, etc. as in-memory implementations; fakes catch integration-level bugs (e.g. double-emit, state leaks) that mocks miss |
+| **JUnit Assert → AssertK** | Medium | Add `assertk` dependency; replace `assertEquals(x, y)` with `assertThat(y).isEqualTo(x)` for better failure messages and fluent chaining |
+
+---
+
 ## CI Recommendation
 
 ```yaml
@@ -478,3 +574,10 @@ Navigates to Profile via bottom nav.
 # Slow gate — runs on PRs to main (requires emulator)
 - run: ./gradlew :app:connectedDebugAndroidTest
 ```
+
+> **Note on `LoginE2ETest`:** The slow gate will run all four tests in this class.
+> `full_login_flow_with_real_phone_and_sms_code` will be **skipped** (not failed)
+> in CI because `OTP_CODE` defaults to the placeholder `"12345"`. The remaining
+> three tests (`phone_input_accepts_number_and_enables_continue`,
+> `sms_request_leads_to_otp_screen`, `back_button_on_otp_screen_returns_to_phone_input`)
+> require a live internet connection and will make real SMS API calls.

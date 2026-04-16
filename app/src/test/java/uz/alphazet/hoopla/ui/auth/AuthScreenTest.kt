@@ -7,6 +7,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -101,9 +102,10 @@ class AuthScreenTest {
             fragment.showLoading()
             fragment.hideLoading()
             val inputPhone = fragment.requireView().findViewById<View>(R.id.inputPhone)
-            assert(inputPhone.isClickable) {
-                "Phone input must be clickable again after hideLoading()"
-            }
+            assertTrue(
+                "Phone input must be clickable again after hideLoading()",
+                inputPhone.isClickable
+            )
         }
     }
 }

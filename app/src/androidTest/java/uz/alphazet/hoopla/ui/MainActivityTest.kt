@@ -5,7 +5,6 @@ import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -23,9 +22,8 @@ import org.junit.runner.RunWith
  *
  * Prerequisites:
  *  - Device / emulator has the app installed (debug build).
- *  - User is NOT logged in (default fresh-install state for tests 3).
- *    If the test device is logged in, test 3 will still pass because the
- *    dialog guard only fires when the token is absent.
+ *  - User is NOT logged in — [setUp] calls [clearAuthTokens] to guarantee this
+ *    so test 3's assertion is unconditional.
  */
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -33,6 +31,8 @@ class MainActivityTest : BaseUiTest() {
 
     @Before
     override fun setUp() {
+        // Guarantee logged-out state so the orders-tab guard fires unconditionally.
+        clearAuthTokens()
         super.setUp()
         launchApp()
     }
@@ -57,13 +57,12 @@ class MainActivityTest : BaseUiTest() {
 
     @Test
     fun tapping_profile_tab_opens_profile_screen() {
-        // Profile tab label is "Профиль"
         val profileTab = waitForId("profile")
         profileTab.click()
 
-        // Profile screen has a header TextView with text "Профиль"
-        val header = device.wait(Until.findObject(By.textContains("Профиль")), TIMEOUT_MS)
-        assertNotNull("Profile screen header not found after tapping Profile tab", header)
+        // Verify using resource ID so the check is language-independent.
+        val header = device.wait(Until.findObject(By.res(APP_PACKAGE, "header_title")), TIMEOUT_MS)
+        assertNotNull("Profile screen header_title not found after tapping Profile tab", header)
     }
 
     // -----------------------------------------------------------------------
@@ -75,21 +74,17 @@ class MainActivityTest : BaseUiTest() {
         val ordersTab = waitForId("orders")
         ordersTab.click()
 
-        // MainActivity.showRequestDF shows a dialog containing the sign-in message.
-        // The dialog body text is "Вы не авторизованы!\nПожалуйста авторизуйтесь".
-        // If the user IS logged in the dialog won't appear — we accept that gracefully.
+        // clearAuthTokens() in setUp guarantees the device is logged out, so the
+        // sign-in dialog MUST appear.  This assertion is now unconditional.
         val dialog = device.wait(
             Until.findObject(By.textContains("авторизованы")),
             TIMEOUT_MS
         )
-        // Only assert presence of the dialog; if logged in the test is a no-op pass.
-        // Logged-out state: dialog must appear.
-        // (In CI, the device is always fresh/logged-out — this assertion holds.)
-        if (dialog != null) {
-            // Dismiss by tapping "Отмена" so subsequent tests are unaffected
-            val cancelButton = device.wait(Until.findObject(By.textContains("Отмена")), TIMEOUT_MS)
-            cancelButton?.click()
-        }
+        assertNotNull("Sign-in dialog must appear when tapping Orders while logged out", dialog)
+
+        // Dismiss by tapping "Отмена" so subsequent tests are unaffected.
+        val cancelButton = device.wait(Until.findObject(By.textContains("Отмена")), TIMEOUT_MS)
+        cancelButton?.click()
     }
 
     // -----------------------------------------------------------------------

@@ -1,10 +1,10 @@
 package uz.alphazet.hoopla.ui.profile
 
+import android.content.Context
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,78 +13,181 @@ import uz.alphazet.hoopla.ui.BaseUiTest
 /**
  * UI Automator tests for the Profile screen.
  *
- * These tests navigate to [ProfileScreen] via the bottom navigation and verify
- * the visible UI elements.  The exact content depends on whether the test device
- * is logged in or logged out.
+ * Four independent language sources are tracked and verified against each other:
  *
- * Tested flows:
- *  1. Tapping the Profile tab shows the screen header "Профиль".
- *  2. Logged-out state — a "Войти" (Login) button is visible.
- *  3. Language section is accessible (the Languages row is present).
- *  4. Privacy Policy row is present and tappable.
+ *  | Source       | How it is read                                         |
+ *  |--------------|--------------------------------------------------------|
+ *  | [deviceLang] | OS locale → "ru" / "en" / "uz"                        |
+ *  | [prefLang]   | "app_cache" SharedPrefs → key "lang"                   |
+ *  | [localeLang] | localehelper SharedPrefs → key "Locale.Helper.Selected.Language" |
+ *  | [uiLang]     | reverse-lookup of the actual [header_title] text       |
+ *
+ * UI interactions are delegated to [ProfileRobot]. Language-source reads and
+ * comparison logic stay here since they are not UI interactions.
  */
 @RunWith(AndroidJUnit4::class)
 @LargeTest
 class ProfileScreenTest : BaseUiTest() {
 
+    private val robot by lazy { ProfileRobot(device) }
+
+    /** Device system locale mapped to a supported code. */
+    private lateinit var deviceLang: String
+
+    /** Language stored in AppCache SharedPreferences ("app_cache" / key "lang"). */
+    private lateinit var prefLang: String
+
+    /**
+     * Language stored by localehelper.
+     * File: "com.zeugmasolutions.localehelper.LocaleHelper"
+     * Key:  "Locale.Helper.Selected.Language"
+     */
+    private lateinit var localeLang: String
+
+    /** Language detected from the rendered [header_title] text. */
+    private lateinit var uiLang: String
+
+    /** Context locked to [prefLang] for resolving expected string values. */
+    private lateinit var localizedContext: Context
+
     @Before
     override fun setUp() {
         super.setUp()
-        launchApp()
-        navigateToProfile()
-    }
 
-    private fun navigateToProfile() {
-        val profileTab = waitForId("profile")
-        profileTab.click()
-        device.waitForIdle(IDLE_TIMEOUT_MS)
+        deviceLang = resolveDeviceLang()
+        prefLang   = readCachePrefLang()
+        localeLang = readLocaleHelperLang()
+        localizedContext = buildLocalizedContext(prefLang)
+
+        launchApp()
+        robot.navigateToProfile()
+
+        // Derive uiLang AFTER navigation so the header is on screen.
+        uiLang = readUiLang()
     }
 
     // -----------------------------------------------------------------------
-    // 1. Profile screen header is visible
+    // Language consistency tests
     // -----------------------------------------------------------------------
 
     @Test
-    fun profile_screen_shows_header() {
-        val header = device.wait(Until.findObject(By.textContains("Профиль")), TIMEOUT_MS)
-        assertNotNull("Profile header not found on profile screen", header)
+    fun cache_lang_matches_localehelper_lang() {
+        assertEquals(
+            "AppCache lang '$prefLang' ≠ localehelper lang '$localeLang'. " +
+            "SplashActivity should call LocaleHelper.setLocale() on first install.",
+            prefLang, localeLang
+        )
+    }
+
+    @Test
+    fun device_language_matches_sharedpref_language() {
+        assertEquals(
+            "Device lang '$deviceLang' ≠ pref lang '$prefLang'. " +
+            "SplashActivity should have written the device locale on first install.",
+            deviceLang, prefLang
+        )
+    }
+
+    @Test
+    fun ui_language_matches_sharedpref_language() {
+        val expected = buildLocalizedContext(prefLang)
+            .getString(uz.alphazet.domain.R.string.profile)
+        assertEquals(
+            "header_title shows '$uiLang' language but prefLang='$prefLang'. " +
+            "localehelper='$localeLang', device='$deviceLang'.",
+            prefLang, uiLang
+        )
+        assertEquals(
+            "header_title text should be '$expected' for lang='$prefLang'",
+            expected,
+            robot.readHeaderText()
+        )
+    }
+
+    @Test
+    fun all_language_sources_are_in_sync() {
+        val langs = mapOf(
+            "device"       to deviceLang,
+            "pref"         to prefLang,
+            "localehelper" to localeLang,
+            "ui"           to uiLang
+        )
+        assertTrue(
+            "Language sources are out of sync: $langs",
+            langs.values.distinct().size == 1
+        )
     }
 
     // -----------------------------------------------------------------------
-    // 2. Login button visible when logged out
+    // Screen content tests
     // -----------------------------------------------------------------------
+
+    @Test
+    fun profile_screen_shows_header_in_current_language() {
+        val expected = localizedContext.getString(uz.alphazet.domain.R.string.profile)
+        robot.assertHeaderText(expected)
+    }
 
     @Test
     fun login_button_visible_when_logged_out() {
-        // If the user is logged out, the "Войти" button is present.
-        // If logged in this element is GONE — the test passes silently in that case.
-        val loginButton = device.wait(Until.findObject(By.res(APP_PACKAGE, "login")), TIMEOUT_MS)
-        // We accept either state; the assertion only fires when the element is found
-        // but in an unexpected visual state.
-        if (loginButton != null) {
-            assert(loginButton.isEnabled) {
-                "'Войти' button found but is not enabled"
-            }
-        }
+        robot.assertLoginButtonEnabledIfPresent()
     }
-
-    // -----------------------------------------------------------------------
-    // 3. Languages row is present
-    // -----------------------------------------------------------------------
 
     @Test
     fun languages_row_is_visible() {
-        val languagesRow = device.wait(Until.findObject(By.res(APP_PACKAGE, "languages")), TIMEOUT_MS)
-        assertNotNull("Languages settings row not found on profile screen", languagesRow)
+        robot.assertLanguagesRowVisible()
     }
-
-    // -----------------------------------------------------------------------
-    // 4. Privacy Policy row is present
-    // -----------------------------------------------------------------------
 
     @Test
     fun privacy_policy_row_is_visible() {
-        val privacyRow = device.wait(Until.findObject(By.res(APP_PACKAGE, "privacyPolicy")), TIMEOUT_MS)
-        assertNotNull("Privacy Policy row not found on profile screen", privacyRow)
+        robot.assertPrivacyPolicyRowVisible()
+    }
+
+    @Test
+    fun orders_tab_label_matches_current_language() {
+        robot.assertOrdersTabVisible()
+    }
+
+    // -----------------------------------------------------------------------
+    // Helpers — language-source reads (not UI interactions; stay in test class)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Language stored in AppCache SharedPreferences.
+     * File: "app_cache"  Key: "lang"  Default: "ru"
+     */
+    private fun readCachePrefLang(): String =
+        prefs("app_cache").getString("lang", "ru") ?: "ru"
+
+    /**
+     * Language stored by the localehelper library.
+     * File: "com.zeugmasolutions.localehelper.LocaleHelper"
+     * Key:  "Locale.Helper.Selected.Language"
+     * Default: device locale mapped to supported code.
+     */
+    private fun readLocaleHelperLang(): String {
+        val stored = prefs("com.zeugmasolutions.localehelper.LocaleHelper")
+            .getString("Locale.Helper.Selected.Language", null)
+        return if (stored != null) toSupportedLang(stored) else deviceLang
+    }
+
+    /**
+     * Reverse-maps the [header_title] text to a supported language code.
+     * "Профиль" → "ru", "Profile" → "en", "Profil" → "uz".
+     */
+    private fun readUiLang(): String {
+        val text = robot.readHeaderText()
+        return HEADER_TRANSLATIONS.entries
+            .firstOrNull { it.value == text }
+            ?.key ?: "ru"
+    }
+
+    companion object {
+        /** All known translations of R.string.profile, keyed by language code. */
+        private val HEADER_TRANSLATIONS = mapOf(
+            "ru" to "Профиль",
+            "en" to "Profile",
+            "uz" to "Profil"
+        )
     }
 }
