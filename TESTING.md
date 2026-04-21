@@ -2,15 +2,16 @@
 
 ## Overview
 
-The project has three layers of tests matching the three-module architecture.
+The project has four test layers spread across the three-module architecture.
 
 | Layer | Module | Framework | Runs on | Count |
-|-------|--------|-----------|---------|-------|
-| Unit — core logic | `:domain` | JUnit 4 + MockK + Robolectric | JVM | **67** |
-| Unit — API / models | `:data` | JUnit 4 + MockWebServer | JVM | **70** |
-| Unit — ViewModels + UI | `:app` | JUnit 4 + MockK + Turbine + Robolectric | JVM | **47** |
-| UI Automation | `:app` | UI Automator | Device / Emulator | **23** |
-| **Total JVM** | | | | **184** |
+|-------|--------|-----------|---------|------:|
+| Unit — core logic + repositories | `:domain` | JUnit 4 + MockK + Turbine + Robolectric | JVM | **141** |
+| Unit — services + models | `:data` | JUnit 4 + MockWebServer + Gson | JVM | **70** |
+| Unit — ViewModels + Fragments | `:app` | JUnit 4 + MockK + Turbine + Robolectric + Koin | JVM | **61** |
+| UI Automation | `:app` | UI Automator 2 | Device / Emulator | **66** |
+| **Total JVM** | | | | **272** |
+| **Grand total (incl. on-device)** | | | | **338** |
 
 ---
 
@@ -52,19 +53,18 @@ The project has three layers of tests matching the three-module architecture.
 
 ### HTML reports
 
-After running, reports are at:
-
 ```
-app/build/reports/tests/testDebugUnitTest/index.html
 domain/build/reports/tests/testDebugUnitTest/index.html
 data/build/reports/tests/testDebugUnitTest/index.html
+app/build/reports/tests/testDebugUnitTest/index.html
+app/build/reports/androidTests/connected/index.html
 ```
 
 ---
 
 ## Test Dependencies
 
-All versions live in `gradle/libs.versions.toml`.
+Versions live in `gradle/libs.versions.toml`.
 
 | Library | Version | Used in |
 |---------|---------|---------|
@@ -83,7 +83,7 @@ All versions live in `gradle/libs.versions.toml`.
 
 ```kotlin
 testOptions {
-    unitTests.isIncludeAndroidResources = true  // needed for Robolectric
+    unitTests.isIncludeAndroidResources = true   // required for Robolectric
     unitTests.isReturnDefaultValues = true
 }
 
@@ -96,159 +96,117 @@ dependencies {
     testImplementation(libs.androidx.test.core)
     testImplementation(libs.fragment.testing)
     testImplementation(libs.koin.test.junit4)
-    debugImplementation(libs.fragment.testing.manifest)   // provides EmptyFragmentActivity
+    debugImplementation(libs.fragment.testing.manifest)   // EmptyFragmentActivity host
     androidTestImplementation(libs.uiautomator)
 }
 ```
 
 ---
 
-## Module 1 — `:domain` Unit Tests
+## Module 1 — `:domain` Unit Tests (141 tests)
 
 **Location:** `domain/src/test/java/uz/alphazet/domain/`
 
-Tests the framework that every feature builds on: HTTP error mapping, coroutine
-flow wrappers, SharedPreferences delegates, and formatting utilities.
+Covers the framework every feature builds on: HTTP error mapping, coroutine
+flow wrappers, SharedPreferences delegates, utilities — and every repository
+in the app.
 
-### Test files
+### Core framework — 67 tests
 
-#### `network/BaseRepoTest.kt` — 20 tests
+| File | Tests | Scope |
+|------|------:|-------|
+| `network/BaseRepoTest.kt` | 20 | `handle` / `handleFlow` / `handleX`; HTTP 200/400/401/402/403/404/409/422/428/429/5xx → custom exceptions; `IOException → ConnectionErrorException` |
+| `network/RemoteExceptionsTest.kt` | 14 | Each `RemoteException` subclass carries the correct status, message and optional `errorData` |
+| `data/UIResourceTest.kt` | 5 | `Success` / `Error` / `Loading` identity + data extraction |
+| `cache/PrefDelegatesTest.kt` | 12 | Robolectric — every `*Pref` delegate factory against a real `ApplicationContext`; two-instance reads confirm persistence |
+| `utils/UtilsTest.kt` | 14 | `Long.formatToPrice`, `String.formatPhoneNumber`, `Date.getDateDMMMMYYYY`, `Double.formatDistance`; locale/TZ pinned to `ENGLISH`/`UTC` |
+| `utils/FormatDistanceTest.kt` | 2 | Boundary values (`< 1 km` → m, `≥ 1 km` → km) |
 
-Tests `BaseRepo`, the abstract class that wraps every Retrofit call in `UIResource`.
+> **Known limitation** — `any<T>()` delegate uses `TypeToken<T>()` in a
+> non-reified context. The resulting type erasure prevents Gson round-tripping
+> to the concrete type. `any<T>()` is currently unused in `AppCacheImpl`; a
+> regression test locks in the bug.
 
-| Test | What it verifies |
-|------|-----------------|
-| `handle_200_returns_success` | 200 → `UIResource.Success` |
-| `handle_400_throws_BadRequestException` | 400 → `BadRequestException` |
-| `handle_401_throws_UnauthorizedException` | 401 → `UnauthorizedException` |
-| `handle_402_throws_PaymentException` | 402 → `PaymentException` |
-| `handle_403_throws_ForbiddenException` | 403 → `ForbiddenException` |
-| `handle_404_throws_NotFoundException` | 404 → `NotFoundException` |
-| `handle_409_throws_ConflictException` | 409 → `ConflictException` |
-| `handle_422_throws_ValidationException` | 422 → `ValidationException` |
-| `handle_428_throws_PreconditionRequiredException` | 428 → `PreconditionRequiredException` |
-| `handle_429_throws_TooManyRequestException` | 429 → `TooManyRequestException` |
-| `handle_500_throws_ServerErrorException` | 5xx → `ServerErrorException` |
-| `handle_IOException_throws_ConnectionErrorException` | No network → `ConnectionErrorException` |
-| `handleFlow_emits_loading_then_success` | Flow wrapper emits Loading → Success |
-| `handleFlow_emits_loading_then_error` | Flow wrapper emits Loading → Error |
-| `handleX_success_returns_data` | Suspend variant returns data directly |
-| `handleX_error_wraps_in_UIResource_Error` | Suspend variant wraps exceptions |
-| + 4 more edge cases | |
+### Repositories — 74 tests
 
-#### `network/RemoteExceptionsTest.kt` — 14 tests
+One test file per `BaseRepo` subclass. Each file mocks the relevant Retrofit
+service with MockK, exercises every public method, and asserts both the
+request (args forwarded correctly, JSON body shape) and the outgoing
+`UIResource` via Turbine. Files that construct `JSONObject` bodies
+(`AuthRepo`, `OrderRepo`, `ProfileRepo`, `SubscriptionRepo`) use Robolectric
+because `org.json.JSONObject` is an Android stub on pure JVM.
 
-Verifies the custom exception hierarchy: each `RemoteException` subclass stores
-the correct HTTP status code, message, and optional `errorData` payload.
-
-#### `data/UIResourceTest.kt` — 5 tests
-
-Verifies `UIResource` sealed class behavior: `Success`, `Error`, `Loading`
-identity comparisons and data extraction.
-
-#### `cache/PrefDelegatesTest.kt` — 12 tests (Robolectric)
-
-Tests all SharedPreferences delegate factories (`stringPref`, `boolPref`,
-`intPref`, `longPref`, `floatPref`, `nullableStringPref`) using a real
-`ApplicationContext` via Robolectric. Two-instance reads confirm persistence
-across `AppCache` instances.
-
-> **Known limitation documented in test:** The `any<T>()` delegate uses
-> `TypeToken<T>()` in a non-`reified` context, causing type erasure that
-> prevents Gson from deserializing back to the concrete type. This is a
-> latent production bug but `any<T>()` is currently unused in `AppCacheImpl`.
-
-#### `utils/UtilsTest.kt` — 14 tests
-
-Pure JVM tests for extension functions in `domain/utils/`. Locale and timezone
-are pinned to `Locale.ENGLISH` / `UTC` in `@Before`/`@After`.
-
-| Utility | Tests |
-|---------|-------|
-| `Long.formatToPrice()` | Thousand separators, zero, large numbers |
-| `String.formatPhoneNumber()` | 12-digit → `+998 XX XXX-XX-XX` format |
-| `Date.getDateDMMMMYYYY()` | Specific date → Russian month name |
-| `Double.formatDistance()` | `< 1 km` → metres, `≥ 1 km` → kilometres |
-
-#### `utils/FormatDistanceTest.kt` — 2 tests
-
-Focused boundary tests for `Double.formatDistance()`.
+| File | Tests | JVM runner | Notable coverage |
+|------|------:|------------|------------------|
+| `repositories/AuthRepoTest.kt` | 10 | Robolectric | `sendSMS`, `resendSMS`, `confirmSMS` — JSON body slot-captured and parsed |
+| `repositories/CategoryRepoTest.kt` | 5 | Pure JVM | `getCategories()` success/empty/400/401/offline |
+| `repositories/HomeRepoTest.kt` | 11 | Pure JVM | `getLoyaltyCard`, `getNearShops(lat,lng,name,catId)`, `getPendingFeedbacks`, `submitFeedback` — `buildMap` omits blank comment |
+| `repositories/NotificationRepoTest.kt` | 6 | Pure JVM | `getNotificationDetail` defaults language to `"ru"`; `markRead()` via flow |
+| `repositories/OrderRepoTest.kt` | 11 | Robolectric | `validateOrder`, `createOrder` (modifiers array), `createOrderRahmat` (`use_cashback` + `cashback_amount`) |
+| `repositories/PaymentServiceRepoTest.kt` | 5 | Pure JVM | `getPaymentServices`, `topUpViaPayService` including 402 PaymentException |
+| `repositories/ProfileRepoTest.kt` | 10 | Robolectric | `getMe`, `editMe`, `updateMe` (null/empty keys omitted), `logout`, `deactivate` |
+| `repositories/QRCodeRepoTest.kt` | 7 | Pure JVM | `generateQRCode`, `getOrderInfo(id)`, `cancelOrder(id)`, `getDrinksStat` |
+| `repositories/ShopRepoTest.kt` | 4 | Pure JVM | `getShopDetail(shopId)` forwards id; 404/500 branches |
+| `repositories/SubscriptionRepoTest.kt` | 5 | Robolectric | `getSubscriptions`, `buySubscription(id)` with 402 PaymentException |
 
 ---
 
-## Module 2 — `:data` Unit Tests
+## Module 2 — `:data` Unit Tests (70 tests)
 
 **Location:** `data/src/test/java/uz/alphazet/data/`
 
-Tests data models (Gson deserialization) and all 10 Retrofit service interfaces
-against a real `MockWebServer`.
+Covers data models (Gson deserialization) and all 10 Retrofit service
+interfaces against a real `MockWebServer`.
 
 ### Shared helper — `services/ServiceTestSupport.kt`
 
 ```kotlin
 inline fun <reified T> retrofitFor(server: MockWebServer): T
-fun mockOk(body: String): MockResponse          // 200 + body
+fun mockOk(body: String): MockResponse            // 200 + body
 fun mockError(code: Int, body: String): MockResponse
 ```
 
-Every service test creates a `MockWebServer`, enqueues a response, calls the
-suspend function, and asserts the request path, method, and parsed response.
+Every service test starts `MockWebServer`, enqueues a response, calls the
+suspend function via `runTest`, and asserts the outgoing request (path,
+method, query params, request body) plus the parsed response model.
 
-### Test files
+### Models — 24 tests
 
-#### `ModelDeserializationTest.kt` — 11 tests
+| File | Tests | Scope |
+|------|------:|-------|
+| `ModelDeserializationTest.kt` | 11 | Every major data model from raw JSON; nested objects, nullable fields, `@SerializedName` mappings |
+| `BaseResponseDataTest.kt` | 7 | `BaseResponseData<T>` wrapper: `status`, `message`, `data`, null-safety |
+| `rv/BaseItemTest.kt` | 6 | `BaseItem` DiffUtil contract — `isSameItem`, `isContentTheSame`, stable `uniqueId` |
 
-Verifies Gson deserialization of every major data model from raw JSON strings.
-Covers nested objects, nullable fields, and `@SerializedName` mappings.
+> **Known limitation** — `NotificationItemData.uniqueId` returns `null` via
+> Gson because it is a constructor-time initializer (`val uniqueId =
+> notificationId.toString()`). Gson uses `Unsafe.allocateInstance` and
+> bypasses the constructor. `ShopItemData.uniqueId` uses a property getter
+> (`get() = shopId.toString()`) and works correctly. A regression test locks
+> in the difference.
 
-> **Known limitation documented in test:** `NotificationItemData.uniqueId`
-> returns `null` when parsed via Gson because it is a constructor-time
-> initializer (`val uniqueId = notificationId.toString()`). Gson uses
-> `Unsafe.allocateInstance` and bypasses the constructor. A separate test
-> locks in this behaviour as a regression guard. Compare with
-> `ShopItemData.uniqueId` which uses a property getter
-> (`get() = shopId.toString()`) and works correctly.
-
-#### `BaseResponseDataTest.kt` — 7 tests
-
-Tests `BaseResponseData<T>` wrapper: `status`, `message`, `data` extraction,
-and null-safety for optional fields.
-
-#### `rv/BaseItemTest.kt` — 6 tests
-
-Tests `BaseItem` DiffUtil contract: `isSameItem`, `isContentTheSame`, and
-stable `uniqueId` behaviour.
-
-#### Service tests (10 files, 46 tests total)
-
-Each service test file follows the same pattern:
-1. Start `MockWebServer`
-2. Build a Retrofit instance pointed at the mock URL
-3. Enqueue a `MockResponse` with a JSON fixture
-4. Call the `suspend` service function via `runTest`
-5. Assert the outgoing request (path, method, query params, request body)
-6. Assert the parsed response model fields
+### Services — 46 tests
 
 | File | Service | Tests |
-|------|---------|-------|
-| `AuthServiceTest.kt` | `AuthService` | 5 |
-| `HomeServiceTest.kt` | `HomeService` | 6 |
-| `ShopServiceTest.kt` | `ShopService` | 4 |
-| `OrderServiceTest.kt` | `OrderService` | 5 |
-| `ProfileServiceTest.kt` | `ProfileService` | 6 |
-| `NotificationServiceTest.kt` | `NotificationService` | 4 |
-| `CategoryServiceTest.kt` | `CategoryService` | 3 |
-| `PaymentServiceTest.kt` | `PaymentServiceTest` | 4 |
-| `QrCodeServiceTest.kt` | `QrCodeService` | 5 |
-| `SubscriptionServiceTest.kt` | `SubscriptionService` | 4 |
+|------|---------|------:|
+| `services/AuthServiceTest.kt` | `AuthService` | 5 |
+| `services/CategoryServiceTest.kt` | `CategoryService` | 3 |
+| `services/HomeServiceTest.kt` | `HomeService` | 6 |
+| `services/NotificationServiceTest.kt` | `NotificationService` | 4 |
+| `services/OrderServiceTest.kt` | `OrderService` | 5 |
+| `services/PaymentServiceTest.kt` | `PaymentService` | 4 |
+| `services/ProfileServiceTest.kt` | `ProfileService` | 6 |
+| `services/QrCodeServiceTest.kt` | `QrCodeService` | 5 |
+| `services/ShopServiceTest.kt` | `ShopService` | 4 |
+| `services/SubscriptionServiceTest.kt` | `SubscriptionService` | 4 |
 
 ---
 
-## Module 3 — `:app` Unit Tests
+## Module 3 — `:app` JVM Unit Tests (61 tests)
 
 **Location:** `app/src/test/java/uz/alphazet/hoopla/`
 
-Tests ViewModels and Fragment UI state using MockK, Turbine, Robolectric, and
+Covers ViewModels and Fragment UI state with MockK + Turbine + Robolectric +
 Koin test rules. No production Koin graph is loaded — every test wires up its
 own mocks directly.
 
@@ -282,7 +240,7 @@ Three patterns exist across the codebase:
 
 **Pattern A — `MutableSharedFlow(replay=0)` (AuthVM, PaymentVM)**
 ```kotlin
-// Collect BEFORE calling the method — SharedFlow drops events with no collectors
+// Collect BEFORE calling the method — SharedFlow drops events with no collectors.
 vm.sendSmsFlow.test {
     vm.sendSms(phone)
     assertEquals(UIResource.Loading, awaitItem())
@@ -293,19 +251,17 @@ vm.sendSmsFlow.test {
 
 **Pattern B — `MutableStateFlow(UIResource.Loading)` (HomeVM, ProfileVM, OrderVM, QRCodeVM, NotificationVM)**
 ```kotlin
-// StateFlow already holds Loading as initial value.
-// distinctUntilChanged suppresses duplicate Loading emissions.
+// StateFlow already holds Loading; distinctUntilChanged suppresses duplicates.
 vm.userDataFlow.test {
     assertEquals(UIResource.Loading, awaitItem())  // initial value
     vm.getUser()
-    assertTrue(awaitItem() is UIResource.Success)  // goes straight to Success
+    assertTrue(awaitItem() is UIResource.Success)  // straight to Success
     cancelAndIgnoreRemainingEvents()
 }
 ```
 
-**Pattern C — `suspend fun method(): SharedFlow` (ShopVM, HomeVM.getLoyaltyCard, etc.)**
+**Pattern C — `suspend fun method(): SharedFlow` (ShopVM, HomeVM.getLoyaltyCard, SubscriptionVM, …)**
 ```kotlin
-// Mock repo to return flowOf(...); shareIn(Lazily) starts on first collector
 coEvery { repo.getShopDetail(1, "ru") } returns flowOf(UIResource.Success(shop))
 val flow = vm.getShopDetail(1)
 flow.test {
@@ -314,62 +270,63 @@ flow.test {
 }
 ```
 
-### ViewModel test files
+### ViewModel tests — 38 tests
 
 | File | VM | Pattern(s) | Tests |
-|------|----|-----------|-------|
-| `auth/AuthVMTest.kt` | `AuthVM` | A | 5 |
-| `home/HomeVMTest.kt` | `HomeVM` | B, C | 8 |
-| `home/NotificationVMTest.kt` | `NotificationVM` | B | 2 |
-| `profile/ProfileVMTest.kt` | `ProfileVM` | B, C | 5 |
-| `profile/payment/PaymentVMTest.kt` | `PaymentVM` | A, C | 3 |
-| `profile/subscriptions/SubscriptionVMTest.kt` | `SubscriptionVM` | C | 3 |
-| `order/OrderVMTest.kt` | `OrderVM` | B, C | 5 |
-| `shop_details/ShopVMTest.kt` | `ShopVM` | C | 2 |
-| `qr_code/QRCodeVMTest.kt` | `QRCodeVM` | B, C | 5 |
+|------|----|-----------|------:|
+| `ui/auth/AuthVMTest.kt` | `AuthVM` | A | 5 |
+| `ui/home/HomeVMTest.kt` | `HomeVM` | B, C | 8 |
+| `ui/home/NotificationVMTest.kt` | `NotificationVM` | B | 2 |
+| `ui/profile/ProfileVMTest.kt` | `ProfileVM` | B, C | 5 |
+| `ui/profile/payment/PaymentVMTest.kt` | `PaymentVM` | A, C | 3 |
+| `ui/profile/subscriptions/SubscriptionVMTest.kt` | `SubscriptionVM` | C | 3 |
+| `ui/order/OrderVMTest.kt` | `OrderVM` | B, C | 5 |
+| `ui/qr_code/QRCodeVMTest.kt` | `QRCodeVM` | B, C | 5 |
+| `ui/shop_details/ShopVMTest.kt` | `ShopVM` | C | 2 |
 
-> **`OrderVM` special case:** The `init` block calls `getUser()` on
+> **`OrderVM` special case** — the `init` block calls `getUser()` on
 > construction. Tests use a `lazy` delegate to set up `profileRepo` mocks
-> before the VM is instantiated.
+> *before* the VM is instantiated.
 
-### Fragment (Robolectric) test files
+### Fragment (Robolectric) tests — 23 tests
 
-Fragment tests use `launchFragmentInContainer<T>` with `@Config(sdk = [33], application = TestApp::class)` and inject mocks via `KoinTestRule`.
+Fragment tests use `launchFragmentInContainer<T>` with
+`@Config(sdk = [33], application = TestApp::class)` and inject mocks via
+`KoinTestRule`.
 
 | File | Fragment | Tests |
-|------|---------|-------|
-| `auth/AuthScreenTest.kt` | `AuthScreen` | 4 |
-| `profile/ProfileScreenTest.kt` | `ProfileScreen` | 5 |
+|------|----------|------:|
+| `ui/auth/AuthScreenTest.kt` | `AuthScreen` | 5 |
+| `ui/home/HomeScreenTest.kt` | `HomeScreen` | 8 |
+| `ui/profile/ProfileScreenTest.kt` | `ProfileScreen` | 10 |
 
 **What Fragment tests cover:**
 
-| Test | Assertion |
-|------|-----------|
-| `fragment_inflates_without_crash` | `launchFragmentInContainer` succeeds |
-| `send_button_is_disabled_initially` | `btSend.isEnabled == false` |
-| `showLoading_disables_phone_input_clickability` | `inputPhone.isClickable == false` |
-| `hideLoading_re_enables_phone_input_clickability` | `inputPhone.isClickable == true` |
-| `getUser_is_called_once_on_view_created` | `verify(exactly = 1) { profileVM.getUser() }` |
-| `success_state_shows_auth_group_and_user_name` | Pre-seed StateFlow → `authGroup` VISIBLE, name set |
-| `unauthorized_exception_shows_unauth_group` | `onUnauthorizedException()` → `unAuthGroup` VISIBLE |
-| `pull_to_refresh_calls_getUser_a_second_time` | `verify(exactly = 2) { profileVM.getUser() }` |
+- Fragment inflation without crash
+- Initial view state (button enabled/disabled, group visibility)
+- Loading transitions (`showLoading` / `hideLoading` toggle input
+  clickability, swipe-refresh state)
+- ViewModel methods called with correct arguments (`verify`)
+- Success/error flow responses mapped into views (pre-seed the mocked
+  `StateFlow`, assert `authGroup`/`unAuthGroup` visibility, text fields,
+  etc.)
+- Pull-to-refresh triggers the repository a second time
 
-**What Fragment tests do NOT cover (requires Espresso / device):**
+**What Fragment tests do NOT cover** (requires Espresso / device):
 
 - Navigation between screens (Cicerone router)
-- Third-party `MaskedEditText` input behaviour
+- `MaskedEditText` input behaviour
 - `CircularProgressButton` animation
-- Location permission flows
-- QR camera, MapKit map rendering
+- Location permission flows, QR camera, MapKit rendering
 
 ---
 
-## Module 3 — `:app` UI Automator Tests
+## Module 3 — `:app` UI Automator Tests (66 tests)
 
 **Location:** `app/src/androidTest/java/uz/alphazet/hoopla/`
 
-UI Automator tests run on a real device or emulator against the installed debug
-APK. They test end-to-end user flows that cannot be verified with JVM tests.
+UI Automator tests run on a real device or emulator against the installed
+debug APK. They cover end-to-end flows that cannot be verified on the JVM.
 
 ### Base class — `ui/BaseUiTest.kt`
 
@@ -380,8 +337,8 @@ abstract class BaseUiTest {
     @Before open fun setUp() {
         device = UiDevice.getInstance(...)
         // Seeds both language SharedPrefs (app_cache + localehelper) to match
-        // the device locale, bypasses first-launch onboarding, wakes screen.
-        device.pressHome()
+        // the OS locale, seeds isFirstTime=false so Splash skips onboarding,
+        // wakes the screen and dismisses the keyguard, then presses Home.
     }
 
     protected fun launchApp()
@@ -389,153 +346,130 @@ abstract class BaseUiTest {
     protected fun waitForText(text: String, timeout: Long = 5_000): UiObject2
     protected fun waitForTextContains(substring: String, timeout: Long = 5_000): UiObject2
 
-    // Shared helpers available to all subclasses:
-    protected fun clearAuthTokens()               // removes accessToken + refreshToken from app_cache
-    protected fun prefs(name: String): SharedPreferences  // opens any named prefs file
-    protected fun resolveDeviceLang(): String      // OS locale → "uz" / "en" / "ru"
-    protected fun toSupportedLang(lang: String): String   // maps any tag to supported code
-    protected fun buildLocalizedContext(lang: String): Context  // Context locked to lang
+    // Shared helpers:
+    protected fun clearAuthTokens()                    // removes accessToken + refreshToken
+    protected fun prefs(name: String): SharedPreferences
+    protected fun resolveDeviceLang(): String          // OS locale → "uz" / "en" / "ru"
+    protected fun toSupportedLang(lang: String): String
+    protected fun buildLocalizedContext(lang: String): Context
+    protected fun currentPrefLang(): String
+    protected fun localizedString(@StringRes id: Int): String
+
+    companion object {
+        const val APP_PACKAGE     = "uz.alphazet.hoopla"
+        const val TIMEOUT_MS      = 5_000L
+        const val IDLE_TIMEOUT_MS = 1_000L
+        const val LAUNCH_READY_MS = 10_000L
+    }
 }
 ```
 
-Default timeout: **5 000 ms** per element lookup.
+### Shared patterns
 
-### Robot classes
-
-The Robot Pattern separates test intent from `UiDevice` boilerplate. Every
-robot method returns `this` so calls chain naturally.
-
-| Class | Location | Used by |
-|-------|----------|---------|
-| `AuthRobot` | `ui/auth/AuthRobot.kt` | `AuthFlowTest` |
-| `ProfileRobot` | `ui/profile/ProfileRobot.kt` | `ProfileScreenTest` |
-
-**`AuthRobot` API:**
-
-| Method | Action |
-|--------|--------|
-| `typePhone(digits)` | Click `inputPhone`, type 9-digit suffix |
-| `clearPhone()` | Clear `inputPhone` |
-| `assertAuthScreenVisible()` | "hoopla" title + `inputPhone` visible |
-| `assertContinueEnabled()` | `btSend.isEnabled == true` |
-| `assertContinueDisabled()` | `btSend.isEnabled == false` |
-
-**`ProfileRobot` API:**
-
-| Method | Action |
-|--------|--------|
-| `navigateToProfile()` | Tap profile tab, wait for `swipe_refresh_layout` |
-| `readHeaderText()` | Return `header_title` text |
-| `assertHeaderText(expected)` | Assert `header_title == expected` |
-| `assertLoginButtonEnabledIfPresent()` | If `login` button exists, assert it is enabled |
-| `assertLanguagesRowVisible()` | `languages` view found |
-| `assertPrivacyPolicyRowVisible()` | `privacyPolicy` view found |
-| `assertOrdersTabVisible()` | `orders` nav item found |
+- **Logged-out baseline** — tests that must hit the unauthenticated branch
+  call `clearAuthTokens()` in `@Before` before `super.setUp()` + `launchApp()`.
+- **Direct-launch activities** — sub-screens like `SubscriptionActivity`,
+  `OrderActivity`, `EditProfileScreen` and `NotificationDetailScreen` are
+  launched via `Intent().setClassName(APP_PACKAGE, "...")` instead of
+  navigating from the bottom nav. Extras are seeded inline when needed
+  (order id, notification id, shop id).
+- **Per-character typing** — phone / search / name fields use
+  `device.executeShellCommand("input text ...")` so the `MaskedEditText` /
+  `PinView` TextWatchers fire exactly as in production.
+- **Locale-resilient back arrow** — toolbar back is located via
+  `By.desc("Orqaga")` with a `device.pressBack()` fallback for non-UZ
+  locales.
+- **Seeded fake auth** — `OrdersScreenTest` writes a non-empty `accessToken`
+  to `app_cache` so MainActivity's orders-tab guard lets the tap through;
+  the backend 401s the fake token but the fragment chrome is still
+  assertable.
+- **Onboarding override** — `OnBoardingScreenTest` writes
+  `isFirstTime=true` *after* `super.setUp()` runs (which seeds `false` by
+  default), then launches the app manually.
 
 ### Test files
 
-#### `ui/MainActivityTest.kt` — 5 tests
+#### Activity-level flows
 
-`setUp()` calls `clearAuthTokens()` before launching so tests always start
-in the logged-out state.
+| File | Tests | Target |
+|------|------:|--------|
+| `ui/SplashActivityTest.kt` | 3 | Splash branches: onboarding vs. MainActivity based on `isFirstTime`; auth state does not affect routing |
+| `ui/MainActivityTest.kt` | 5 | Bottom-nav startup, profile/map/home tabs, orders-tab guard dialog when logged out |
+| `ui/on_boarding/OnBoardingScreenTest.kt` | 4 | Page 1 chrome, `next` advances to page 2 (still on onboarding), `next` on page 2 → MainActivity, `skip` → MainActivity |
 
-| Test | Flow |
-|------|------|
-| `app_launches_and_home_screen_is_visible` | Launch → `bottom_nav` + `home` tab present |
-| `tapping_profile_tab_opens_profile_screen` | Tap `profile` tab → `header_title` view visible |
-| `tapping_orders_tab_when_logged_out_shows_sign_in_dialog` | Tap `orders` while logged out → dialog with "авторизованы" text appears (unconditional assert); dismisses via "Отмена" |
-| `tapping_map_tab_shows_map_screen` | Tap `map` tab → `bottom_nav` still present |
-| `bottom_nav_is_visible_on_all_tabs` | Cycle home → map → profile; assert `bottom_nav` visible each time |
+#### Auth
 
-#### `ui/auth/AuthFlowTest.kt` — 5 tests
+| File | Tests | Target |
+|------|------:|--------|
+| `ui/auth/AuthFlowTest.kt` | 6 | `AuthActivity` launch, `btSend` disabled/enabled gating, navigation to `ConfirmPhoneNumberScreen`, invalid-code error surfacing, back navigation. Uses `+998 90 047-24-00` / code `12345` |
+| `ui/auth/ConfirmPhoneNumberScreenTest.kt` | 5 | Static chrome (`confirmation_code`, `code_send_to`, `phoneNumber`, `timer`, `privacy_policy`), `mm:ss` timer format, `send_again` disabled while counting down, `errorTextCode` hidden on fresh screen, `backImg` returns to phone input |
 
-Launches `AuthActivity` directly (isolated from `MainActivity`). `launchAuthActivity()` waits for `inputPhone` to be drawn (not just the package window) before returning.
+#### Home + Notifications
 
-All UI interactions are delegated to **`AuthRobot`** — test bodies are single-line chains.
+| File | Tests | Target |
+|------|------:|--------|
+| `ui/home/HomeScreenTest.kt` | 5 | Home logo, `search`/`notification` cards, `categoriesRv`, bottom-nav persistence |
+| `ui/home/NotificationsScreenTest.kt` | 3 | Toolbar + `notification_rv` render, toolbar back → Home, system back → Home |
+| `ui/home/NotificationDetailScreenTest.kt` | 1 | Layout chrome (toolbar, image, name, desc) with `id = -1` |
 
-| Test | Robot call |
-|------|------------|
-| `auth_screen_shows_title_and_phone_input` | `robot.assertAuthScreenVisible()` |
-| `continue_button_is_disabled_before_phone_entry` | `robot.assertContinueDisabled()` |
-| `typing_valid_phone_enables_continue_button` | `robot.typePhone("901234567").assertContinueEnabled()` |
-| `clearing_phone_disables_continue_button` | `robot.typePhone("901234567").clearPhone().assertContinueDisabled()` |
-| `incomplete_phone_number_keeps_continue_button_disabled` | `robot.typePhone("9012").assertContinueDisabled()` |
+#### Shop / Map / Search
 
-#### `ui/profile/ProfileScreenTest.kt` — 9 tests
+| File | Tests | Target |
+|------|------:|--------|
+| `ui/shop_details/ShopDetailFlowTest.kt` | 4 | Navigate via Home nearby-shops; assert `ShopDetailActivity` chrome and back-arrow → Home |
+| `ui/map/MapScreenTest.kt` | 3 | Yandex `map_view` + `header_layout` + `logo`, bottom-nav persistence, Map → Home round-trip |
+| `ui/search/SearchScreenTest.kt` | 3 | Toolbar + `inputSearch` + `items_rv`, typing survives (TextWatcher fires), system back → Home |
 
-Navigates to Profile via bottom nav. Verifies four independent language
-sources simultaneously. UI interactions are delegated to **`ProfileRobot`**;
-language-source reads (SharedPrefs comparisons) stay in the test class.
+#### Profile + sub-screens
 
-**Language sources tracked:**
+| File | Tests | Target |
+|------|------:|--------|
+| `ui/profile/ProfileScreenTest.kt` | 5 | Profile header, swipe-refresh, unauth group visible after 401, language bottom-sheet, login CTA → `AuthActivity` |
+| `ui/profile/EditProfileScreenTest.kt` | 3 | Form chrome (name/gender/birth/CTA/delete-account), `btSend` disabled on initial render, toolbar back |
+| `ui/profile/subscriptions/SubscriptionActivityTest.kt` | 3 | Toolbar + `subscription_rv`, `swipe_refresh_layout` present, toolbar back |
+| `ui/profile/payment/PaymentServicesActivityTest.kt` | 2 | Toolbar + `subscription_rv` grid, toolbar back |
 
-| Source | How it is read |
-|--------|----------------|
-| `deviceLang` | OS locale via `resolveDeviceLang()` (BaseUiTest) |
-| `prefLang` | `app_cache` SharedPrefs → key `lang` |
-| `localeLang` | localehelper SharedPrefs → key `Locale.Helper.Selected.Language` |
-| `uiLang` | reverse-mapped from `robot.readHeaderText()` |
+#### Orders / Order flow
 
-| Test | What it checks |
-|------|----------------|
-| `cache_lang_matches_localehelper_lang` | `prefLang == localeLang` |
-| `device_language_matches_sharedpref_language` | `deviceLang == prefLang` |
-| `ui_language_matches_sharedpref_language` | rendered header matches expected string for `prefLang` |
-| `all_language_sources_are_in_sync` | all four sources agree |
-| `profile_screen_shows_header_in_current_language` | `robot.assertHeaderText(expected)` |
-| `login_button_visible_when_logged_out` | `robot.assertLoginButtonEnabledIfPresent()` |
-| `languages_row_is_visible` | `robot.assertLanguagesRowVisible()` |
-| `privacy_policy_row_is_visible` | `robot.assertPrivacyPolicyRowVisible()` |
-| `orders_tab_label_matches_current_language` | `robot.assertOrdersTabVisible()` |
-
-#### `ui/auth/LoginE2ETest.kt` — 4 tests
-
-End-to-end login flow using a real test account and SMS API.
-
-**Requires:**
-- Real internet connection (SMS API call)
-- Physical/virtual SIM reachable at `+998 90 047-24-00`
-- `OTP_CODE` constant replaced with the actual received SMS code
-
-> `full_login_flow_with_real_phone_and_sms_code` is **automatically skipped**
-> (`Assume.assumeTrue`) when `OTP_CODE` equals the placeholder `"12345"`.
-> Replace the constant before running this test manually; do not run it in CI
-> without a real OTP injection mechanism.
-
-| Test | Flow |
-|------|------|
-| `full_login_flow_with_real_phone_and_sms_code` | Full flow: enter phone → Continue → wait OTP screen → enter OTP → assert `bottom_nav` (skipped when OTP is placeholder) |
-| `phone_input_accepts_number_and_enables_continue` | Enter "900472400" → `btSend.isEnabled == true` |
-| `sms_request_leads_to_otp_screen` | Tap Continue → `inputCode` (PinView) + `phoneNumber` label appear |
-| `back_button_on_otp_screen_returns_to_phone_input` | On OTP screen → tap `backImg` → `inputPhone` reappears |
+| File | Tests | Target |
+|------|------:|--------|
+| `ui/qr_code/OrdersScreenTest.kt` | 3 | Logged-out guard blocks the tab, logged-in chrome (header/`order_rv`/swipe/title), bottom-nav persistence |
+| `ui/qr_code/OrderInfoScreenTest.kt` | 2 | Layout chrome (toolbar/image/name/status/info_rv), toolbar back |
+| `ui/order/OrderActivityTest.kt` | 2 | Drink customisation chrome (size/sugar/milk/syrup RVs + `order` CTA), toolbar back |
+| `ui/order/OrderActivity2Test.kt` | 2 | Alt grouped-modifier flow (`modifications_rv` + `size_selector` + `order`), toolbar back |
+| `ui/order/CheckoutActivityTest.kt` | 2 | Review-and-pay chrome (image/name/total_summa/info_rv/order), toolbar back |
 
 ---
 
 ## Architecture of the Test Stack
 
 ```
-┌──────────────────────────────────────────────────────────┐
-│  UI Automator (androidTest)          real device/emulator │
-│  MainActivityTest (5), AuthFlowTest (5),                  │
-│  ProfileScreenTest (9), LoginE2ETest (4) = 23 tests       │
-│  — full app installed, real Koin, network optional        │
-├──────────────────────────────────────────────────────────┤
-│  Robolectric Fragment tests (test)              JVM only  │
-│  AuthScreenTest, ProfileScreenTest                        │
-│  — fragment inflation, view state, ViewModel mock calls   │
-├──────────────────────────────────────────────────────────┤
-│  ViewModel unit tests (test)                    JVM only  │
-│  *VMTest.kt × 9 files                                     │
-│  — UIResource flow patterns A/B/C, MockK + Turbine        │
-├──────────────────────────────────────────────────────────┤
-│  Service tests (test)                           JVM only  │
-│  *ServiceTest.kt × 10 files                               │
-│  — MockWebServer: request path/method/body, response JSON │
-├──────────────────────────────────────────────────────────┤
-│  Model / BaseRepo / Utils tests (test)          JVM only  │
-│  BaseRepoTest, ModelDeserializationTest, UtilsTest, …     │
-│  — pure logic, no Android context (except PrefDelegates)  │
-└──────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────┐
+│  UI Automator (androidTest)             real device/emulator │
+│  20 files · 66 tests                                         │
+│  — full app installed, real Koin graph, network optional     │
+├──────────────────────────────────────────────────────────────┤
+│  Robolectric Fragment tests (test)                 JVM only  │
+│  AuthScreen · HomeScreen · ProfileScreen  — 23 tests         │
+│  — inflation, view state transitions, VM verify              │
+├──────────────────────────────────────────────────────────────┤
+│  ViewModel unit tests (test)                       JVM only  │
+│  9 *VMTest.kt files  — 38 tests                              │
+│  — UIResource flow patterns A/B/C, MockK + Turbine           │
+├──────────────────────────────────────────────────────────────┤
+│  Repository unit tests (test — :domain)            JVM only  │
+│  10 *RepoTest.kt files  — 74 tests                           │
+│  — MockK service + request/body capture + UIResource flow    │
+├──────────────────────────────────────────────────────────────┤
+│  Service tests (test — :data)                      JVM only  │
+│  10 *ServiceTest.kt files  — 46 tests                        │
+│  — MockWebServer: request path/method/body, response JSON    │
+├──────────────────────────────────────────────────────────────┤
+│  Model + core (test — :domain, :data)              JVM only  │
+│  BaseRepo · RemoteExceptions · UIResource ·                  │
+│  PrefDelegates · Utils · ModelDeserialization · BaseItem     │
+│  — 91 tests, pure logic (Robolectric where Android ctx needed)│
+└──────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -543,25 +477,27 @@ End-to-end login flow using a real test account and SMS API.
 ## What Is Not Tested
 
 | Area | Reason | Path forward |
-|------|--------|-------------|
+|------|--------|--------------|
 | Paging flows (`getNotificationsPager`, `getOrderHistoryPager`) | Need `androidx.paging:paging-testing` | Add as a separate task |
-| `HomeScreen` | Heavy: FusedLocationClient, QR scan, LocationManager, Yandex MapKit | Extract location logic into a testable wrapper class |
-| `MapScreen` | MapKit initialises native SDK; cannot run headless | Instrument test only |
-| `ShopDetailActivity` (scroll-chip sync, working hours) | Complex View interactions | Espresso with `ActivityScenario` |
-| Network integration | Token authenticator, real API responses | Mock server environment / staging config |
-| `any<T>()` PrefDelegate Gson round-trip | Type erasure bug — `TypeToken<T>()` in non-reified context; `any<T>()` is currently unused in `AppCacheImpl` | Fix delegate to use `reified` or remove |
+| `HomeScreen` integrations (FusedLocationClient, QR scan, LocationManager) | Native dependencies cannot run headless | Extract location logic into a wrapper class |
+| `MapScreen` map rendering | Yandex MapKit initialises a native SDK | UI Automator only (already present) |
+| Full authenticated flows (buy subscription, create order, cancel order, top-up) | Need real access token matching backend | Test account + OTP injection, or staging env with pre-provisioned tokens |
+| `any<T>()` PrefDelegate Gson round-trip | Type erasure — `TypeToken<T>()` in non-reified context | Fix delegate to use `reified` or remove |
+| Bottom-sheet dialogs (`FeedbackBD`, `SelectCashbackSummaBD`, `TopUpViaPaymentServiceBD`) | Hosted dialogs — tests need their host activity state | Dialog is covered indirectly via the host activity's UI test |
 
 ---
 
 ## Recommended Improvements
 
-Identified during android-testing skill review. These require build.gradle / infrastructure changes and have not been applied yet.
+Identified during an android-testing skill review. These require
+build.gradle / infrastructure changes and have not been applied yet.
 
 | Improvement | Effort | Details |
 |-------------|--------|---------|
-| **JUnit4 → JUnit5** | High | Add `junit-jupiter` to `libs.versions.toml`; replace `@Rule`/`TestWatcher` with `@BeforeEach`/`@AfterEach`; `MainDispatcherRule` becomes a plain setup/teardown pair |
-| **MockK → Fakes** | High | Create `FakeAuthRepo`, `FakeProfileRepo`, etc. as in-memory implementations; fakes catch integration-level bugs (e.g. double-emit, state leaks) that mocks miss |
-| **JUnit Assert → AssertK** | Medium | Add `assertk` dependency; replace `assertEquals(x, y)` with `assertThat(y).isEqualTo(x)` for better failure messages and fluent chaining |
+| **JUnit4 → JUnit5** | High | Add `junit-jupiter`; replace `@Rule` / `TestWatcher` with `@BeforeEach` / `@AfterEach`; `MainDispatcherRule` becomes a plain setup/teardown pair |
+| **MockK → Fakes** | High | Hand-rolled `FakeAuthRepo`, `FakeProfileRepo`, etc. catch integration-level bugs (double-emit, state leaks) that mocks miss |
+| **JUnit Assert → AssertK** | Medium | Add `assertk`; replace `assertEquals(x, y)` with `assertThat(y).isEqualTo(x)` for better failure messages and fluent chaining |
+| **Robot pattern for UI Automator** | Medium | Re-introduce per-screen robots (previously used for Auth/Profile) as the UI suite grew past 20 files — reduces duplicated `device.wait(Until.findObject(...))` boilerplate |
 
 ---
 
@@ -575,9 +511,6 @@ Identified during android-testing skill review. These require build.gradle / inf
 - run: ./gradlew :app:connectedDebugAndroidTest
 ```
 
-> **Note on `LoginE2ETest`:** The slow gate will run all four tests in this class.
-> `full_login_flow_with_real_phone_and_sms_code` will be **skipped** (not failed)
-> in CI because `OTP_CODE` defaults to the placeholder `"12345"`. The remaining
-> three tests (`phone_input_accepts_number_and_enables_continue`,
-> `sms_request_leads_to_otp_screen`, `back_button_on_otp_screen_returns_to_phone_input`)
-> require a live internet connection and will make real SMS API calls.
+The UI Automator suite assumes a device on which network is reachable and
+Yandex MapKit has a valid API key wired into the debug build. Flaky runs are
+usually attributable to one of those two prerequisites.

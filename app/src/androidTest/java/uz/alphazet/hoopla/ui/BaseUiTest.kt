@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.res.Resources
 import android.os.Build
+import androidx.annotation.StringRes
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
@@ -168,6 +169,23 @@ abstract class BaseUiTest {
         val config = base.resources.configuration.apply { setLocale(Locale.forLanguageTag(lang)) }
         return base.createConfigurationContext(config)
     }
+
+    /**
+     * The language code currently stored in "app_cache" / "lang". Falls back to
+     * the device locale then to "ru". Use this (not a hard-coded literal) when
+     * your test needs to reference user-visible strings — otherwise the test
+     * fails on any device whose locale differs from the test author's.
+     */
+    protected fun currentPrefLang(): String =
+        prefs("app_cache").getString("lang", null) ?: resolveDeviceLang()
+
+    /**
+     * Returns a user-visible string in the active [currentPrefLang]. Use this
+     * instead of hard-coded Russian/English snippets when asserting dialog
+     * messages, headers, or other localized UI text.
+     */
+    protected fun localizedString(@StringRes id: Int): String =
+        buildLocalizedContext(currentPrefLang()).getString(id)
 
     companion object {
         const val APP_PACKAGE = "uz.alphazet.hoopla"
