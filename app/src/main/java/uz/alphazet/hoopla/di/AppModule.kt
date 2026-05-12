@@ -4,6 +4,7 @@ import org.koin.dsl.module
 import uz.alphazet.hoopla.ui.auth.AuthVM
 import uz.alphazet.hoopla.ui.home.HomeVM
 import uz.alphazet.hoopla.ui.home.NotificationVM
+import uz.alphazet.hoopla.ui.home.StoryViewerVM
 import uz.alphazet.hoopla.ui.order.OrderVM
 import uz.alphazet.hoopla.ui.profile.ProfileVM
 import uz.alphazet.hoopla.ui.profile.payment.PaymentVM
@@ -15,7 +16,7 @@ object AppModule {
 
     val viewModelModule = module {
         factory { AuthVM(get()) }
-        factory { HomeVM(get(), get(), get()) }
+        factory { HomeVM(get(), get(), get(), get()) }
         factory { ProfileVM(get()) }
         factory { ShopVM(get()) }
         factory { OrderVM(get(), get()) }
@@ -23,6 +24,7 @@ object AppModule {
         factory { SubscriptionVM(get()) }
         factory { PaymentVM(get()) }
         factory { NotificationVM(get(), get(), get()) }
+        factory { StoryViewerVM(get()) }
     }
 
 }

@@ -31,6 +31,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.CategoryData
 import uz.alphazet.data.models.FeedbackDetail
+import uz.alphazet.data.models.StoryItemData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.hoopla.ui.home.FeedbackBD.Companion.showFeedbackBD
 import uz.alphazet.data.models.ShopItemData
@@ -62,6 +63,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
     private val adapter = NearShopAdapter()
     private val loyaltyAdapter = LoyaltyAdapter()
     private val categoryAdapter = CategoryAdapter()
+    private val storyAdapter = StoryAdapter()
 
     private var selectedCategoryId: Int? = null
 
@@ -115,6 +117,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         binding.swipeRefreshLayout.setOnRefreshListener(this)
         binding.partnersRv.adapter = adapter
         binding.categoriesRv.adapter = categoryAdapter
+        binding.storiesRv.adapter = storyAdapter
 //        binding.loyaltyRv.adapter = loyaltyAdapter
 
 //        launch {
@@ -124,6 +127,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         viewModel.getPendingFeedbacks()
         viewModel.getUser()
         viewModel.getCategories()
+        viewModel.getStories()
 
         categoryAdapter.setOnItemClickListener { category ->
             val newId = if (selectedCategoryId == category.id) null else category.id
@@ -142,6 +146,17 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         launch {
             viewModel.categoriesFlow.collectLatest(::collectCategories)
+        }
+
+        launch {
+            viewModel.storiesFlow.collectLatest(::collectStories)
+        }
+
+        storyAdapter.setOnItemClickListener { story ->
+            val storyId = story.id ?: return@setOnItemClickListener
+            val intent = Intent(requireContext(), StoryViewerActivity::class.java)
+            intent.putExtra(StoryViewerActivity.STORY_ID, storyId)
+            startActivity(intent)
         }
 
         if (checkPermissionForLocationIsGranted()) {
@@ -259,6 +274,15 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         if (!data.isNullOrEmpty()) {
             categoryAdapter.submitList(data)
             binding.categoriesRv.visible()
+        }
+    }
+
+    private fun collectStories(t: UIResource<List<StoryItemData>>) = t.collect(onLoading = {}) { data ->
+        if (!data.isNullOrEmpty()) {
+            storyAdapter.submitList(data)
+            binding.storiesRv.visible()
+        } else {
+            binding.storiesRv.gone()
         }
     }
 

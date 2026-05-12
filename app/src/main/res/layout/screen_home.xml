@@ -116,6 +116,22 @@
     </com.google.android.material.card.MaterialCardView>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/stories_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:orientation="horizontal"
+        android:overScrollMode="never"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="4dp"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/search_card"
+        tools:listitem="@layout/item_story"
+        tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/categories_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -127,7 +143,7 @@
         android:paddingBottom="4dp"
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintTop_toBottomOf="@id/search_card"
+        app:layout_constraintTop_toBottomOf="@id/stories_rv"
         tools:visibility="visible" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

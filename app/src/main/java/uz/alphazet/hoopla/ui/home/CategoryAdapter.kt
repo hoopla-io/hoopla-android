@@ -38,15 +38,11 @@ class CategoryAdapter : BaseAdapter<CategoryData>() {
 
             val isSelected = itemData.id == selectedId
             if (isSelected) {
-                binding.iconCard.setCardBackgroundColor(
-                    itemView.context.getColor(DomainR.color.primary)
-                )
+                binding.pill.setBackgroundResource(R.drawable.bg_category_pill_selected)
                 binding.name.setTextColor(itemView.context.getColor(DomainR.color.primary))
             } else {
-                binding.iconCard.setCardBackgroundColor(
-                    itemView.context.getColor(DomainR.color.grey_200)
-                )
-                binding.name.setTextColor(itemView.context.getColor(DomainR.color.grey_400))
+                binding.pill.setBackgroundResource(R.drawable.bg_category_pill)
+                binding.name.setTextColor(itemView.context.getColor(DomainR.color.black_300))
             }
         }
     }

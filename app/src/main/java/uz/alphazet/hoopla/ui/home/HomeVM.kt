@@ -11,17 +11,20 @@ import uz.alphazet.data.models.CategoryData
 import uz.alphazet.data.models.FeedbackDetail
 import uz.alphazet.data.models.LoyaltyItemData
 import uz.alphazet.data.models.ShopItemData
+import uz.alphazet.data.models.StoryItemData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.domain.repositories.CategoryRepo
 import uz.alphazet.domain.repositories.HomeRepo
 import uz.alphazet.domain.repositories.ProfileRepo
+import uz.alphazet.domain.repositories.StoryRepo
 import uz.alphazet.domain.ui.BaseVM
 import uz.alphazet.domain.ui.load
 
 class HomeVM(
     private val homeRepo: HomeRepo,
     private val profileRepo: ProfileRepo,
-    private val categoryRepo: CategoryRepo
+    private val categoryRepo: CategoryRepo,
+    private val storyRepo: StoryRepo
 ) : BaseVM() {
 
     private val pendingFeedbackEmitter: MutableStateFlow<UIResource<FeedbackDetail>> =
@@ -36,12 +39,20 @@ class HomeVM(
         MutableStateFlow(UIResource.Loading)
     val categoriesFlow: StateFlow<UIResource<List<CategoryData>>> get() = categoriesEmitter
 
+    private val storiesEmitter: MutableStateFlow<UIResource<List<StoryItemData>>> =
+        MutableStateFlow(UIResource.Loading)
+    val storiesFlow: StateFlow<UIResource<List<StoryItemData>>> get() = storiesEmitter
+
     fun getUser() {
         launch { userDataEmitter.load { profileRepo.getMe() } }
     }
 
     fun getCategories() {
         launch { categoriesEmitter.load { categoryRepo.getCategories() } }
+    }
+
+    fun getStories() {
+        launch { storiesEmitter.load { storyRepo.getStories() } }
     }
 
     suspend fun getLoyaltyCard(): SharedFlow<UIResource<List<LoyaltyItemData>>> {

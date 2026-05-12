@@ -20,6 +20,7 @@ import uz.alphazet.domain.network.RemoteException
 import uz.alphazet.domain.repositories.CategoryRepo
 import uz.alphazet.domain.repositories.HomeRepo
 import uz.alphazet.domain.repositories.ProfileRepo
+import uz.alphazet.domain.repositories.StoryRepo
 import uz.alphazet.hoopla.rules.MainDispatcherRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -31,8 +32,9 @@ class HomeVMTest {
     private val homeRepo: HomeRepo = mockk()
     private val profileRepo: ProfileRepo = mockk()
     private val categoryRepo: CategoryRepo = mockk()
+    private val storyRepo: StoryRepo = mockk()
 
-    private val vm by lazy { HomeVM(homeRepo, profileRepo, categoryRepo) }
+    private val vm by lazy { HomeVM(homeRepo, profileRepo, categoryRepo, storyRepo) }
 
     // --- getUser (Pattern B — StateFlow) ----------------------------------
 

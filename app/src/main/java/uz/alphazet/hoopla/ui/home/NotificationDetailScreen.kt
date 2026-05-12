@@ -21,6 +21,8 @@ class NotificationDetailScreen : BaseActivity() {
         binding = ScreenNotificationDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.toolbar.setNavigationOnClickListener { finish() }
+
         viewModel.getNotificationDetail(id)
 
         launch {

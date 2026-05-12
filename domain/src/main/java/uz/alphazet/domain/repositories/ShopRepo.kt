@@ -9,4 +9,8 @@ class ShopRepo(private val shopService: ShopService) : BaseRepo() {
         shopService.getShopDetail(shopId)
     }
 
+    suspend fun getShopDrinks(shopId: Int) = handleFlow {
+        shopService.getShopDrinks(shopId)
+    }
+
 }

@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DrinkItemData
+import uz.alphazet.data.models.ShopCategoryData
 import uz.alphazet.data.models.ShopData
+import uz.alphazet.data.models.ShopDrinksData
 import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
@@ -55,7 +57,6 @@ class ShopDetailActivity : BaseActivity() {
 
     private var isClickable = true
     private var canAcceptOrders = false
-    private var categoryGroups: Map<String, List<DrinkItemData>> = emptyMap()
 
     // category name -> section root view
     private val sectionViews = mutableListOf<Pair<String, View>>()
@@ -96,6 +97,9 @@ class ShopDetailActivity : BaseActivity() {
 
         launch {
             viewModel.getShopDetail(shopId).collectLatest(::collectData)
+        }
+        launch {
+            viewModel.getShopDrinks(shopId).collectLatest(::collectDrinks)
         }
     }
 
@@ -192,9 +196,6 @@ class ShopDetailActivity : BaseActivity() {
             }
         }
 
-        // Build category chips and drink sections
-        buildCategoryChipsAndSections(data?.drinks)
-
         // Direction button
         binding.btnDirection.setOnClickListener {
             val uri =
@@ -212,24 +213,37 @@ class ShopDetailActivity : BaseActivity() {
         }
     }
 
-    private fun buildCategoryChipsAndSections(drinks: List<DrinkItemData>?) {
+    private fun collectDrinks(t: UIResource<ShopDrinksData>) = t.collect { data ->
+        buildCategoryChipsAndSections(data?.categories)
+    }
+
+    private fun buildCategoryChipsAndSections(categories: List<ShopCategoryData>?) {
         binding.categoryChipGroup.removeAllViews()
         binding.drinksContainer.removeAllViews()
         sectionViews.clear()
         categoryChips.clear()
 
-        if (drinks.isNullOrEmpty()) {
+        val nonEmptyCategories = categories
+            ?.filter { !it.drinks.isNullOrEmpty() }
+            .orEmpty()
+
+        if (nonEmptyCategories.isEmpty()) {
             binding.categoryScroll.gone()
             return
         }
 
-        categoryGroups = drinks.groupBy { it.categoryName ?: getString(R.string.drinks_) }
-        val categoryNames = categoryGroups.keys.toList()
+        val categoryNames = nonEmptyCategories.map {
+            it.name ?: getString(R.string.drinks_)
+        }
         val inflater = LayoutInflater.from(this)
 
         // Build all sections first
-        for (name in categoryNames) {
-            addDrinkSection(inflater, name, categoryGroups[name] ?: emptyList())
+        nonEmptyCategories.forEachIndexed { index, category ->
+            addDrinkSection(
+                inflater,
+                categoryNames[index],
+                category.drinks.orEmpty()
+            )
         }
 
         if (categoryNames.size <= 1) {
