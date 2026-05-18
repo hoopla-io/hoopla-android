@@ -10,7 +10,7 @@ import uz.alphazet.data.models.QRCodeAccessData
 import uz.alphazet.data.models.order.OrderInfo
 import uz.alphazet.data.models.order.OrderItemData
 
-interface QrCodeService {
+interface OrdersService {
 
     @GET("v1/user/generate-qr-code")
     suspend fun generateQRCode(): BaseResponse<QRCodeAccessData>
@@ -23,6 +23,9 @@ interface QrCodeService {
 
     @GET("v1/user/orders/{id}")
     suspend fun getOrderInfo(@Path("id") id: Int): BaseResponse<OrderInfo>
+
+    @GET("v1/user/orders/{id}/pickup-qr")
+    suspend fun getOrderPickupQR(@Path("id") id: Int): BaseResponse<QRCodeAccessData>
 
     @POST("v1/user/orders/{id}/cancel")
     suspend fun cancelOrder(@Path("id") id: Int): BaseResponse<Any>

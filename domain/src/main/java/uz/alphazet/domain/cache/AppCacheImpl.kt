@@ -2,6 +2,7 @@ package uz.alphazet.domain.cache
 
 import android.content.SharedPreferences
 import com.zeugmasolutions.localehelper.Locales
+import uz.alphazet.domain.theme.ThemeModes
 
 class AppCacheImpl constructor(
     private val prefs: SharedPreferences
@@ -11,6 +12,7 @@ class AppCacheImpl constructor(
     override var refreshToken: String? by prefs.stringNullable()
     override var tokenExpireAt: Long by prefs.long()
     override var lang: String by prefs.string(Locales.Russian.language)
+    override var themeMode: String by prefs.string(ThemeModes.SYSTEM)
     override var isFirstTime: Boolean by prefs.boolean(true)
 
     override fun saveTokens(accessToken: String?, refreshToken: String?, tokenExpireAt: Long) {

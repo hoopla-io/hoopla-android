@@ -23,17 +23,17 @@ import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DailyDrinksStatData
 import uz.alphazet.data.models.QRCodeAccessData
 import uz.alphazet.data.models.order.OrderInfo
-import uz.alphazet.data.services.QrCodeService
+import uz.alphazet.data.services.OrdersService
 import uz.alphazet.domain.network.ConflictException
 import uz.alphazet.domain.network.NotFoundException
 import uz.alphazet.domain.network.UnauthorizedException
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class QRCodeRepoTest {
+class OrdersRepoTest {
 
     private val dispatcher = StandardTestDispatcher()
-    private val api: QrCodeService = mockk()
-    private val repo = QRCodeRepo(api)
+    private val api: OrdersService = mockk()
+    private val repo = OrdersRepo(api)
 
     @Before
     fun setUp() {
@@ -47,7 +47,7 @@ class QRCodeRepoTest {
 
     @Test
     fun generateQRCode_success_returns_qr_data() = runTest(dispatcher) {
-        val payload = QRCodeAccessData(qrCode = "QR-123", expireAt = 1_700_000_000L)
+        val payload = QRCodeAccessData(token = "QR-123", expiresAt = 1_700_000_000L, orderId = 1)
         coEvery { api.generateQRCode() } returns Response.success(wrap(payload))
 
         val result = repo.generateQRCode()

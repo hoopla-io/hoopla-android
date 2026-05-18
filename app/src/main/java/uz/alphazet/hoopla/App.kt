@@ -2,13 +2,18 @@ package uz.alphazet.hoopla
 
 import com.yandex.mapkit.MapKitFactory
 import com.zeugmasolutions.localehelper.LocaleAwareApplication
+import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import uz.alphazet.domain.BuildConfig.MAPKIT_API_KEY
+import uz.alphazet.domain.cache.AppCache
 import uz.alphazet.domain.di.Modules
+import uz.alphazet.domain.theme.applyThemeMode
 import uz.alphazet.hoopla.di.AppModule
 
 class App : LocaleAwareApplication() {
+
+    private val appCache: AppCache by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -23,6 +28,7 @@ class App : LocaleAwareApplication() {
             )
         }
 
+        appCache.applyThemeMode()
 
         MapKitFactory.setApiKey(MAPKIT_API_KEY)
         MapKitFactory.initialize(this)

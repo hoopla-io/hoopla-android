@@ -1,4 +1,4 @@
-package uz.alphazet.hoopla.ui.qr_code
+package uz.alphazet.hoopla.ui.orders
 
 import app.cash.turbine.test
 import io.mockk.coEvery
@@ -17,28 +17,28 @@ import uz.alphazet.data.models.UserData
 import uz.alphazet.data.models.order.OrderInfo
 import uz.alphazet.domain.repositories.OrderHistoryDataSource
 import uz.alphazet.domain.repositories.ProfileRepo
-import uz.alphazet.domain.repositories.QRCodeRepo
+import uz.alphazet.domain.repositories.OrdersRepo
 import uz.alphazet.hoopla.rules.MainDispatcherRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class QRCodeVMTest {
+class OrdersVMTest {
 
     @get:Rule
     val mainDispatcherRule = MainDispatcherRule()
 
-    private val repo: QRCodeRepo = mockk()
+    private val repo: OrdersRepo = mockk()
     private val profileRepo: ProfileRepo = mockk()
     // dataSource is only used for paging (out of scope), use relaxed mock to
     // avoid constructor-call issues
     private val dataSource: OrderHistoryDataSource = mockk(relaxed = true)
 
-    private val vm by lazy { QRCodeVM(repo, profileRepo, dataSource) }
+    private val vm by lazy { OrdersVM(repo, profileRepo, dataSource) }
 
     // --- generateQRCode (Pattern B) ---------------------------------------
 
     @Test
     fun generateQRCode_updates_qrCodeDataFlow() = runTest {
-        val qrData = QRCodeAccessData("qr-token-abc", 1_893_456_000L)
+        val qrData = QRCodeAccessData("qr-token-abc", 1_893_456_000L, 501)
         coEvery { repo.generateQRCode() } returns UIResource.Success(qrData)
 
         vm.qrCodeDataFlow.test {
@@ -46,7 +46,7 @@ class QRCodeVMTest {
             vm.generateQRCode()
             val result = awaitItem()
             assertTrue(result is UIResource.Success)
-            assertEquals("qr-token-abc", (result as UIResource.Success).data?.qrCode)
+            assertEquals("qr-token-abc", (result as UIResource.Success).data?.token)
             cancelAndIgnoreRemainingEvents()
         }
     }

@@ -6,6 +6,7 @@ interface AppCache {
     var refreshToken: String?
     var tokenExpireAt: Long
     var lang: String
+    var themeMode: String
     var isFirstTime: Boolean
 
     fun saveTokens(

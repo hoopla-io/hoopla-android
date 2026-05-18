@@ -151,4 +151,15 @@
         <item>Женский</item>
     </string-array>
 
+    <string name="pickup_qr">Получить заказ</string>
+    <string name="pickup_qr_title">QR-код для получения</string>
+    <string name="pickup_qr_description">Покажите этот QR-код бариста, чтобы забрать заказ</string>
+    <string name="label_valid_until_">Действителен до: %1$s</string>
+
+    <string name="theme">Тема</string>
+    <string name="select_theme">Выберите тему</string>
+    <string name="theme_system">Системная</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+
 </resources>

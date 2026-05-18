@@ -26,6 +26,7 @@ import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.home.HomeScreen
 import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
 import uz.alphazet.hoopla.ui.profile.settings.SelectLanguageBD.Companion.showSelectLanguageBD
+import uz.alphazet.hoopla.ui.profile.settings.SelectThemeBD.Companion.showSelectThemeBD
 import uz.alphazet.hoopla.ui.profile.subscriptions.SubscriptionActivity
 
 class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.OnRefreshListener {
@@ -55,6 +56,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
         binding.subscription.setOnClickListener(this)
         binding.topUp.setOnClickListener(this)
         binding.languages.setOnClickListener(this)
+        binding.theme.setOnClickListener(this)
         binding.logout.setOnClickListener(this)
         binding.login.setOnClickListener(this)
         binding.support.setOnClickListener(this)
@@ -135,6 +137,10 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
                 showSelectLanguageBD {
                     (requireActivity() as BaseActivity).updateLocale(it)
                 }
+            }
+
+            R.id.theme -> {
+                showSelectThemeBD()
             }
 
             R.id.privacyPolicy -> {

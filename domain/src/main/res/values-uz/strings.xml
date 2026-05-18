@@ -147,4 +147,15 @@
         <item>Ayol</item>
     </string-array>
 
+    <string name="pickup_qr">Buyurtmani olish</string>
+    <string name="pickup_qr_title">Olib ketish QR-kodi</string>
+    <string name="pickup_qr_description">Buyurtmangizni olish uchun ushbu QR-kodni baristaga ko\'rsating</string>
+    <string name="label_valid_until_">Amal qiladi: %1$s</string>
+
+    <string name="theme">Mavzu</string>
+    <string name="select_theme">Mavzuni tanlang</string>
+    <string name="theme_system">Tizim</string>
+    <string name="theme_light">Yorug\'</string>
+    <string name="theme_dark">Qorong\'i</string>
+
 </resources>

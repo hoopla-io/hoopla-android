@@ -2,10 +2,10 @@ package uz.alphazet.domain.repositories
 
 import androidx.paging.PagingState
 import uz.alphazet.data.models.order.OrderItemData
-import uz.alphazet.data.services.QrCodeService
+import uz.alphazet.data.services.OrdersService
 import uz.alphazet.domain.network.BasePagingDataSource
 
-class OrderHistoryDataSource(private val service: QrCodeService) :
+class OrderHistoryDataSource(private val service: OrdersService) :
     BasePagingDataSource<OrderItemData>() {
 
     override fun getRefreshKey(state: PagingState<Int, OrderItemData>): Int? {

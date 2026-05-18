@@ -146,4 +146,15 @@
         <item>Male</item>
         <item>Female</item>
     </string-array>
+
+    <string name="pickup_qr">Get order</string>
+    <string name="pickup_qr_title">Pickup QR code</string>
+    <string name="pickup_qr_description">Show this QR code to the barista to pick up your order</string>
+    <string name="label_valid_until_">Valid until: %1$s</string>
+
+    <string name="theme">Theme</string>
+    <string name="select_theme">Select theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 </resources>

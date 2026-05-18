@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Surface family: flip light greys to dark surfaces -->
+    <color name="grey_50">#121212</color>
+    <color name="grey_75">#161616</color>
+    <color name="grey_100">#181818</color>
+    <color name="grey_150">#1A1A1A</color>
+    <color name="grey_200">#202020</color>
+    <color name="grey_300">#232323</color>
+    <color name="grey_250">#3A3B40</color>
+
+    <!-- Mid greys: nudge slightly lighter so they remain visible on dark surfaces -->
+    <color name="grey_350">#A8A9B0</color>
+    <color name="grey_400">#9094A0</color>
+    <color name="grey_500">#B0B3B3</color>
+
+    <!-- Text family: flip dark text to light values -->
+    <color name="black_50">#2A2A2A</color>
+    <color name="black_75">#6A6B72</color>
+    <color name="black_100">#8F9098</color>
+    <color name="black_200">#B3B3B3</color>
+    <color name="black_300">#E5E5E5</color>
+    <color name="black_400">#F0F0F0</color>
+    <color name="black_500">#FAFAFA</color>
+
+    <!-- Error subtle bg flipped a touch darker so it isn't blinding on dark surface -->
+    <color name="error_50">#3A1B1A</color>
+
+</resources>

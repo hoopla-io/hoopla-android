@@ -9,10 +9,10 @@ import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 
-class QrCodeServiceTest {
+class OrdersServiceTest {
 
     private lateinit var server: MockWebServer
-    private lateinit var service: QrCodeService
+    private lateinit var service: OrdersService
 
     @Before
     fun setUp() {
@@ -31,7 +31,7 @@ class QrCodeServiceTest {
             mockOk(
                 """
                 {
-                  "data": {"qrCode": "qr-token-abc", "expireAt": 1893456000},
+                  "data": {"token": "qr-token-abc", "expiresAt": 1893456000, "orderId": 501},
                   "message": "ok", "status": true, "code": 200, "meta": null
                 }
                 """.trimIndent()
@@ -46,8 +46,9 @@ class QrCodeServiceTest {
 
         val qr = response.body()?.data
         assertNotNull(qr)
-        assertEquals("qr-token-abc", qr!!.qrCode)
-        assertEquals(1_893_456_000L, qr.expireAt)
+        assertEquals("qr-token-abc", qr!!.token)
+        assertEquals(1_893_456_000L, qr.expiresAt)
+        assertEquals(501, qr.orderId)
     }
 
     @Test

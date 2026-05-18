@@ -1,7 +1,9 @@
-package uz.alphazet.hoopla.ui.qr_code
+package uz.alphazet.hoopla.ui.orders
 
 import android.os.Bundle
+import androidx.core.graphics.Insets
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import coil3.load
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -23,11 +25,12 @@ import uz.alphazet.domain.utils.setTextStringRes
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.databinding.ScreenOrderInfoBinding
 import uz.alphazet.hoopla.ui.order.SummaInfoAdapter
+import uz.alphazet.hoopla.ui.orders.OrderQrCodeBD.Companion.showOrderQrCodeBD
 
 class OrderInfoScreen : BaseActivity() {
 
     private lateinit var binding: ScreenOrderInfoBinding
-    private val viewModel: QRCodeVM by viewModel()
+    private val viewModel: OrdersVM by viewModel()
     private val adapter = SummaInfoAdapter()
     private val orderId by lazy { intent.getIntExtra(Constants.ID, -1) }
 
@@ -142,6 +145,25 @@ class OrderInfoScreen : BaseActivity() {
             intentToBrowser(orderInfo.fiscalLink ?: "")
         }
 
+        val pickupReady = when (orderInfo.orderStatus) {
+            OrderStatus.Paid,
+            OrderStatus.Pending,
+            OrderStatus.Completed,
+            "created",
+            "preparing" -> true
+
+            else -> false
+        }
+
+        if (pickupReady) {
+            binding.pickupQr.visible()
+            binding.pickupQr.setOnClickListener {
+                showOrderQrCodeBD(orderId)
+            }
+        } else {
+            binding.pickupQr.gone()
+        }
+
         if (orderInfo.orderStatus == OrderStatus.PendingPayment) {
             binding.cancelOrder.visible()
             binding.continuePayment.visible()
@@ -172,12 +194,8 @@ class OrderInfoScreen : BaseActivity() {
         }
     }
 
-    override fun updateStatusBarViewHeight() {
-        launch {
-            val statusBarHeight = getStatusBarHeight()
-            binding.statusBarView.layoutParams.height = statusBarHeight
-            binding.statusBarView.requestLayout()
-        }
+    override fun onApplySystemBarInsets(systemBars: Insets) {
+        binding.root.updatePadding(bottom = systemBars.bottom)
     }
 
 }

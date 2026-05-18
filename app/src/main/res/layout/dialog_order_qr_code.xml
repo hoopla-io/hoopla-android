@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:clipToPadding="false"
+    android:elevation="2dp"
+    android:orientation="vertical"
+    android:paddingTop="24dp"
+    android:paddingBottom="16dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/inter_bold"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:text="@string/pickup_qr_title"
+        android:textColor="@color/black_300"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center"
+        android:paddingHorizontal="24dp"
+        android:text="@string/pickup_qr_description"
+        android:textColor="@color/grey_400"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/qr_code_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/inter_medium"
+        android:gravity="center"
+        android:paddingHorizontal="24dp"
+        android:textColor="@color/black_300"
+        android:textIsSelectable="true"
+        android:textSize="16sp"
+        tools:text="HOOPLA-ORDER-1234" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:minWidth="240dp"
+        android:minHeight="240dp">
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/qr_code"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:background="@color/white"
+            android:contentDescription="@string/qr_code"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/ImageAppearanceCorner20"
+            tools:src="@drawable/ic_qr_code" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/expire_at"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/inter_medium"
+        android:gravity="center"
+        android:paddingHorizontal="16dp"
+        android:textColor="@color/black_300"
+        android:textSize="14sp"
+        tools:text="Valid until: 14.05.2026 18:30" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/close"
+        style="@style/PrimaryColorButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/close"
+        android:textAllCaps="false" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

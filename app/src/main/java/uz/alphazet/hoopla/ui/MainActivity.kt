@@ -3,6 +3,8 @@ package uz.alphazet.hoopla.ui
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.graphics.Insets
+import androidx.core.view.updatePadding
 import androidx.fragment.app.commit
 import org.koin.android.ext.android.inject
 import uz.alphazet.domain.cache.AppCache
@@ -15,7 +17,7 @@ import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.home.HomeScreen
 import uz.alphazet.hoopla.ui.map.MapScreen
 import uz.alphazet.hoopla.ui.profile.ProfileScreen
-import uz.alphazet.hoopla.ui.qr_code.OrdersScreen
+import uz.alphazet.hoopla.ui.orders.OrdersScreen
 
 class MainActivity : BaseActivity() {
 
@@ -61,12 +63,8 @@ class MainActivity : BaseActivity() {
         }
     }
 
-    override fun updateStatusBarViewHeight() {
-        launch {
-            val statusBarHeight = getStatusBarHeight()
-            binding.statusBarView.layoutParams.height = statusBarHeight
-            binding.statusBarView.requestLayout()
-        }
+    override fun onApplySystemBarInsets(systemBars: Insets) {
+        binding.bottomNav.updatePadding(bottom = systemBars.bottom)
     }
 
     fun callOnLogOut() {

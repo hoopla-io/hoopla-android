@@ -1,4 +1,4 @@
-package uz.alphazet.hoopla.ui.qr_code
+package uz.alphazet.hoopla.ui.orders
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -18,12 +18,12 @@ import uz.alphazet.data.models.order.OrderInfo
 import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.domain.repositories.OrderHistoryDataSource
 import uz.alphazet.domain.repositories.ProfileRepo
-import uz.alphazet.domain.repositories.QRCodeRepo
+import uz.alphazet.domain.repositories.OrdersRepo
 import uz.alphazet.domain.ui.BaseVM
 import uz.alphazet.domain.ui.load
 
-class QRCodeVM(
-    private val repo: QRCodeRepo, private val profileRepo: ProfileRepo,
+class OrdersVM(
+    private val repo: OrdersRepo, private val profileRepo: ProfileRepo,
     private val dataSource: OrderHistoryDataSource
 ) : BaseVM() {
 
@@ -41,6 +41,10 @@ class QRCodeVM(
     private val orderInfoEmitter: MutableStateFlow<UIResource<OrderInfo>> =
         MutableStateFlow(UIResource.Loading)
     val orderInfoFlow: StateFlow<UIResource<OrderInfo>> get() = orderInfoEmitter
+
+    private val pickupQrEmitter: MutableStateFlow<UIResource<QRCodeAccessData>> =
+        MutableStateFlow(UIResource.Loading)
+    val pickupQrFlow: StateFlow<UIResource<QRCodeAccessData>> get() = pickupQrEmitter
 
     init {
 //        generateQRCode()
@@ -76,6 +80,12 @@ class QRCodeVM(
     fun getOrderInfo(id: Int) {
         launch {
             orderInfoEmitter.load { repo.getOrderInfo(id) }
+        }
+    }
+
+    fun getOrderPickupQR(id: Int) {
+        launch {
+            pickupQrEmitter.load { repo.getOrderPickupQR(id) }
         }
     }
 

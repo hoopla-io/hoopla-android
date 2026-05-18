@@ -1,4 +1,4 @@
-package uz.alphazet.hoopla.ui.qr_code
+package uz.alphazet.hoopla.ui.orders
 
 import android.view.View
 import coil3.load

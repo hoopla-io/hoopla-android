@@ -6,12 +6,14 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.core.view.updatePadding
+import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
+import uz.alphazet.domain.R
 import com.zeugmasolutions.localehelper.LocaleHelper
 import com.zeugmasolutions.localehelper.LocaleHelperActivityDelegate
 import com.zeugmasolutions.localehelper.LocaleHelperActivityDelegateImpl
@@ -57,36 +59,44 @@ abstract class BaseActivity : AppCompatActivity(), RemoteErrorListener {
         WindowInsetsControllerCompat(window, window.decorView)
             .isAppearanceLightNavigationBars = false
 
-//        applySystemBarsInsets()
-
+        setupSystemBarInsets()
     }
 
-    private fun applySystemBarsInsets() {
-        val rootView = findViewById<android.view.View>(android.R.id.content)
-        ViewCompat.setOnApplyWindowInsetsListener(rootView) { view, insets ->
+    private fun setupSystemBarInsets() {
+        val content = findViewById<View>(android.R.id.content)
+        ViewCompat.setOnApplyWindowInsetsListener(content) { _, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            view.updatePadding(top = systemBars.top)
+            content.findViewById<View>(R.id.status_bar_view)?.let { statusBar ->
+                val lp = statusBar.layoutParams
+                if (lp.height != systemBars.top) {
+                    lp.height = systemBars.top
+                    statusBar.layoutParams = lp
+                }
+            }
 
+            onApplySystemBarInsets(systemBars)
             insets
         }
+        ViewCompat.requestApplyInsets(content)
     }
+
+    open fun onApplySystemBarInsets(systemBars: Insets) {}
 
     open fun updateStatusBarViewHeight() {}
 
     suspend fun getStatusBarHeight(): Int {
+        val content = findViewById<View>(android.R.id.content) ?: return 0
+        ViewCompat.getRootWindowInsets(content)
+            ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top
+            ?.let { return it }
+
         val deferred = CompletableDeferred<Int>()
-
-        val content = findViewById<View>(android.R.id.content)
-
-        ViewCompat.setOnApplyWindowInsetsListener(content) { _, insets ->
-            val topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            deferred.complete(topInset)
-            insets
+        content.doOnLayout {
+            val top = ViewCompat.getRootWindowInsets(content)
+                ?.getInsets(WindowInsetsCompat.Type.statusBars())?.top ?: 0
+            deferred.complete(top)
         }
-
-        ViewCompat.requestApplyInsets(content)
-
         return deferred.await()
     }
 

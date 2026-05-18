@@ -110,7 +110,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.qr_code.OrderInfoScreen"
+            android:name=".ui.orders.OrderInfoScreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
         <activity

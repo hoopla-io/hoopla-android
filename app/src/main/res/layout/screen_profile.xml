@@ -334,6 +334,18 @@
                     app:layout_constraintTop_toBottomOf="@id/subscription" />
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/theme"
+                    style="@style/DetailButtonStyle"
+                    android:drawableStart="@drawable/ic_theme"
+                    android:elevation="4dp"
+                    android:text="@string/theme"
+                    android:visibility="gone"
+                    app:drawableEndCompat="@drawable/ic_arrow_right_black300"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/languages" />
+
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/devices"
                     style="@style/DetailButtonStyle"
                     android:drawableStart="@drawable/ic_devices"
@@ -343,7 +355,7 @@
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/languages" />
+                    app:layout_constraintTop_toBottomOf="@id/theme" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/support"

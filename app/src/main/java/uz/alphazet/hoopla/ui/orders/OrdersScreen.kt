@@ -1,4 +1,4 @@
-package uz.alphazet.hoopla.ui.qr_code
+package uz.alphazet.hoopla.ui.orders
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -42,7 +42,7 @@ import uz.alphazet.hoopla.databinding.ScreenOrdersBinding
 class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.OnRefreshListener {
 
     private val binding by viewBinding(ScreenOrdersBinding::bind)
-    private val viewModel: QRCodeVM by viewModel()
+    private val viewModel: OrdersVM by viewModel()
 
     private val orderAdapter = OrderAdapter()
 
@@ -120,7 +120,7 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
     }
 
     private fun collectQRCodeData(t: UIResource<QRCodeAccessData>) = t.collect(onLoading = {}) {
-        val drawable = generateQRCodeImage(it?.qrCode.toString())
+        val drawable = generateQRCodeImage(it?.token.toString())
         val bitmap = drawableToBitmap(drawable)
         val bitmapDrawable = bitmap.toDrawable(resources)
         binding.qrCode.load(bitmapDrawable)

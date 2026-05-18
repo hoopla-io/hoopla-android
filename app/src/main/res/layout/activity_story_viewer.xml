@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:fitsSystemWindows="true">
+
+    <ImageView
+        android:id="@+id/slide_image"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/ic_notification" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_gravity="bottom"
+        android:background="@drawable/bg_story_overlay_gradient" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/tap_prev"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+        <View
+            android:id="@+id/tap_next"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/progress_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginTop="12dp"
+        android:layout_marginHorizontal="12dp"
+        android:orientation="horizontal" />
+
+    <ImageButton
+        android:id="@+id/btn_close"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="12dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="centerInside"
+        android:src="@drawable/ic_close"
+        app:tint="@color/white" />
+
+    <LinearLayout
+        android:id="@+id/cta_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="36dp"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="vertical"
+        android:background="?attr/selectableItemBackground"
+        android:padding="6dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/slide_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_bold"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:visibility="gone"
+            tools:text="Try our new latte"
+            tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/slide_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:fontFamily="@font/inter_medium"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:text="Available at all locations"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</FrameLayout>
