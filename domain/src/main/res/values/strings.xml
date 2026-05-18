@@ -162,4 +162,7 @@
     <string name="theme_light">Светлая</string>
     <string name="theme_dark">Тёмная</string>
 
+    <string name="update_downloaded">Обновление загружено</string>
+    <string name="restart">Перезапустить</string>
+
 </resources>

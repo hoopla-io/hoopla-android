@@ -18,10 +18,13 @@ import uz.alphazet.hoopla.ui.home.HomeScreen
 import uz.alphazet.hoopla.ui.map.MapScreen
 import uz.alphazet.hoopla.ui.profile.ProfileScreen
 import uz.alphazet.hoopla.ui.orders.OrdersScreen
+import uz.alphazet.hoopla.util.InAppUpdateManager
 
 class MainActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var inAppUpdateManager: InAppUpdateManager
 
     private val cache: AppCache by inject()
 
@@ -37,6 +40,13 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        inAppUpdateManager = InAppUpdateManager(
+            activity = this,
+            rootView = binding.root,
+            anchorView = binding.bottomNav,
+        )
+        inAppUpdateManager.checkForUpdate()
 
         if (supportFragmentManager.fragments.isEmpty()) {
             binding.bottomNav.selectedItemId = R.id.home

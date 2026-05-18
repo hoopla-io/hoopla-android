@@ -15,8 +15,8 @@ android {
         applicationId = "uz.alphazet.hoopla"
         minSdk = 26
         targetSdk = 36
-        versionCode = 26
-        versionName = "1.3.7"
+        versionCode = 27
+        versionName = "1.3.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -106,6 +106,8 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.play.services.location)
+    implementation(libs.play.app.update)
+    implementation(libs.play.app.update.ktx)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockk)

@@ -158,4 +158,7 @@
     <string name="theme_light">Yorug\'</string>
     <string name="theme_dark">Qorong\'i</string>
 
+    <string name="update_downloaded">Yangilanish yuklab olindi</string>
+    <string name="restart">Qayta ishga tushirish</string>
+
 </resources>
