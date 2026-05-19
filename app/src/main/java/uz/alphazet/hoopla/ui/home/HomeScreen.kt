@@ -162,9 +162,13 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         if (checkPermissionForLocationIsGranted()) {
             runLocationListener()
         } else {
-            permissionManager.checkFineCoarseLocationPermission {
-                runLocationListener()
-            }
+            permissionManager.checkFineCoarseLocationPermission(
+                onDeny = {
+                    showErrorMessage(getString(uz.alphazet.domain.R.string.location_permission_not_full_granted))
+                    loadDefaultLocationShops()
+                },
+                onAllow = { runLocationListener() }
+            )
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -310,6 +314,24 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         }
     }
 
+    /**
+     * Fallback used when device GPS is off or location permission is denied:
+     * load nearby shops around a default location and keep the screen usable
+     * (category filter / pull-to-refresh rely on [currentLocation]).
+     */
+    private fun loadDefaultLocationShops() {
+        binding.turnOnGPSContainer.gone()
+        binding.partnersRv.visible()
+        adapter.showDistance = false
+        showLoading()
+        val defaultLocation = Location(LocationManager.GPS_PROVIDER).apply {
+            latitude = DEFAULT_LATITUDE
+            longitude = DEFAULT_LONGITUDE
+        }
+        currentLocation = defaultLocation
+        getNearShops(defaultLocation)
+    }
+
     override fun onUnauthorizedException(message: String?, code: Int) {}
 
     private fun checkPermissionForLocationIsGranted(): Boolean = ContextCompat.checkSelfPermission(
@@ -328,73 +350,27 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             if (mLocationManager == null) mLocationManager =
                 requireActivity().getSystemService(LOCATION_SERVICE) as LocationManager
 
-            val isNetworkEnabled =
-                mLocationManager!!.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
             val isGPSEnabled =
                 mLocationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
             if (isGPSEnabled) {
                 if (!checkPermissionForLocationIsGranted()) {
                     showErrorMessage(getString(uz.alphazet.domain.R.string.location_permission_not_full_granted))
+                    loadDefaultLocationShops()
                     return
                 }
                 binding.turnOnGPSContainer.gone()
                 binding.partnersRv.visible()
+                adapter.showDistance = true
                 showLoading()
                 startFusedLocationListener()
             } else {
                 showErrorMessage(getString(uz.alphazet.domain.R.string.please_turn_on_gps))
-                binding.turnOnGPSContainer.visible()
-                binding.partnersRv.gone()
+                loadDefaultLocationShops()
             }
-
-//            if (!isGPSEnabled && !isNetworkEnabled) {
-//                showErrorMessage("please_turn_on_gps_or_internet")
-//            } else {
-//                if (!checkPermissionForLocation()) {
-//                    showErrorMessage("location_permission_not_full_granted")
-//                    return
-//                }
-//
-//                startFusedLocationListener()
-////                if (isGPSEnabled) {
-////                    showErrorMessage("gps")
-////                    startGPSLocationListener()
-////                } else if (isNetworkEnabled) {
-////                    showErrorMessage("network")
-////                    startNetworkLocationListener()
-////                } else {
-////                    showErrorMessage("fused location")
-////                    startFusedLocationListener()
-////                }
-//            }
-
         } catch (e: Exception) {
             e.printStackTrace()
         }
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun startNetworkLocationListener() {
-        if (mLocationManager == null) mLocationManager =
-            requireActivity().getSystemService(LOCATION_SERVICE) as LocationManager
-
-        mLocationManager!!.requestLocationUpdates(
-            LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES,
-            MIN_DISTANCE_CHANGE_FOR_UPDATES, this
-        )
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun startGPSLocationListener() {
-        if (mLocationManager == null) mLocationManager =
-            requireActivity().getSystemService(LOCATION_SERVICE) as LocationManager
-
-        mLocationManager!!.requestLocationUpdates(
-            LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
-            MIN_DISTANCE_CHANGE_FOR_UPDATES, this
-        )
     }
 
     @SuppressLint("MissingPermission")
@@ -409,7 +385,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         locationRequest = locationRequestBuilder?.build()
 
         val builder = LocationSettingsRequest.Builder()
-        builder.addLocationRequest(locationRequest ?: LocationRequest())
+        builder.addLocationRequest(locationRequest!!)
         val locationSettingsRequest = builder.build()
 
         locationCallback = object : LocationCallback() {
@@ -493,11 +469,11 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         const val MIN_DISTANCE_CHANGE_FOR_UPDATES = 10f // 10 meters
         const val MIN_TIME_BW_UPDATES = 3 * 1000L // 3 sec
-        const val TIMER_UPDATED = "TIMER_UPDATED"
-        const val IS_SERVICE_ACTIVE = "IS_SERVICE_ACTIVE"
-        const val TIME_EXTRA = "TIME_EXTRA"
-        const val LOCALE_ID = "LOCALE_ID"
-        var raidLocalID = -1
+
+        // Fallback when device GPS is off: Tashkent center
+        // (same coords used by MapScreen / SearchScreen).
+        const val DEFAULT_LATITUDE = 41.31125776157484
+        const val DEFAULT_LONGITUDE = 69.27957810360282
     }
 
 }

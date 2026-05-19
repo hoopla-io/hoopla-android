@@ -31,6 +31,8 @@ pagingRuntimeKtx = "3.3.2"
 localeHelperAndroid = "1.5.1"
 localization = "1.2.11"
 playServicesLocation = "21.3.0"
+playServicesMaps = "19.2.0"
+mapsUtils = "3.8.2"
 playAppUpdate = "2.1.0"
 
 mockk = "1.13.13"
@@ -77,6 +79,8 @@ androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", v
 locale-helper-android = { module = "com.zeugmasolutions.localehelper:locale-helper-android", version.ref = "localeHelperAndroid" }
 localization = { module = "com.akexorcist:localization", version.ref = "localization" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+android-maps-utils = { group = "com.google.maps.android", name = "android-maps-utils", version.ref = "mapsUtils" }
 play-app-update = { module = "com.google.android.play:app-update", version.ref = "playAppUpdate" }
 play-app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "playAppUpdate" }
 

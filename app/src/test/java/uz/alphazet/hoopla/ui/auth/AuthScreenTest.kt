@@ -29,8 +29,8 @@ import uz.alphazet.hoopla.rules.MainDispatcherRule
 /**
  * Robolectric unit tests for [AuthScreen].
  *
- * [TestApp] replaces [uz.alphazet.hoopla.App] so MapKit and the production Koin
- * graph are never initialised. [KoinTestRule] provides a minimal graph with a
+ * [TestApp] replaces [uz.alphazet.hoopla.App] so the production Koin
+ * graph is never initialised. [KoinTestRule] provides a minimal graph with a
  * mocked [AuthVM] and [AppCache] per test.
  *
  * What is tested here:

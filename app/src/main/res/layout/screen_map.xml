@@ -25,11 +25,14 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.yandex.mapkit.mapview.MapView
+    <com.google.android.gms.maps.MapView
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/header_layout" />
+        app:layout_constraintTop_toBottomOf="@id/header_layout"
+        app:mapType="normal"
+        app:uiCompass="true"
+        app:uiZoomControls="false" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

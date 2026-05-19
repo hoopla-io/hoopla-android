@@ -2,15 +2,14 @@ package uz.alphazet.hoopla.ui.auth
 
 import android.app.Activity
 import android.content.ActivityNotFoundException
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
@@ -40,6 +39,7 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
     private val viewModel: AuthVM by viewModel()
 
     private val smsBroadcastReceiver by lazy { MySMSBroadcastReceiver() }
+    private var isSmsReceiverRegistered = false
 
     private var sessionId: String? = null
     private val phoneNumberFormatted by lazy { arguments?.getString(PHONE_FORMATTED) }
@@ -87,14 +87,14 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
 
         })
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                requireActivity().registerReceiver(
-                    smsBroadcastReceiver,
-                    IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION),
-                    Context.RECEIVER_EXPORTED
-                )
-            }
+        if (!isSmsReceiverRegistered) {
+            ContextCompat.registerReceiver(
+                requireActivity(),
+                smsBroadcastReceiver,
+                IntentFilter(SmsRetriever.SMS_RETRIEVED_ACTION),
+                ContextCompat.RECEIVER_EXPORTED
+            )
+            isSmsReceiverRegistered = true
         }
 
     }
@@ -223,7 +223,10 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
     }
 
     override fun onDestroyView() {
-        requireActivity().unregisterReceiver(smsBroadcastReceiver)
+        if (isSmsReceiverRegistered) {
+            runCatching { requireActivity().unregisterReceiver(smsBroadcastReceiver) }
+            isSmsReceiverRegistered = false
+        }
         countDownTimer.cancel()
         super.onDestroyView()
     }

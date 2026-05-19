@@ -163,7 +163,7 @@ Interface in `domain/cache/AppCache.kt`, implemented via `PrefDelegates`:
 | Cicerone 7.1 | Navigation router |
 | Coil 3.0.4 | Image loading |
 | Lottie 5.0.3 | Animations |
-| Yandex MapKit 4.24.0 | Maps |
+| Google Maps SDK 19.2 + maps-utils 3.8.2 | Maps + marker clustering |
 | AndroidX Paging 3 | Pagination |
 | Firebase (Analytics + Crashlytics) | Analytics/crash reporting |
 | Dexter 6.2.2 | Runtime permissions |
@@ -198,7 +198,7 @@ ui/
 │   ├── payment/   — top-up via payment services
 │   └── subscriptions/ — subscription plans
 ├── search/        — shop/product search
-├── map/           — map view with Yandex MapKit
+├── map/           — map view with Google Maps
 └── on_boarding/   — first-launch onboarding
 ```
 

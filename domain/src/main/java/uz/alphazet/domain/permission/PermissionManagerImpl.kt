@@ -100,6 +100,8 @@ class PermissionManagerImpl(val context: Context) : PermissionManager {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     if (report?.areAllPermissionsGranted() == true) {
                         onAllow()
+                    } else {
+                        onDeny()
                     }
                 }
 

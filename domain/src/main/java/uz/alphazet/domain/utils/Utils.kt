@@ -11,6 +11,12 @@ fun getMapImageUrl(long: String?, lat: String?): String {
     return "http://static-maps.yandex.ru/1.x/?lang=en-US&ll=$long,$lat&size=450,450&z=14&l=map&pt=$long,$lat,vkbkm"
 }
 
+fun getGoogleMapImageUrl(long: String?, lat: String?, apiKey: String? = null): String {
+    val keyParam = if (apiKey.isNullOrBlank()) "" else "&key=$apiKey"
+    return "https://maps.googleapis.com/maps/api/staticmap?center=$lat,$long" +
+        "&zoom=14&size=450x450&markers=color:red%7C$lat,$long$keyParam"
+}
+
 fun String.formatPhoneNumber(): String {
     val regex = """(\d{3})(\d{2})(\d{3})(\d{2})(\d{2})""".toRegex()
     val output = regex.replace(this, "+$1 $2 $3-$4-$5")

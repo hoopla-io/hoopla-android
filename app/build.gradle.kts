@@ -1,10 +1,20 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+}
+
+val mapsApiKey: String = run {
+    val props = Properties()
+    val localProps = rootProject.file("local.properties")
+    if (localProps.exists()) {
+        localProps.inputStream().use(props::load)
+    }
+    props.getProperty("MAPS_API_KEY") ?: "YOUR_GOOGLE_MAPS_API_KEY"
 }
 
 android {
@@ -15,10 +25,12 @@ android {
         applicationId = "uz.alphazet.hoopla"
         minSdk = 26
         targetSdk = 36
-        versionCode = 27
-        versionName = "1.3.8"
+        versionCode = 28
+        versionName = "1.3.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
 
     signingConfigs {

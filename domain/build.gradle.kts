@@ -19,14 +19,12 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "BASE_URL", "\"https://api.hoopla.uz/api/\"")
-            buildConfigField("String", "MAPKIT_API_KEY", "\"4115671a-34dd-47dc-a8e5-809ed17374c1\"")
             isMinifyEnabled = false
         }
 
         release {
 
             buildConfigField("String", "BASE_URL", "\"https://api.hoopla.uz/api/\"")
-            buildConfigField("String", "MAPKIT_API_KEY", "\"4115671a-34dd-47dc-a8e5-809ed17374c1\"")
 
             isMinifyEnabled = false
             proguardFiles(
@@ -115,7 +113,8 @@ dependencies {
     api("com.google.firebase:firebase-analytics")
     api("com.google.firebase:firebase-crashlytics")
 
-    api("com.yandex.android:maps.mobile:4.24.0-navikit")
+    api(libs.play.services.maps)
+    api(libs.android.maps.utils)
 
     api("com.github.skydoves:powerspinner:1.2.7")
 

@@ -11,8 +11,8 @@ import org.junit.runner.RunWith
 import uz.alphazet.hoopla.ui.BaseUiTest
 
 /**
- * UI Automator tests for [uz.alphazet.hoopla.ui.map.MapScreen] — the Yandex
- * MapView-based shops map reached via the bottom nav.
+ * UI Automator tests for [uz.alphazet.hoopla.ui.map.MapScreen] — the Google
+ * Maps MapView-based shops map reached via the bottom nav.
  *
  * Tested flows:
  *  1. Tapping the Map tab renders the MapView (`map_view`), the header app
@@ -24,7 +24,7 @@ import uz.alphazet.hoopla.ui.BaseUiTest
  *
  * Prerequisites:
  *  - Device / emulator has the debug build installed.
- *  - Yandex MapKit is configured with a valid API key so the MapView inflates
+ *  - Google Maps is configured with a valid API key so the MapView inflates
  *    rather than throwing during `onCreateView`.
  */
 @RunWith(AndroidJUnit4::class)
@@ -48,7 +48,7 @@ class MapScreenTest : BaseUiTest() {
     @Test
     fun map_screen_renders_header_and_mapview() {
         val mapView = device.wait(Until.findObject(By.res(APP_PACKAGE, "map_view")), TIMEOUT_MS)
-        assertNotNull("Yandex MapView (map_view) not found after tapping Map tab", mapView)
+        assertNotNull("Google MapView (map_view) not found after tapping Map tab", mapView)
 
         assertNotNull(
             "header_layout missing — MapScreen did not inflate",

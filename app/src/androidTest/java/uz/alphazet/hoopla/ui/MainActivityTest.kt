@@ -20,7 +20,7 @@ import org.junit.runner.RunWith
  *  3. Tapping the Orders tab while logged out shows the locale-specific
  *     sign-in dialog (message resolved from resources, not a hard-coded
  *     Russian literal).
- *  4. Tapping the Map tab reveals the Yandex MapView (not merely the bottom
+ *  4. Tapping the Map tab reveals the Google MapView (not merely the bottom
  *     nav).
  *  5. After navigating away from and back to the Home tab, the bottom nav
  *     remains visible — other tabs are already asserted by tests 2/4.
@@ -106,7 +106,7 @@ class MainActivityTest : BaseUiTest() {
         waitForId("map").click()
 
         val mapView = device.wait(Until.findObject(By.res(APP_PACKAGE, "map_view")), TIMEOUT_MS)
-        assertNotNull("Yandex MapView (R.id.map_view) not found after tapping Map tab", mapView)
+        assertNotNull("Google MapView (R.id.map_view) not found after tapping Map tab", mapView)
 
         val bottomNav = device.wait(Until.findObject(By.res(APP_PACKAGE, "bottom_nav")), TIMEOUT_MS)
         assertNotNull("Bottom nav disappeared after navigating to Map tab", bottomNav)

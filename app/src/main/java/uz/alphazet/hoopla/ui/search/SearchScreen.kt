@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
-import com.yandex.mapkit.geometry.Point
+import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
@@ -27,7 +27,7 @@ class SearchScreen : BaseActivity() {
 
     private val adapter = NearShopAdapter(false)
 
-    private val defaultPoint: Point = Point(41.31125776157484, 69.27957810360282)
+    private val defaultPoint: LatLng = LatLng(41.31125776157484, 69.27957810360282)
 
     private val shopListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -82,7 +82,7 @@ class SearchScreen : BaseActivity() {
         adapter.submitList(it)
     }
 
-    private fun getNearShops(location: Point) {
+    private fun getNearShops(location: LatLng) {
         launch {
             viewModel.getNearShops(location.latitude, location.longitude, null)
                 .collectLatest(::collectNearShopsData)

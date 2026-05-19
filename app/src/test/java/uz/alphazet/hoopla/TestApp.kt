@@ -4,7 +4,7 @@ import android.app.Application
 
 /**
  * Minimal Application for Robolectric tests.
- * Replaces [App] so that MapKit initialization and production Koin setup are skipped.
+ * Replaces [App] so that production Koin setup is skipped.
  * Each test that needs Koin starts it via [KoinTestRule].
  */
 class TestApp : Application()

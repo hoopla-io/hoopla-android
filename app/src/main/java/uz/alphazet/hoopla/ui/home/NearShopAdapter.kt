@@ -10,7 +10,14 @@ import uz.alphazet.domain.utils.formatDistance
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ItemPartnerBinding
 
-class NearShopAdapter(val showDistance: Boolean = true) : BaseAdapter<ShopItemData>() {
+class NearShopAdapter(showDistance: Boolean = true) : BaseAdapter<ShopItemData>() {
+
+    var showDistance: Boolean = showDistance
+        set(value) {
+            if (field == value) return
+            field = value
+            notifyItemRangeChanged(0, itemCount)
+        }
 
     override fun onCreateViewHolder(view: View): BaseVH {
         return VH(ItemPartnerBinding.bind(view))
