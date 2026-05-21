@@ -117,6 +117,7 @@ dependencies {
     api(project(mapOf("path" to ":domain")))
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    implementation(libs.androidx.viewpager2)
     implementation(libs.play.services.location)
     implementation(libs.play.app.update)
     implementation(libs.play.app.update.ktx)

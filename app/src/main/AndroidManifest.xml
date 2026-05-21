@@ -97,7 +97,7 @@
             android:name=".ui.home.StoryViewerActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:theme="@style/Theme.Hoopla.StoryViewer" />
 
         <activity
             android:name=".ui.auth.AuthActivity"

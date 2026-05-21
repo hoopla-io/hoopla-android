@@ -14,4 +14,11 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <!-- Story viewer needs a MaterialComponents ancestor so MaterialCardView (cover ring)
+         resolves its style attrs. Black window background avoids a white flash before
+         the layout paints over the fullscreen black slide area. -->
+    <style name="Theme.Hoopla.StoryViewer" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+
 </resources>

@@ -30,7 +30,10 @@ data class StorySlideData(
     val linkType: String?,
     val linkValue: String?,
     val duration: Int?
-) : Parcelable
+) : Parcelable, BaseItem {
+    override val uniqueId: String
+        get() = id.toString()
+}
 
 object StoryLinkTypes {
     const val PARTNER = "partner"

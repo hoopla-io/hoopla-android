@@ -28,6 +28,7 @@ lifecycleCommonJava8 = "2.8.6"
 lifecycleRuntimeKtx = "2.8.6"
 lifecycleViewmodelKtx = "2.8.6"
 pagingRuntimeKtx = "3.3.2"
+viewpager2 = "1.1.0"
 localeHelperAndroid = "1.5.1"
 localization = "1.2.11"
 playServicesLocation = "21.3.0"
@@ -76,6 +77,7 @@ lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx
 androidx-lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycleCommonJava8" }
 androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExtensions" }
 androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
+androidx-viewpager2 = { module = "androidx.viewpager2:viewpager2", version.ref = "viewpager2" }
 locale-helper-android = { module = "com.zeugmasolutions.localehelper:locale-helper-android", version.ref = "localeHelperAndroid" }
 localization = { module = "com.akexorcist:localization", version.ref = "localization" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }

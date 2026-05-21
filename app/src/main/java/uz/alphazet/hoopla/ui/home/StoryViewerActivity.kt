@@ -2,260 +2,237 @@ package uz.alphazet.hoopla.ui.home
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
+import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.View
-import android.view.ViewConfiguration
-import android.view.ViewGroup
-import android.view.animation.LinearInterpolator
-import android.widget.FrameLayout
-import android.widget.LinearLayout
-import androidx.core.content.ContextCompat
-import coil3.load
-import kotlinx.coroutines.flow.collectLatest
+import android.view.animation.AccelerateDecelerateInterpolator
+import androidx.viewpager2.widget.ViewPager2
+import coil3.SingletonImageLoader
+import coil3.request.ImageRequest
+import kotlinx.coroutines.flow.first
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
-import uz.alphazet.data.models.StoryDetailData
-import uz.alphazet.data.models.StoryLinkTypes
-import uz.alphazet.data.models.StorySlideData
 import uz.alphazet.domain.ui.BaseActivity
-import uz.alphazet.domain.utils.gone
-import uz.alphazet.domain.utils.intentToBrowser
-import uz.alphazet.domain.utils.visible
-import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ActivityStoryViewerBinding
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
+import kotlin.math.abs
 
-class StoryViewerActivity : BaseActivity() {
+class StoryViewerActivity : BaseActivity(), StoryGroupFragment.Host {
 
     private lateinit var binding: ActivityStoryViewerBinding
     private val viewModel: StoryViewerVM by viewModel()
 
-    private val storyId by lazy { intent.getIntExtra(STORY_ID, -1) }
+    private var storyIds: IntArray = intArrayOf()
+    private val viewedGroupIds = linkedSetOf<Int>()
 
-    private var slides: List<StorySlideData> = emptyList()
-    private var currentIndex = 0
-    private val progressBars = mutableListOf<View>()
-    private var animator: ObjectAnimator? = null
+    private var isDragging = false
+    private var dragStartY = 0f
+    private var touchSlop = 0
 
-    private val longPressTimeout = ViewConfiguration.getLongPressTimeout().toLong()
-    private val touchSlop by lazy { ViewConfiguration.get(this).scaledTouchSlop }
-    private var pauseRunnable: Runnable? = null
-    private var isHoldingPaused = false
-    private var touchDownX = 0f
-    private var touchDownY = 0f
+    private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
+        override fun onPageSelected(position: Int) {
+            storyIds.getOrNull(position)?.let(viewedGroupIds::add)
+            preloadFirstSlide(position - 1)
+            preloadFirstSlide(position + 1)
+        }
+    }
+
+    private val gestureDetector by lazy {
+        GestureDetector(this, object : GestureDetector.SimpleOnGestureListener() {
+            override fun onDown(e: MotionEvent): Boolean = true
+
+            override fun onScroll(
+                e1: MotionEvent?,
+                e2: MotionEvent,
+                distanceX: Float,
+                distanceY: Float
+            ): Boolean {
+                if (e1 == null) return false
+                if (!isDragging) {
+                    val dy = e2.y - e1.y
+                    val dx = e2.x - e1.x
+                    if (dy > touchSlop && abs(dy) > abs(dx)) {
+                        isDragging = true
+                        dragStartY = e1.y
+                    }
+                }
+                if (isDragging) {
+                    binding.root.translationY = (e2.y - dragStartY).coerceAtLeast(0f)
+                    binding.root.alpha = 1f - (binding.root.translationY / binding.root.height)
+                        .coerceIn(0f, 1f) * 0.5f
+                    return true
+                }
+                return false
+            }
+        })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStoryViewerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (storyId <= 0) {
+        val explicitIds = intent.getIntArrayExtra(STORY_IDS)?.takeIf { it.isNotEmpty() }
+        val singleId = intent.getIntExtra(STORY_ID, -1).takeIf { it > 0 }
+        storyIds = explicitIds ?: singleId?.let { intArrayOf(it) } ?: run {
             finish()
             return
         }
 
-        binding.btnClose.setOnClickListener { finish() }
-        binding.tapPrev.setOnClickListener { showSlide(currentIndex - 1) }
-        binding.tapNext.setOnClickListener { showSlide(currentIndex + 1) }
-        binding.ctaContainer.setOnClickListener {
-            slides.getOrNull(currentIndex)?.let(::handleLink)
-        }
-        binding.tapPrev.setOnTouchListener(holdToPauseListener)
-        binding.tapNext.setOnTouchListener(holdToPauseListener)
+        touchSlop = android.view.ViewConfiguration.get(this).scaledTouchSlop
 
+        binding.outerPager.adapter = StoryGroupPagerAdapter(this, storyIds)
+        binding.outerPager.offscreenPageLimit = 1
+        binding.outerPager.setPageTransformer(CubePageTransformer())
+        binding.outerPager.registerOnPageChangeCallback(pageChangeCallback)
+
+        val restoredIndex = savedInstanceState?.getInt(KEY_GROUP_INDEX)
+            ?: intent.getIntExtra(START_INDEX, 0)
+        val startIndex = restoredIndex.coerceIn(0, storyIds.lastIndex)
+        binding.outerPager.setCurrentItem(startIndex, false)
+        // setCurrentItem(0, false) is a no-op for the default initial page and
+        // won't fire onPageSelected — seed the viewed set + adjacent preloads explicitly.
+        storyIds.getOrNull(startIndex)?.let(viewedGroupIds::add)
+        preloadFirstSlide(startIndex - 1)
+        preloadFirstSlide(startIndex + 1)
+
+        binding.btnClose.setOnClickListener { finish() }
+    }
+
+    private fun preloadFirstSlide(groupIndex: Int) {
+        val id = storyIds.getOrNull(groupIndex)?.takeIf { it > 0 } ?: return
         launch {
-            viewModel.getStory(storyId).collectLatest(::collectStory)
+            val resource = viewModel.getStory(id).first()
+            val url = (resource as? UIResource.Success)?.data?.items?.firstOrNull()?.imageUrl
+            if (!url.isNullOrBlank()) {
+                val request = ImageRequest.Builder(this@StoryViewerActivity)
+                    .data(url)
+                    .build()
+                SingletonImageLoader.get(this@StoryViewerActivity).enqueue(request)
+            }
         }
+    }
+
+    override fun finish() {
+        if (viewedGroupIds.isNotEmpty()) {
+            val data = Intent().putExtra(VIEWED_IDS, viewedGroupIds.toIntArray())
+            setResult(RESULT_OK, data)
+        }
+        super.finish()
     }
 
     override fun updateStatusBarViewHeight() {}
 
-    private fun collectStory(t: UIResource<StoryDetailData>) = t.collect { data ->
-        val items = data?.items.orEmpty()
-        if (items.isEmpty()) {
-            finish()
-            return@collect
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        gestureDetector.onTouchEvent(ev)
+        if (ev.actionMasked == MotionEvent.ACTION_UP ||
+            ev.actionMasked == MotionEvent.ACTION_CANCEL
+        ) {
+            if (isDragging) {
+                isDragging = false
+                settleDrag()
+            }
         }
-        slides = items
-        currentIndex = 0
-        buildProgressBars(items.size)
-        showSlide(0)
+        return super.dispatchTouchEvent(ev)
     }
 
-    private fun buildProgressBars(count: Int) {
-        binding.progressContainer.removeAllViews()
-        progressBars.clear()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(KEY_GROUP_INDEX, binding.outerPager.currentItem)
+    }
 
-        val density = resources.displayMetrics.density
-        val height = (3f * density).toInt()
-        val gap = (4f * density).toInt()
-
-        for (i in 0 until count) {
-            val track = FrameLayout(this).apply {
-                background = ContextCompat.getDrawable(
-                    this@StoryViewerActivity, R.drawable.bg_story_progress_track
-                )
-                clipChildren = true
-            }
-            val lp = LinearLayout.LayoutParams(0, height, 1f).apply {
-                if (i > 0) marginStart = gap
-            }
-            track.layoutParams = lp
-
-            val fill = View(this).apply {
-                layoutParams = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-                background = ContextCompat.getDrawable(
-                    this@StoryViewerActivity, R.drawable.bg_story_progress_fill
-                )
-                pivotX = 0f
-                scaleX = 0f
-            }
-            track.addView(fill)
-            binding.progressContainer.addView(track)
-            progressBars.add(fill)
+    override fun goToNextGroup() {
+        val next = binding.outerPager.currentItem + 1
+        if (next >= storyIds.size) {
+            finish()
+        } else {
+            binding.outerPager.smoothScrollTo(next, GROUP_TRANSITION_MS)
         }
     }
 
-    private fun showSlide(index: Int) {
-        if (index < 0) return
-        if (index >= slides.size) {
-            finish()
+    override fun goToPreviousGroup() {
+        val prev = binding.outerPager.currentItem - 1
+        if (prev < 0) return
+        binding.outerPager.smoothScrollTo(prev, GROUP_TRANSITION_MS)
+    }
+
+    /**
+     * Programmatic page change with a controllable duration. ViewPager2 hardcodes
+     * its own smooth-scroll timing, so we drive the transition via fakeDrag
+     * instead — the page transformer (CubePageTransformer) still runs on every
+     * frame, just over our duration instead of ~250ms.
+     */
+    private fun ViewPager2.smoothScrollTo(item: Int, durationMs: Long) {
+        if (item == currentItem) return
+        val w = width
+        if (w <= 0) {
+            setCurrentItem(item, false)
             return
         }
+        if (isFakeDragging) endFakeDrag()
 
-        animator?.cancel()
-        animator = null
-
-        currentIndex = index
-
-        progressBars.forEachIndexed { i, view ->
-            view.scaleX = when {
-                i < index -> 1f
-                i > index -> 0f
-                else -> 0f
-            }
-        }
-
-        val slide = slides[index]
-        binding.slideImage.load(slide.imageUrl)
-
-        if (!slide.title.isNullOrBlank()) {
-            binding.slideTitle.text = slide.title
-            binding.slideTitle.visible()
-        } else {
-            binding.slideTitle.gone()
-        }
-        if (!slide.description.isNullOrBlank()) {
-            binding.slideDescription.text = slide.description
-            binding.slideDescription.visible()
-        } else {
-            binding.slideDescription.gone()
-        }
-        binding.ctaContainer.isClickable = slide.linkType != null && slide.linkValue != null
-
-        val durationMs = ((slide.duration ?: DEFAULT_DURATION_SECONDS) * 1000L)
-            .coerceAtLeast(MIN_DURATION_MS)
-        val fillView = progressBars.getOrNull(index) ?: return
-        animator = ObjectAnimator.ofFloat(fillView, "scaleX", 0f, 1f).apply {
+        val pxToDrag = w * (item - currentItem)
+        val animator = ValueAnimator.ofInt(0, pxToDrag).apply {
             duration = durationMs
-            interpolator = LinearInterpolator()
-            addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    if (!isFinishing && animation == animator) {
-                        showSlide(currentIndex + 1)
-                    }
-                }
-            })
-            start()
+            interpolator = AccelerateDecelerateInterpolator()
         }
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    private val holdToPauseListener = View.OnTouchListener { v, event ->
-        when (event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                touchDownX = event.x
-                touchDownY = event.y
-                isHoldingPaused = false
-                val r = Runnable {
-                    animator?.pause()
-                    isHoldingPaused = true
-                }
-                pauseRunnable = r
-                v.postDelayed(r, longPressTimeout)
-                false
-            }
-
-            MotionEvent.ACTION_MOVE -> {
-                val dx = event.x - touchDownX
-                val dy = event.y - touchDownY
-                if (dx * dx + dy * dy > touchSlop * touchSlop) {
-                    pauseRunnable?.let { v.removeCallbacks(it) }
-                    pauseRunnable = null
-                }
-                false
-            }
-
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                pauseRunnable?.let { v.removeCallbacks(it) }
-                pauseRunnable = null
-                if (isHoldingPaused) {
-                    isHoldingPaused = false
-                    animator?.resume()
-                    true
-                } else {
-                    false
-                }
-            }
-
-            else -> false
+        var previousValue = 0
+        animator.addUpdateListener { va ->
+            val current = va.animatedValue as Int
+            fakeDragBy(-(current - previousValue).toFloat())
+            previousValue = current
         }
+        animator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator) {
+                beginFakeDrag()
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                if (isFakeDragging) endFakeDrag()
+            }
+
+            override fun onAnimationCancel(animation: Animator) {
+                if (isFakeDragging) endFakeDrag()
+            }
+        })
+        animator.start()
     }
 
-    private fun handleLink(slide: StorySlideData) {
-        val type = slide.linkType ?: return
-        val value = slide.linkValue ?: return
-        when (type) {
-            StoryLinkTypes.URL -> intentToBrowser(value)
-            StoryLinkTypes.PARTNER -> {
-                val partnerId = value.toIntOrNull() ?: return
-                val intent = Intent(this, ShopDetailActivity::class.java)
-                intent.putExtra(ShopDetailActivity.SHOP_ID, partnerId)
-                startActivity(intent)
-            }
-
-            StoryLinkTypes.DRINK -> {
-                // No standalone drink-detail screen yet — skip.
-            }
+    private fun settleDrag() {
+        val ty = binding.root.translationY
+        if (ty > binding.root.height / DRAG_DISMISS_FRACTION) {
+            binding.root.animate()
+                .translationY(binding.root.height.toFloat())
+                .alpha(0f)
+                .setDuration(DRAG_SETTLE_MS)
+                .withEndAction {
+                    finish()
+                    overridePendingTransition(0, 0)
+                }
+                .start()
+        } else {
+            binding.root.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(DRAG_SETTLE_MS)
+                .start()
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        animator?.pause()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        animator?.resume()
     }
 
     override fun onDestroy() {
-        animator?.cancel()
-        animator = null
+        binding.outerPager.unregisterOnPageChangeCallback(pageChangeCallback)
         super.onDestroy()
     }
 
     companion object {
         const val STORY_ID = "story_id"
-        private const val DEFAULT_DURATION_SECONDS = 5
-        private const val MIN_DURATION_MS = 1500L
+        const val STORY_IDS = "story_ids"
+        const val START_INDEX = "start_index"
+        const val VIEWED_IDS = "viewed_ids"
+        private const val KEY_GROUP_INDEX = "current_group_index"
+        private const val DRAG_SETTLE_MS = 200L
+        private const val DRAG_DISMISS_FRACTION = 4f
+        private const val GROUP_TRANSITION_MS = 500L
     }
 }

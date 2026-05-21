@@ -93,6 +93,21 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             viewModel.getUser()
         }
 
+    private val storyViewerLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode != android.app.Activity.RESULT_OK) return@registerForActivityResult
+            val viewedIds = result.data?.getIntArrayExtra(StoryViewerActivity.VIEWED_IDS)
+                ?: return@registerForActivityResult
+            if (viewedIds.isEmpty()) return@registerForActivityResult
+            val viewedSet = viewedIds.toHashSet()
+            val updated = storyAdapter.currentList.map { story ->
+                if (story.id != null && story.id in viewedSet && story.isSeen != true) {
+                    story.copy(isSeen = true)
+                } else story
+            }
+            storyAdapter.submitList(updated)
+        }
+
     private val scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
         when (result) {
             is QRResult.QRSuccess -> {
@@ -154,9 +169,18 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         storyAdapter.setOnItemClickListener { story ->
             val storyId = story.id ?: return@setOnItemClickListener
+            if (story.isSeen != true) {
+                val updated = storyAdapter.currentList.map {
+                    if (it.id == storyId) it.copy(isSeen = true) else it
+                }
+                storyAdapter.submitList(updated)
+            }
+            val orderedIds = storyAdapter.currentList.mapNotNull { it.id }.toIntArray()
+            val startIndex = orderedIds.indexOf(storyId).coerceAtLeast(0)
             val intent = Intent(requireContext(), StoryViewerActivity::class.java)
-            intent.putExtra(StoryViewerActivity.STORY_ID, storyId)
-            startActivity(intent)
+            intent.putExtra(StoryViewerActivity.STORY_IDS, orderedIds)
+            intent.putExtra(StoryViewerActivity.START_INDEX, startIndex)
+            storyViewerLauncher.launch(intent)
         }
 
         if (checkPermissionForLocationIsGranted()) {
