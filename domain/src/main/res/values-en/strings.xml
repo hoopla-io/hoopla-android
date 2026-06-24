@@ -161,4 +161,8 @@
 
     <string name="update_downloaded">Update downloaded</string>
     <string name="restart">Restart</string>
+
+    <string name="whats_your_name">What\'s your name?</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="save">Save</string>
 </resources>

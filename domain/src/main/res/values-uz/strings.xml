@@ -162,4 +162,8 @@
     <string name="update_downloaded">Yangilanish yuklab olindi</string>
     <string name="restart">Qayta ishga tushirish</string>
 
+    <string name="whats_your_name">Ismingiz nima?</string>
+    <string name="enter_your_name">Ismingizni kiriting</string>
+    <string name="save">Saqlash</string>
+
 </resources>

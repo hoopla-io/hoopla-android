@@ -22,7 +22,10 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.ConfirmSMSData
 import uz.alphazet.data.models.LoginSessionData
+import uz.alphazet.data.models.UserData
 import uz.alphazet.domain.ui.BaseFragment
+import uz.alphazet.hoopla.ui.profile.InputNameBD.Companion.showInputNameBD
+import uz.alphazet.hoopla.ui.profile.ProfileVM
 import uz.alphazet.domain.utils.disable
 import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.setTextColorRes
@@ -37,6 +40,7 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
 
     private val binding by viewBinding(ScreenConfirmPhoneNumberBinding::bind)
     private val viewModel: AuthVM by viewModel()
+    private val profileViewModel: ProfileVM by viewModel()
 
     private val smsBroadcastReceiver by lazy { MySMSBroadcastReceiver() }
     private var isSmsReceiverRegistered = false
@@ -121,6 +125,10 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
             viewModel.confirmSmsFlow.collectLatest(::collectConfirmSms)
         }
 
+        launch {
+            profileViewModel.userDataFlow.collectLatest(::collectUserData)
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.withStarted {
                 launch {
@@ -139,8 +147,25 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
         cache.refreshToken = confirmData?.jwt?.refreshToken
         cache.tokenExpireAt = confirmData?.jwt?.expireAt ?: 0L
 
-        requireActivity().finish()
+        // Fetch profile to check whether the user still needs to enter a name.
+        profileViewModel.getUser()
 //        replaceScreen(Screens.bottomNav())
+    }
+
+    private fun collectUserData(t: UIResource<UserData>) = t.collect(
+        onLoading = {},
+        onError = { finishAuth() }
+    ) { data ->
+        val name = data?.name?.trim()
+        if (name.isNullOrEmpty() || name.equals(DEFAULT_NAME, ignoreCase = true)) {
+            showInputNameBD { finishAuth() }
+        } else {
+            finishAuth()
+        }
+    }
+
+    private fun finishAuth() {
+        if (isAdded) requireActivity().finish()
     }
 
     private fun collectResendSmsResource(t: UIResource<LoginSessionData>) = t?.collect {
@@ -248,6 +273,9 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
         const val TAG = "ConfirmPhoneNumberScreen"
         const val SESSION_ID = "session_id"
         const val PHONE_FORMATTED = "PHONE_FORMATTED"
+
+        // Backend placeholder name assigned to brand-new users.
+        private const val DEFAULT_NAME = "Qahvazor"
 
         fun withArgs(sessionId: String, phoneNumberFormatted: String): ConfirmPhoneNumberScreen =
             ConfirmPhoneNumberScreen().apply {

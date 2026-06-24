@@ -166,4 +166,8 @@
     <string name="update_downloaded">Обновление загружено</string>
     <string name="restart">Перезапустить</string>
 
+    <string name="whats_your_name">Как вас зовут?</string>
+    <string name="enter_your_name">Введите ваше имя</string>
+    <string name="save">Сохранить</string>
+
 </resources>
