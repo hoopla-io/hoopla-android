@@ -4,10 +4,12 @@ import android.os.Bundle
 import androidx.core.graphics.Insets
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import coil3.load
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
+import uz.alphazet.data.models.FeedbackDetail
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderInfo
 import uz.alphazet.data.models.order.OrderStatus
@@ -24,10 +26,11 @@ import uz.alphazet.domain.utils.setTextColorRes
 import uz.alphazet.domain.utils.setTextStringRes
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.databinding.ScreenOrderInfoBinding
+import uz.alphazet.hoopla.ui.home.FeedbackBD.Companion.showFeedbackBD
 import uz.alphazet.hoopla.ui.order.SummaInfoAdapter
 import uz.alphazet.hoopla.ui.orders.OrderQrCodeBD.Companion.showOrderQrCodeBD
 
-class OrderInfoScreen : BaseActivity() {
+class OrderInfoScreen : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     private lateinit var binding: ScreenOrderInfoBinding
     private val viewModel: OrdersVM by viewModel()
@@ -45,7 +48,20 @@ class OrderInfoScreen : BaseActivity() {
             viewModel.orderInfoFlow.collectLatest(::collectData)
         }
         binding.infoRv.adapter = adapter
+        binding.swipeRefreshLayout.setOnRefreshListener(this)
         binding.toolbar.setNavigationOnClickListener { finish() }
+    }
+
+    override fun onRefresh() {
+        viewModel.getOrderInfo(orderId)
+    }
+
+    override fun showLoading() {
+        binding.swipeRefreshLayout.isRefreshing = true
+    }
+
+    override fun hideLoading() {
+        binding.swipeRefreshLayout.isRefreshing = false
     }
 
     private suspend fun collectData(t: UIResource<OrderInfo>) = t.collect { orderInfo ->
@@ -145,6 +161,17 @@ class OrderInfoScreen : BaseActivity() {
             intentToBrowser(orderInfo.fiscalLink ?: "")
         }
 
+        if (orderInfo.orderStatus == OrderStatus.Completed && orderInfo.hasFeedback != true) {
+            binding.rate.visible()
+            binding.rate.setOnClickListener {
+                showFeedbackBD(orderInfo.toFeedbackDetail()) {
+                    binding.rate.gone()
+                }
+            }
+        } else {
+            binding.rate.gone()
+        }
+
         val pickupReady = when (orderInfo.orderStatus) {
             OrderStatus.Paid,
             OrderStatus.Pending,
@@ -187,6 +214,20 @@ class OrderInfoScreen : BaseActivity() {
             binding.continuePayment.gone()
         }
     }
+
+    private fun OrderInfo.toFeedbackDetail() = FeedbackDetail(
+        cashbackEarned = cashbackEarned,
+        cashbackUsed = cashbackUsed,
+        drinkName = drinkName,
+        id = id,
+        orderStatus = orderStatus,
+        partnerName = shopName,
+        productPrice = productPrice,
+        purchasedAt = purchasedAt,
+        purchasedAtUnix = purchasedAtUnix,
+        shopName = shopName,
+        drinkImage = drinkImageUrl
+    )
 
     private fun collectCancelOrder(t: UIResource<Any>) = t.collect {
         showMessageDF(getString(R.string.order_cancelled), "", "OK") {

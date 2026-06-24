@@ -141,6 +141,7 @@
     <string name="feedback_rate_label">Bahoyingiz:</string>
     <string name="feedback_comment_hint">O\'z fikringizni bildiring</string>
     <string name="feedback_submit">Fikr bildirish</string>
+    <string name="rate_order">Buyurtmani baholash</string>
 
     <string-array name="genders">
         <item>Erkak</item>

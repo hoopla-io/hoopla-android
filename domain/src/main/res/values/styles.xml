@@ -164,6 +164,14 @@
         <item name="cornerSize">12dp</item>
     </style>
 
+    <style name="DrinkImageTopRounded">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">12dp</item>
+        <item name="cornerSizeTopRight">12dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
     <style name="ItemLoyaltyImageAppearance">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">29dp</item>

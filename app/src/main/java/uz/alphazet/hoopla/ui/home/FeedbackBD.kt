@@ -1,5 +1,6 @@
 package uz.alphazet.hoopla.ui.home
 
+import androidx.fragment.app.FragmentActivity
 import coil3.load
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -70,6 +71,16 @@ class FeedbackBD(
             val current = childFragmentManager.findFragmentByTag(TAG)
             if (current == null) {
                 FeedbackBD(feedbackDetail, onSubmitted).show(childFragmentManager, TAG)
+            }
+        }
+
+        fun FragmentActivity.showFeedbackBD(
+            feedbackDetail: FeedbackDetail,
+            onSubmitted: () -> Unit = {}
+        ) {
+            val current = supportFragmentManager.findFragmentByTag(TAG)
+            if (current == null) {
+                FeedbackBD(feedbackDetail, onSubmitted).show(supportFragmentManager, TAG)
             }
         }
     }

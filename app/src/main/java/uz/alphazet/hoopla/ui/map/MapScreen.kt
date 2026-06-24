@@ -6,16 +6,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
 import com.google.maps.android.clustering.view.DefaultClusterRenderer
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
@@ -41,6 +45,8 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
 
     private var googleMap: GoogleMap? = null
     private var clusterManager: ClusterManager<ShopClusterItem>? = null
+
+    private val markerIconFactory by lazy { ShopMarkerIconFactory(requireContext()) }
 
     private val defaultPoint = LatLng(41.31125776157484, 69.27957810360282)
     private val defaultZoom = 12f
@@ -80,7 +86,13 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
 
     private fun setupClusterManager(map: GoogleMap) {
         val manager = ClusterManager<ShopClusterItem>(requireContext(), map)
-        manager.renderer = ShopClusterRenderer(requireContext(), map, manager)
+        manager.renderer = ShopClusterRenderer(
+            requireContext(),
+            map,
+            manager,
+            markerIconFactory,
+            viewLifecycleOwner.lifecycleScope
+        )
 
         map.setOnCameraIdleListener(manager)
         map.setOnMarkerClickListener(manager)
@@ -177,25 +189,38 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
     }
 
     /**
-     * Renders individual shop markers with the shared `location` pin (parity
-     * with the previous Yandex placemark icon); clusters keep the default
-     * bubble.
+     * Renders each shop marker as a pin showing the café's logo. The branded
+     * placeholder is shown immediately, then upgraded to the loaded logo once
+     * [ShopMarkerIconFactory] resolves it. Built icons are cached per logo
+     * URL so re-clustering on zoom neither reloads nor flickers. Clusters keep
+     * the default bubble.
      */
     private class ShopClusterRenderer(
         context: Context,
         map: GoogleMap,
-        clusterManager: ClusterManager<ShopClusterItem>
+        clusterManager: ClusterManager<ShopClusterItem>,
+        private val iconFactory: ShopMarkerIconFactory,
+        private val scope: CoroutineScope
     ) : DefaultClusterRenderer<ShopClusterItem>(context, map, clusterManager) {
 
-        private val pinIcon by lazy {
-            BitmapDescriptorFactory.fromResource(uz.alphazet.domain.R.drawable.location)
-        }
+        private val iconCache = mutableMapOf<String, BitmapDescriptor>()
 
         override fun onBeforeClusterItemRendered(
             item: ShopClusterItem,
             markerOptions: MarkerOptions
         ) {
-            markerOptions.icon(pinIcon).title(item.title)
+            val icon = item.shop.logoUrl?.let(iconCache::get) ?: iconFactory.placeholder
+            markerOptions.icon(icon).anchor(0.5f, 1f).title(item.title)
+        }
+
+        override fun onClusterItemRendered(item: ShopClusterItem, marker: Marker) {
+            val url = item.shop.logoUrl
+            if (url.isNullOrBlank() || iconCache.containsKey(url)) return
+            scope.launch {
+                val descriptor = iconFactory.create(url)
+                iconCache[url] = descriptor
+                runCatching { marker.setIcon(descriptor) }
+            }
         }
     }
 }

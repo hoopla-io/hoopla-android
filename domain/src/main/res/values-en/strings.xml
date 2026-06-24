@@ -141,6 +141,7 @@
     <string name="feedback_rate_label">Your rating:</string>
     <string name="feedback_comment_hint">Share your experience</string>
     <string name="feedback_submit">Submit feedback</string>
+    <string name="rate_order">Rate order</string>
 
     <string-array name="genders">
         <item>Male</item>

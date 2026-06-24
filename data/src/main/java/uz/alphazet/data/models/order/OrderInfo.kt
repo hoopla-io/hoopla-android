@@ -18,7 +18,8 @@ data class OrderInfo(
     val productPrice: Double?,
     val purchasedAt: String?,
     val purchasedAtUnix: Long?,
-    val shopName: String?
+    val shopName: String?,
+    val hasFeedback: Boolean?
 ) {
     data class Item(
         @SerializedName("item_type")

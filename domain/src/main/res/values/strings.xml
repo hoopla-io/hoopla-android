@@ -145,6 +145,7 @@
     <string name="feedback_rate_label">Ваша оценка:</string>
     <string name="feedback_comment_hint">Поделитесь впечатлением</string>
     <string name="feedback_submit">Отправить отзыв</string>
+    <string name="rate_order">Оценить заказ</string>
 
     <string-array name="genders">
         <item>Мужской</item>
