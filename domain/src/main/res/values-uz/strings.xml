@@ -120,8 +120,11 @@
     <string name="use">Foydalanish</string>
     <string name="available_">Mavjud:</string>
     <string name="label_use_cashback_description">Siz %1$s so\'mgacha keshbekdan foydalanishingiz mumkin</string>
+    <string name="use_cashback">Keshbekdan foydalanish</string>
+    <string name="back">Orqaga</string>
     <string name="cashback_">Keshbek:</string>
     <string name="total_">Umumiy:</string>
+    <string name="label_earn_cashback">Sizga qaytadi (%1$s%%)</string>
     <string name="order_cancelled">Buyurtma bekor qilindi!</string>
     <string name="cancel_order">Buyurtmani bekor qilish</string>
     <string name="continue_payment">To\'lov qilish</string>

@@ -124,8 +124,11 @@
     <string name="use">Использовать</string>
     <string name="available_">Доступный:</string>
     <string name="label_use_cashback_description">Вы можете использовать до %1$s сум</string>
+    <string name="use_cashback">Использовать кэшбэк</string>
+    <string name="back">Назад</string>
     <string name="cashback_">Кэшбэк:</string>
     <string name="total_">Итого:</string>
+    <string name="label_earn_cashback">Вы получите (%1$s%%)</string>
     <string name="order_cancelled">Заказ отменен!</string>
     <string name="cancel_order">Отменить заказ</string>
     <string name="continue_payment">Продолжить оплату</string>

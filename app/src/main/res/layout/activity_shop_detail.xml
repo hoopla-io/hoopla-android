@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:navigationContentDescription="Orqaga"
+                app:navigationContentDescription="@string/back"
                 app:navigationIcon="@drawable/ic_arrow_left_back"
                 app:titleTextColor="@color/white" />
 

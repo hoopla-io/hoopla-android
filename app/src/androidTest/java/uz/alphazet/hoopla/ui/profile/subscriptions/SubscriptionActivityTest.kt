@@ -25,7 +25,7 @@ import uz.alphazet.hoopla.ui.BaseUiTest
  *     toolbar and the paged RecyclerView (`subscription_rv`).
  *  2. The SwipeRefreshLayout container is present so users can pull to
  *     refresh.
- *  3. Toolbar back button (`By.desc("Orqaga")`) finishes the activity.
+ *  3. Toolbar back button (desc = @string/back) finishes the activity.
  *
  * Prerequisites:
  *  - Device / emulator has the debug build installed.
@@ -85,7 +85,7 @@ class SubscriptionActivityTest : BaseUiTest() {
             device.wait(Until.findObject(By.res(APP_PACKAGE, "subscription_rv")), LAUNCH_READY_MS)
         )
 
-        val backArrow = device.wait(Until.findObject(By.desc("Orqaga")), TIMEOUT_MS)
+        val backArrow = device.wait(Until.findObject(By.desc(localizedString(uz.alphazet.domain.R.string.back))), TIMEOUT_MS)
         if (backArrow != null) {
             backArrow.click()
         } else {

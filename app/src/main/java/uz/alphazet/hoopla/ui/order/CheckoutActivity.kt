@@ -171,8 +171,30 @@ class CheckoutActivity : BaseActivity() {
             binding.usedCashbackContainer.gone()
         }
 
+        updateEarnCashback(price)
+
         return price
     }
+
+    /**
+     * Shows how much cashback this order earns: [CheckoutActivity]'s payable total
+     * multiplied by the shop's [OrderDetails.cashbackPercent]. Hidden when the shop
+     * gives no cashback.
+     */
+    private fun updateEarnCashback(total: Double) {
+        val percent = orderData?.cashbackPercent ?: 0f
+        if (percent <= 0f) {
+            binding.earnCashbackContainer.gone()
+            return
+        }
+        val earned = total * percent / 100.0
+        binding.earnCashbackLabel.text = getString(R.string.label_earn_cashback, percent.formatPercent())
+        binding.earnCashback.text = "+".plus(earned.formatToPrice()).plus(" UZS")
+        binding.earnCashbackContainer.visible()
+    }
+
+    private fun Float.formatPercent(): String =
+        if (this % 1f == 0f) toInt().toString() else toString()
 
     override fun showLoading() {
         binding.order.startAnimation()

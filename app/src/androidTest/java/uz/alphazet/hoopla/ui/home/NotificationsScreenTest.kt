@@ -77,7 +77,7 @@ class NotificationsScreenTest : BaseUiTest() {
         // The toolbar nav icon's content description is localised — tap the
         // button via content-description selector (same pattern used by the
         // ShopDetail back-arrow test).
-        val backArrow = device.wait(Until.findObject(By.desc("Orqaga")), TIMEOUT_MS)
+        val backArrow = device.wait(Until.findObject(By.desc(localizedString(uz.alphazet.domain.R.string.back))), TIMEOUT_MS)
         if (backArrow != null) {
             backArrow.click()
         } else {

@@ -88,7 +88,7 @@ class CheckoutActivityTest : BaseUiTest() {
             device.wait(Until.findObject(By.res(APP_PACKAGE, "toolbar")), LAUNCH_READY_MS)
         )
 
-        val backArrow = device.wait(Until.findObject(By.desc("Orqaga")), TIMEOUT_MS)
+        val backArrow = device.wait(Until.findObject(By.desc(localizedString(uz.alphazet.domain.R.string.back))), TIMEOUT_MS)
         if (backArrow != null) {
             backArrow.click()
         } else {

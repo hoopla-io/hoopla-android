@@ -1,6 +1,7 @@
 package uz.alphazet.data.models.order
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import uz.alphazet.data.rv.BaseItem
 
@@ -10,7 +11,9 @@ data class OrderDetails(
     val drink: Drink?,
     val shop: Shop?,
     val validatedAt: String?,
-    val validatedAtUnix: Int?
+    val validatedAtUnix: Int?,
+    @SerializedName("cashback_percent")
+    val cashbackPercent: Float?
 ) : Parcelable {
     @Parcelize
     data class Modification(

@@ -19,7 +19,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
         app:layout_constraintTop_toBottomOf="@id/status_bar_view"
-        app:navigationContentDescription="Orqaga"
+        app:navigationContentDescription="@string/back"
         app:navigationIcon="@drawable/ic_arrow_left_back"
         app:title="@string/payment"
         app:titleTextAppearance="@style/ToolbarTitleTextStyle"

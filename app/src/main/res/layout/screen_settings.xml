@@ -11,7 +11,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
         app:layout_constraintTop_toTopOf="parent"
-        app:navigationContentDescription="Orqaga"
+        app:navigationContentDescription="@string/back"
         app:navigationIcon="@drawable/ic_arrow_left_back"
         app:title="Settings"
         app:titleTextAppearance="@style/ToolbarTitleTextStyle"

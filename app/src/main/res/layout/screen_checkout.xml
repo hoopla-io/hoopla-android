@@ -20,7 +20,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
         app:layout_constraintTop_toBottomOf="@id/status_bar_view"
-        app:navigationContentDescription="Orqaga"
+        app:navigationContentDescription="@string/back"
         app:navigationIcon="@drawable/ic_arrow_left_back"
         app:title="@string/order_details"
         app:titleTextAppearance="@style/ToolbarTitleTextStyle"
@@ -57,9 +57,9 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/inter_bold"
                 android:paddingHorizontal="16dp"
-                android:text="Cappuccino"
                 android:textColor="@color/black_400"
                 android:textSize="24sp"
+                tools:text="Cappuccino"
                 app:layout_constraintBottom_toTopOf="@id/cafe_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/image"
@@ -102,9 +102,9 @@
                         android:layout_marginHorizontal="16dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/inter_regular"
-                        android:text="Total:"
                         android:textColor="@color/grey_350"
-                        android:textSize="16sp" />
+                        android:textSize="16sp"
+                        tools:text="Cappuccino" />
 
                     <TextView
                         android:id="@+id/drink_summa"
@@ -180,6 +180,37 @@
                         android:textColor="@color/black_300"
                         android:textSize="20sp"
                         tools:text="44 000 UZS" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/earn_cashback_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="7.5dp"
+                    android:orientation="horizontal"
+                    android:paddingVertical="7.5dp">
+
+                    <TextView
+                        android:id="@+id/earn_cashback_label"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter_medium"
+                        android:textColor="@color/green_200"
+                        android:textSize="14sp"
+                        tools:text="You'll earn (5%)" />
+
+                    <TextView
+                        android:id="@+id/earn_cashback"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/green_200"
+                        android:textSize="14sp"
+                        tools:text="+2 200 UZS" />
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -325,7 +356,7 @@
             android:background="@drawable/ripple_corner14"
             android:fontFamily="@font/inter_medium"
             android:paddingHorizontal="16dp"
-            android:text="Use cashback"
+            android:text="@string/use_cashback"
             android:textColor="@color/black_300"
             android:textSize="16sp" />
 

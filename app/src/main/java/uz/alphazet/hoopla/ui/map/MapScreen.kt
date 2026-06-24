@@ -165,11 +165,15 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
         binding.mapView.onSaveInstanceState(outState)
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
+        // MapView is part of the fragment's view hierarchy, so its lifecycle must
+        // be tied to the view, not the fragment. Destroying it here (paired with
+        // onCreate() in initialize()) keeps binding valid; doing it in onDestroy()
+        // crashes because the view — and thus requireView() — is already gone.
         binding.mapView.onDestroy()
         googleMap = null
         clusterManager = null
-        super.onDestroy()
+        super.onDestroyView()
     }
 
     /**

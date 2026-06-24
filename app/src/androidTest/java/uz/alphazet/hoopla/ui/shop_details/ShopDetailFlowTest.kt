@@ -151,9 +151,9 @@ class ShopDetailFlowTest : BaseUiTest() {
     fun tapping_back_arrow_returns_to_home() {
         navigateFromHomeToFirstNearbyShop()
 
-        // The toolbar nav icon's content description is hard-coded in XML.
-        val backArrow = device.wait(Until.findObject(By.desc("Orqaga")), TIMEOUT_MS)
-        assertNotNull("toolbar back arrow (desc='Orqaga') not found", backArrow)
+        // The toolbar nav icon's content description is @string/back (localized).
+        val backArrow = device.wait(Until.findObject(By.desc(localizedString(uz.alphazet.domain.R.string.back))), TIMEOUT_MS)
+        assertNotNull("toolbar back arrow (desc=@string/back) not found", backArrow)
 
         backArrow!!.click()
         device.waitForIdle(IDLE_TIMEOUT_MS)
