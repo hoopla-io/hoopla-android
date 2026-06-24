@@ -14,12 +14,6 @@ import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.DialogInputNameBinding
 
-/**
- * Prompts the user to enter their display name right after login when the
- * profile name is missing or still the default placeholder. [onCompleted] is
- * invoked once the sheet is gone (whether the name was saved or skipped) so the
- * caller can continue its flow.
- */
 class InputNameBD(
     private val onCompleted: () -> Unit = {}
 ) : BaseBottomSheetDF(R.layout.dialog_input_name) {
