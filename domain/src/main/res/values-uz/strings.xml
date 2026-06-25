@@ -143,6 +143,8 @@
     <string name="feedback_title">Buyurtmani baholang\*</string>
     <string name="feedback_rate_label">Bahoyingiz:</string>
     <string name="feedback_comment_hint">O\'z fikringizni bildiring</string>
+    <string name="order_comment_title">Izoh</string>
+    <string name="order_comment_hint">Buyurtmaga izoh (ixtiyoriy)</string>
     <string name="feedback_submit">Fikr bildirish</string>
     <string name="rate_order">Buyurtmani baholash</string>
 

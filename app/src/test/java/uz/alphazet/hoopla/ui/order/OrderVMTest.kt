@@ -2,6 +2,7 @@ package uz.alphazet.hoopla.ui.order
 
 import app.cash.turbine.test
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -90,7 +91,7 @@ class OrderVMTest {
         val drink = OrderDetails.Drink(5, "Latte", 25000.0, null)
         val shop = OrderDetails.Shop(3, "Hoopla")
         val mod = OrderDetails.Modification(emptyList(), emptyList(), emptyList(), emptyList())
-        val details = OrderDetails(mod, drink, shop, null, null)
+        val details = OrderDetails(mod, drink, shop, null, null, null)
 
         coEvery { orderRepo.validateOrder(3, 5) } returns flowOf(UIResource.Success(details))
 
@@ -108,7 +109,7 @@ class OrderVMTest {
     @Test
     fun createOrder_returns_order_info() = runTest {
         val info = OrderInfoData(101, "Hoopla", "Hoopla Central", null, null, "Latte", "pending")
-        coEvery { orderRepo.createOrder(3, 5, any()) } returns flowOf(UIResource.Success(info))
+        coEvery { orderRepo.createOrder(3, 5, any(), any()) } returns flowOf(UIResource.Success(info))
 
         val flow = vm.createOrder(3, 5, arrayListOf())
         flow.test {
@@ -119,12 +120,28 @@ class OrderVMTest {
         }
     }
 
+    @Test
+    fun createOrder_forwards_comment_to_repo() = runTest {
+        val info = OrderInfoData(101, "Hoopla", "Hoopla Central", null, null, "Latte", "pending")
+        coEvery { orderRepo.createOrder(3, 5, any(), "no sugar") } returns
+            flowOf(UIResource.Success(info))
+
+        val flow = vm.createOrder(3, 5, arrayListOf(), "no sugar")
+        flow.test {
+            val result = awaitItem()
+            assertTrue(result is UIResource.Success)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        coVerify { orderRepo.createOrder(3, 5, any(), "no sugar") }
+    }
+
     // --- createOrderRahmat (Pattern C) ------------------------------------
 
     @Test
     fun createOrderRahmat_returns_checkout_info() = runTest {
         val checkout = CheckOutInfo(29000, "https://pay/co", "app://pay", "2030-01-01", 55, "https://s/x")
-        coEvery { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0) } returns
+        coEvery { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, any()) } returns
             flowOf(UIResource.Success(checkout))
 
         val flow = vm.createOrderRahmat(3, 5, arrayListOf(), false, 0.0)
@@ -134,5 +151,21 @@ class OrderVMTest {
             assertEquals("https://pay/co", (result as UIResource.Success).data?.checkout_url)
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun createOrderRahmat_forwards_comment_to_repo() = runTest {
+        val checkout = CheckOutInfo(29000, "https://pay/co", "app://pay", "2030-01-01", 55, "https://s/x")
+        coEvery { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, "extra hot") } returns
+            flowOf(UIResource.Success(checkout))
+
+        val flow = vm.createOrderRahmat(3, 5, arrayListOf(), false, 0.0, "extra hot")
+        flow.test {
+            val result = awaitItem()
+            assertTrue(result is UIResource.Success)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        coVerify { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, "extra hot") }
     }
 }

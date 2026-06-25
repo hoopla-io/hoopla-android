@@ -19,7 +19,8 @@ data class OrderInfo(
     val purchasedAt: String?,
     val purchasedAtUnix: Long?,
     val shopName: String?,
-    val hasFeedback: Boolean?
+    val hasFeedback: Boolean?,
+    val comment: String?
 ) {
     data class Item(
         @SerializedName("item_type")

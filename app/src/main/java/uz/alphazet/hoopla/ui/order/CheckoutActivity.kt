@@ -32,6 +32,7 @@ class CheckoutActivity : BaseActivity() {
     private val viewModel: OrderVM by viewModel()
     private val orderData by lazy { intent.getParcelableExtra<OrderDetails>(Constants.DATA) }
     private val modifiers by lazy { intent.getParcelableArrayListExtra<ModifierItemData>(Constants.MODIFIERS) }
+    private val comment by lazy { intent.getStringExtra(Constants.COMMENT) }
 
     private val adapter = SummaInfoAdapter()
     private var usingCashBack = 0.0
@@ -74,7 +75,8 @@ class CheckoutActivity : BaseActivity() {
                         orderData?.drink?.id ?: -1,
                         list,
                         usingCashBack > 0,
-                        usingCashBack
+                        usingCashBack,
+                        comment
                     ).collectLatest(::collectData)
                 }
             }

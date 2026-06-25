@@ -63,9 +63,10 @@ class OrderActivity2 : BaseActivity() {
 
         binding.order.setOnClickListener {
             val modifiers = ArrayList<ModifierItemData>()
+            val comment = binding.commentInput.text?.toString()?.trim()
 
             launch {
-                viewModel.createOrder(shopId, drinkData?.id ?: -1, modifiers)
+                viewModel.createOrder(shopId, drinkData?.id ?: -1, modifiers, comment)
                     .collectLatest(::collectData)
             }
         }

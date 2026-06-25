@@ -10,4 +10,5 @@ object Constants {
     const val ID = "id"
     const val DATA = "data"
     const val MODIFIERS = "modifiers"
+    const val COMMENT = "comment"
 }

@@ -44,9 +44,10 @@ class OrderVM(
     suspend fun createOrder(
         shopId: Int,
         drinkId: Int,
-        modifiers: ArrayList<ModifierItemData>
+        modifiers: ArrayList<ModifierItemData>,
+        comment: String? = null
     ): SharedFlow<UIResource<OrderInfoData>> {
-        return repo.createOrder(shopId, drinkId, modifiers)
+        return repo.createOrder(shopId, drinkId, modifiers, comment)
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
@@ -55,9 +56,10 @@ class OrderVM(
         drinkId: Int,
         modifiers: ArrayList<ModifierItemData>,
         useCashback: Boolean,
-        cashbackAmount: Double
+        cashbackAmount: Double,
+        comment: String? = null
     ): SharedFlow<UIResource<CheckOutInfo>> {
-        return repo.createOrderRahmat(shopId, drinkId, modifiers, useCashback, cashbackAmount)
+        return repo.createOrderRahmat(shopId, drinkId, modifiers, useCashback, cashbackAmount, comment)
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 

@@ -74,6 +74,13 @@ class OrderInfoScreen : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
 
         binding.orderNumber.text = orderInfo.id.toString()
 
+        if (orderInfo.comment.isNullOrBlank()) {
+            binding.commentContainer.gone()
+        } else {
+            binding.commentContainer.visible()
+            binding.comment.text = orderInfo.comment
+        }
+
         if ((orderInfo.cashbackUsed ?: 0.0) > 0) {
             binding.usedCashbackContainer.visible()
             binding.usedCashback.text =

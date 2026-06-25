@@ -135,6 +135,38 @@
 
                 </androidx.appcompat.widget.LinearLayoutCompat>
 
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/comment_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="vertical"
+                    android:paddingVertical="7.5dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/order_comment_title"
+                        android:textColor="@color/grey_350"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:textColor="@color/black_300"
+                        android:textSize="16sp"
+                        tools:text="Less ice, extra hot please" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/info_rv"
                     android:layout_width="match_parent"

@@ -25,11 +25,17 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
         service.validateOrder(body)
     }
 
-    suspend fun createOrder(shopId: Int, drinkId: Int, modifiers: ArrayList<ModifierItemData>) =
+    suspend fun createOrder(
+        shopId: Int,
+        drinkId: Int,
+        modifiers: ArrayList<ModifierItemData>,
+        comment: String? = null
+    ) =
         handleFlow {
             val json = JSONObject().apply {
                 put("shopId", shopId)
                 put("drinkId", drinkId)
+                if (!comment.isNullOrBlank()) put("comment", comment.trim())
                 put("modifiers", JSONArray().apply {
                     modifiers.forEach {
                         put(JSONObject().apply {
@@ -53,7 +59,8 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
         drinkId: Int,
         modifiers: ArrayList<ModifierItemData>,
         useCashback: Boolean,
-        cashbackAmount: Double
+        cashbackAmount: Double,
+        comment: String? = null
     ) =
         handleFlow {
             val json = JSONObject().apply {
@@ -61,6 +68,7 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
                 put("drinkId", drinkId)
                 put("use_cashback", useCashback)
                 put("cashback_amount", cashbackAmount)
+                if (!comment.isNullOrBlank()) put("comment", comment.trim())
                 put("modifiers", JSONArray().apply {
                     modifiers.forEach {
                         put(JSONObject().apply {

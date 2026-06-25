@@ -202,6 +202,7 @@ class OrderActivity : BaseActivity() {
             val intent1 = Intent(this, CheckoutActivity::class.java)
             intent1.putExtra(Constants.DATA, data)
             intent1.putExtra(Constants.MODIFIERS, modifiers)
+            intent1.putExtra(Constants.COMMENT, binding.commentInput.text?.toString()?.trim())
             checkoutListener.launch(intent1)
         }
 

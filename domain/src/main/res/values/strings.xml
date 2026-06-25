@@ -147,6 +147,8 @@
     <string name="feedback_title">Оцените заказ\*</string>
     <string name="feedback_rate_label">Ваша оценка:</string>
     <string name="feedback_comment_hint">Поделитесь впечатлением</string>
+    <string name="order_comment_title">Комментарий</string>
+    <string name="order_comment_hint">Комментарий к заказу (необязательно)</string>
     <string name="feedback_submit">Отправить отзыв</string>
     <string name="rate_order">Оценить заказ</string>
 

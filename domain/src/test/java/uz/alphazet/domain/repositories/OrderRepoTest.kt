@@ -18,6 +18,7 @@ import okio.Buffer
 import org.json.JSONObject
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -135,6 +136,33 @@ class OrderRepoTest {
     }
 
     @Test
+    fun createOrder_includes_comment_when_provided() = runTest(dispatcher) {
+        val slot = slot<RequestBody>()
+        coEvery { service.createOrder(capture(slot)) } returns Response.success(
+            wrap(OrderInfoData(1, null, null, null, null, null, null))
+        )
+
+        repo.createOrder(shopId = 1, drinkId = 2, modifiers = arrayListOf(), comment = "  no sugar  ")
+            .test { awaitItem(); awaitComplete() }
+
+        val json = JSONObject(slot.captured.asString())
+        assertEquals("no sugar", json.getString("comment"))
+    }
+
+    @Test
+    fun createOrder_omits_comment_when_blank_or_null() = runTest(dispatcher) {
+        val slot = slot<RequestBody>()
+        coEvery { service.createOrder(capture(slot)) } returns Response.success(
+            wrap(OrderInfoData(1, null, null, null, null, null, null))
+        )
+
+        repo.createOrder(shopId = 1, drinkId = 2, modifiers = arrayListOf(), comment = "   ")
+            .test { awaitItem(); awaitComplete() }
+
+        assertFalse(JSONObject(slot.captured.asString()).has("comment"))
+    }
+
+    @Test
     fun createOrder_with_empty_modifiers_sends_empty_array() = runTest(dispatcher) {
         val slot = slot<RequestBody>()
         coEvery { service.createOrder(capture(slot)) } returns Response.success(
@@ -209,6 +237,34 @@ class OrderRepoTest {
     }
 
     @Test
+    fun createOrderRahmat_includes_comment_when_provided() = runTest(dispatcher) {
+        val slot = slot<RequestBody>()
+        coEvery { service.createOrderRahmat(capture(slot)) } returns Response.success(
+            wrap(CheckOutInfo(null, null, null, null, null, null))
+        )
+
+        repo.createOrderRahmat(
+            shopId = 1, drinkId = 2, modifiers = arrayListOf(),
+            useCashback = false, cashbackAmount = 0.0, comment = "  extra hot  "
+        ).test { awaitItem(); awaitComplete() }
+
+        assertEquals("extra hot", JSONObject(slot.captured.asString()).getString("comment"))
+    }
+
+    @Test
+    fun createOrderRahmat_omits_comment_when_blank_or_null() = runTest(dispatcher) {
+        val slot = slot<RequestBody>()
+        coEvery { service.createOrderRahmat(capture(slot)) } returns Response.success(
+            wrap(CheckOutInfo(null, null, null, null, null, null))
+        )
+
+        repo.createOrderRahmat(1, 2, arrayListOf(), useCashback = false, cashbackAmount = 0.0)
+            .test { awaitItem(); awaitComplete() }
+
+        assertFalse(JSONObject(slot.captured.asString()).has("comment"))
+    }
+
+    @Test
     fun createOrderRahmat_with_useCashback_false_serialises_false() = runTest(dispatcher) {
         val slot = slot<RequestBody>()
         coEvery { service.createOrderRahmat(capture(slot)) } returns Response.success(
@@ -263,7 +319,8 @@ class OrderRepoTest {
         drink = OrderDetails.Drink(id = 123, name = "Latte", amount = 15_000.0, imageUrl = null),
         shop = OrderDetails.Shop(id = 7, name = "Hoopla"),
         validatedAt = "now",
-        validatedAtUnix = 1
+        validatedAtUnix = 1,
+        cashbackPercent = null
     )
 
     private fun <T> wrap(data: T?): BaseResponseData<T> = BaseResponseData(

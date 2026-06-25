@@ -85,7 +85,9 @@ class OrdersRepoTest {
             productPrice = 15_000.0,
             purchasedAt = "2026-04-20",
             purchasedAtUnix = 1_700_000_000L,
-            shopName = "Hoopla"
+            shopName = "Hoopla",
+            hasFeedback = null,
+            comment = null
         )
         coEvery { api.getOrderInfo(55) } returns Response.success(wrap(info))
 
