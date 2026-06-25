@@ -17,6 +17,7 @@ import uz.alphazet.data.models.order.CheckOutInfo
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.data.models.order.OrderInfoData
+import uz.alphazet.data.models.order.PromocodeData
 import uz.alphazet.domain.repositories.OrderRepo
 import uz.alphazet.domain.repositories.ProfileRepo
 import uz.alphazet.hoopla.rules.MainDispatcherRule
@@ -109,7 +110,7 @@ class OrderVMTest {
     @Test
     fun createOrder_returns_order_info() = runTest {
         val info = OrderInfoData(101, "Hoopla", "Hoopla Central", null, null, "Latte", "pending")
-        coEvery { orderRepo.createOrder(3, 5, any(), any()) } returns flowOf(UIResource.Success(info))
+        coEvery { orderRepo.createOrder(3, 5, any(), any(), any()) } returns flowOf(UIResource.Success(info))
 
         val flow = vm.createOrder(3, 5, arrayListOf())
         flow.test {
@@ -123,7 +124,7 @@ class OrderVMTest {
     @Test
     fun createOrder_forwards_comment_to_repo() = runTest {
         val info = OrderInfoData(101, "Hoopla", "Hoopla Central", null, null, "Latte", "pending")
-        coEvery { orderRepo.createOrder(3, 5, any(), "no sugar") } returns
+        coEvery { orderRepo.createOrder(3, 5, any(), "no sugar", any()) } returns
             flowOf(UIResource.Success(info))
 
         val flow = vm.createOrder(3, 5, arrayListOf(), "no sugar")
@@ -133,7 +134,23 @@ class OrderVMTest {
             cancelAndIgnoreRemainingEvents()
         }
 
-        coVerify { orderRepo.createOrder(3, 5, any(), "no sugar") }
+        coVerify { orderRepo.createOrder(3, 5, any(), "no sugar", any()) }
+    }
+
+    @Test
+    fun createOrder_forwards_promo_code_to_repo() = runTest {
+        val info = OrderInfoData(101, "Hoopla", "Hoopla Central", null, null, "Latte", "pending")
+        coEvery { orderRepo.createOrder(3, 5, any(), any(), "SUMMER25") } returns
+            flowOf(UIResource.Success(info))
+
+        val flow = vm.createOrder(3, 5, arrayListOf(), promoCode = "SUMMER25")
+        flow.test {
+            val result = awaitItem()
+            assertTrue(result is UIResource.Success)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        coVerify { orderRepo.createOrder(3, 5, any(), any(), "SUMMER25") }
     }
 
     // --- createOrderRahmat (Pattern C) ------------------------------------
@@ -141,7 +158,7 @@ class OrderVMTest {
     @Test
     fun createOrderRahmat_returns_checkout_info() = runTest {
         val checkout = CheckOutInfo(29000, "https://pay/co", "app://pay", "2030-01-01", 55, "https://s/x")
-        coEvery { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, any()) } returns
+        coEvery { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, any(), any()) } returns
             flowOf(UIResource.Success(checkout))
 
         val flow = vm.createOrderRahmat(3, 5, arrayListOf(), false, 0.0)
@@ -156,7 +173,7 @@ class OrderVMTest {
     @Test
     fun createOrderRahmat_forwards_comment_to_repo() = runTest {
         val checkout = CheckOutInfo(29000, "https://pay/co", "app://pay", "2030-01-01", 55, "https://s/x")
-        coEvery { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, "extra hot") } returns
+        coEvery { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, "extra hot", any()) } returns
             flowOf(UIResource.Success(checkout))
 
         val flow = vm.createOrderRahmat(3, 5, arrayListOf(), false, 0.0, "extra hot")
@@ -166,6 +183,44 @@ class OrderVMTest {
             cancelAndIgnoreRemainingEvents()
         }
 
-        coVerify { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, "extra hot") }
+        coVerify { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, "extra hot", any()) }
+    }
+
+    @Test
+    fun createOrderRahmat_forwards_promo_code_to_repo() = runTest {
+        val checkout = CheckOutInfo(29000, "https://pay/co", "app://pay", "2030-01-01", 55, "https://s/x")
+        coEvery { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, any(), "SUMMER25") } returns
+            flowOf(UIResource.Success(checkout))
+
+        val flow = vm.createOrderRahmat(3, 5, arrayListOf(), false, 0.0, promoCode = "SUMMER25")
+        flow.test {
+            val result = awaitItem()
+            assertTrue(result is UIResource.Success)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        coVerify { orderRepo.createOrderRahmat(3, 5, any(), false, 0.0, any(), "SUMMER25") }
+    }
+
+    // --- checkPromocode (Pattern C) ---------------------------------------
+
+    @Test
+    fun checkPromocode_returns_discount() = runTest {
+        val promo = PromocodeData(
+            valid = true, code = "SUMMER25", discountType = "percent",
+            discountValue = 25.0, discountAmount = 10_000.0, subtotal = 40_000.0, total = 30_000.0
+        )
+        coEvery { orderRepo.checkPromocode("SUMMER25", 3, 5, any()) } returns
+            flowOf(UIResource.Success(promo))
+
+        val flow = vm.checkPromocode("SUMMER25", 3, 5, arrayListOf())
+        flow.test {
+            val result = awaitItem()
+            assertTrue(result is UIResource.Success)
+            assertEquals(10_000.0, (result as UIResource.Success).data?.discountAmount)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        coVerify { orderRepo.checkPromocode("SUMMER25", 3, 5, any()) }
     }
 }

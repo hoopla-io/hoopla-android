@@ -145,6 +145,17 @@
     <string name="feedback_comment_hint">O\'z fikringizni bildiring</string>
     <string name="order_comment_title">Izoh</string>
     <string name="order_comment_hint">Buyurtmaga izoh (ixtiyoriy)</string>
+    <string name="promo_title">Promokod</string>
+    <string name="promo_add">Promokod qo\'shish</string>
+    <string name="promo_apply">Qo\'llash</string>
+    <string name="promo_remove">Olib tashlash</string>
+    <string name="promo_enter_code">Promokod kiriting</string>
+    <string name="promo_invalid">Promokod yaroqsiz</string>
+    <string name="promo_discount_">Promokod chegirmasi:</string>
+    <string name="cashback_title">Keshbek</string>
+    <string name="cashback_available">Mavjud: %1$s</string>
+    <string name="cashback_using">Ishlatilgan: %1$s</string>
+    <string name="change">O\'zgartirish</string>
     <string name="feedback_submit">Fikr bildirish</string>
     <string name="rate_order">Buyurtmani baholash</string>
 

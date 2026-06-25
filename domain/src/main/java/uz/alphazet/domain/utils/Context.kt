@@ -53,6 +53,13 @@ fun BottomSheetDialogFragment.hideKeyboard() {
         manager.hideSoftInputFromWindow(view?.windowToken, 0)
 }
 
+fun Activity.hideKeyboard() {
+    val manager: InputMethodManager =
+        getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    val focused = currentFocus ?: window.decorView
+    manager.hideSoftInputFromWindow(focused.windowToken, 0)
+}
+
 
 inline fun <reified T> T.log(tag: String = "Hoopla") {
     if (BuildConfig.DEBUG)

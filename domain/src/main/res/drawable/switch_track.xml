@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Pill track for the cashback switch. Colour comes from trackTint; this only
+     defines the shape and size. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/white" />
+    <corners android:radius="14dp" />
+    <size
+        android:width="46dp"
+        android:height="28dp" />
+</shape>

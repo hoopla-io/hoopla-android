@@ -12,6 +12,7 @@ import uz.alphazet.data.models.order.CheckOutInfo
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.data.models.order.OrderInfoData
+import uz.alphazet.data.models.order.PromocodeData
 import uz.alphazet.domain.repositories.OrderRepo
 import uz.alphazet.domain.repositories.ProfileRepo
 import uz.alphazet.domain.ui.BaseVM
@@ -41,13 +42,24 @@ class OrderVM(
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
+    suspend fun checkPromocode(
+        code: String,
+        shopId: Int,
+        drinkId: Int,
+        modifiers: ArrayList<ModifierItemData>
+    ): SharedFlow<UIResource<PromocodeData>> {
+        return repo.checkPromocode(code, shopId, drinkId, modifiers)
+            .shareIn(viewModelScope, SharingStarted.Lazily, 0)
+    }
+
     suspend fun createOrder(
         shopId: Int,
         drinkId: Int,
         modifiers: ArrayList<ModifierItemData>,
-        comment: String? = null
+        comment: String? = null,
+        promoCode: String? = null
     ): SharedFlow<UIResource<OrderInfoData>> {
-        return repo.createOrder(shopId, drinkId, modifiers, comment)
+        return repo.createOrder(shopId, drinkId, modifiers, comment, promoCode)
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
@@ -57,10 +69,12 @@ class OrderVM(
         modifiers: ArrayList<ModifierItemData>,
         useCashback: Boolean,
         cashbackAmount: Double,
-        comment: String? = null
+        comment: String? = null,
+        promoCode: String? = null
     ): SharedFlow<UIResource<CheckOutInfo>> {
-        return repo.createOrderRahmat(shopId, drinkId, modifiers, useCashback, cashbackAmount, comment)
-            .shareIn(viewModelScope, SharingStarted.Lazily, 0)
+        return repo.createOrderRahmat(
+            shopId, drinkId, modifiers, useCashback, cashbackAmount, comment, promoCode
+        ).shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
 }

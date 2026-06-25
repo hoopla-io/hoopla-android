@@ -127,6 +127,37 @@
                     tools:listitem="@layout/item_summa_info" />
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/promo_discount_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="7.5dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/promo_discount_"
+                        android:textColor="@color/grey_350"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/promo_discount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/green_300"
+                        android:textSize="16sp"
+                        tools:text="-10 000 UZS" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/used_cashback_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -226,139 +257,227 @@
         android:background="@drawable/bg_bottom_sheet_dialog_fragment"
         android:elevation="2dp"
         android:orientation="vertical"
+        android:paddingTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <!--        <androidx.constraintlayout.widget.ConstraintLayout-->
-        <!--            android:id="@+id/cashback_container"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginHorizontal="16dp"-->
-        <!--            android:background="@drawable/bg_cashback"-->
-        <!--            android:padding="16dp">-->
-
-        <!--            <androidx.appcompat.widget.AppCompatImageView-->
-        <!--                android:id="@+id/coin_icon"-->
-        <!--                android:layout_width="42dp"-->
-        <!--                android:layout_height="42dp"-->
-        <!--                android:paddingHorizontal="4dp"-->
-        <!--                android:scaleType="centerInside"-->
-        <!--                android:src="@drawable/ic_money_cashback"-->
-        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                app:layout_constraintStart_toStartOf="parent"-->
-        <!--                app:layout_constraintTop_toTopOf="parent" />-->
-
-        <!--            <androidx.appcompat.widget.AppCompatTextView-->
-        <!--                android:id="@+id/available_title"-->
-        <!--                android:layout_width="0dp"-->
-        <!--                android:layout_height="match_parent"-->
-        <!--                android:layout_weight="1"-->
-        <!--                android:fontFamily="@font/inter_regular"-->
-        <!--                android:gravity="center_vertical"-->
-        <!--                android:paddingHorizontal="8dp"-->
-        <!--                android:text="@string/cashback_"-->
-        <!--                android:textColor="@color/white"-->
-        <!--                android:textSize="14sp"-->
-        <!--                app:layout_constraintBottom_toTopOf="@id/available"-->
-        <!--                app:layout_constraintStart_toEndOf="@id/coin_icon"-->
-        <!--                app:layout_constraintTop_toTopOf="parent" />-->
-
-        <!--            <androidx.appcompat.widget.AppCompatTextView-->
-        <!--                android:id="@+id/available"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="match_parent"-->
-        <!--                android:fontFamily="@font/inter_medium"-->
-        <!--                android:gravity="center_vertical"-->
-        <!--                android:paddingHorizontal="8dp"-->
-        <!--                android:textColor="@color/white"-->
-        <!--                android:textSize="16sp"-->
-        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                app:layout_constraintStart_toEndOf="@id/coin_icon"-->
-        <!--                app:layout_constraintTop_toBottomOf="@id/available_title"-->
-        <!--                app:layout_constraintVertical_chainStyle="packed"-->
-        <!--                tools:text="1 000 000" />-->
-
-        <!--            <androidx.appcompat.widget.AppCompatTextView-->
-        <!--                android:id="@+id/used_title"-->
-        <!--                android:layout_width="0dp"-->
-        <!--                android:layout_height="match_parent"-->
-        <!--                android:layout_weight="1"-->
-        <!--                android:fontFamily="@font/inter_regular"-->
-        <!--                android:gravity="center_vertical"-->
-        <!--                android:paddingHorizontal="8dp"-->
-        <!--                android:text="Used:"-->
-        <!--                android:textColor="@color/white"-->
-        <!--                android:textSize="14sp"-->
-        <!--                app:layout_constraintBottom_toTopOf="@id/available"-->
-        <!--                app:layout_constraintEnd_toStartOf="@id/arrow_right"-->
-        <!--                app:layout_constraintTop_toTopOf="parent" />-->
-
-        <!--            <androidx.appcompat.widget.AppCompatTextView-->
-        <!--                android:id="@+id/used"-->
-        <!--                android:layout_width="wrap_content"-->
-        <!--                android:layout_height="match_parent"-->
-        <!--                android:fontFamily="@font/inter_medium"-->
-        <!--                android:gravity="center_vertical"-->
-        <!--                android:paddingHorizontal="8dp"-->
-        <!--                android:textColor="@color/white"-->
-        <!--                android:textSize="16sp"-->
-        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                app:layout_constraintEnd_toStartOf="@id/arrow_right"-->
-        <!--                app:layout_constraintTop_toBottomOf="@id/available_title"-->
-        <!--                app:layout_constraintVertical_chainStyle="packed"-->
-        <!--                tools:text="30 000" />-->
-
-        <!--            <androidx.appcompat.widget.AppCompatImageView-->
-        <!--                android:id="@+id/arrow_right"-->
-        <!--                android:layout_width="24dp"-->
-        <!--                android:layout_height="24dp"-->
-        <!--                android:src="@drawable/ic_arrow_right_black300"-->
-        <!--                app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--                app:layout_constraintEnd_toEndOf="parent"-->
-        <!--                app:layout_constraintTop_toTopOf="parent"-->
-        <!--                app:tint="@color/white" />-->
-
-        <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
-
+        <!-- ============================ Promocode ============================ -->
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:background="@drawable/bg_cashback"
-            android:orientation="horizontal"
-            android:padding="16dp">
+            android:background="@drawable/bg_corner16_grey300"
+            android:minHeight="56dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="6dp">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/inter_regular"
-                android:text="@string/cashback_"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
+            <!-- Empty state: a button that opens the promocode input dialog -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/promo_add_row"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/ripple_corner14"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="6dp">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/available"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_medium"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                tools:text="10 000 UZS" />
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_plus"
+                    app:tint="@color/primary" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/inter_medium"
+                    android:text="@string/promo_add"
+                    android:textColor="@color/black_300"
+                    android:textSize="15sp" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_arrow_right_black300"
+                    app:tint="@color/grey_350" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <!-- Applied state: tap to change the code, or × to remove it -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/promo_applied_row"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/ripple_corner14"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="6dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_done"
+                    app:tint="@color/green_300" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/promo_applied_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_bold"
+                        android:textColor="@color/black_400"
+                        android:textSize="15sp"
+                        tools:text="SUMMER25" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/promo_applied_discount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:textColor="@color/green_300"
+                        android:textSize="13sp"
+                        tools:text="-10 000 UZS" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/remove_promo"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="@drawable/ripple_corner14"
+                    android:contentDescription="@string/promo_remove"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_close"
+                    app:tint="@color/grey_350" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:id="@+id/use_cashback"
+        <!-- ============================ Cashback ============================= -->
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="4dp"
-            android:background="@drawable/ripple_corner14"
-            android:fontFamily="@font/inter_medium"
-            android:paddingHorizontal="16dp"
-            android:text="@string/use_cashback"
-            android:textColor="@color/black_300"
-            android:textSize="16sp" />
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_corner16_grey300"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/ic_money_cashback" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/cashback_title"
+                        android:textColor="@color/black_300"
+                        android:textSize="15sp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/cashback_available"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:textColor="@color/grey_350"
+                        android:textSize="13sp"
+                        tools:text="Available: 10 000 UZS" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/use_cashback"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:thumb="@drawable/switch_thumb"
+                    app:showText="false"
+                    app:splitTrack="false"
+                    app:thumbTint="@color/white"
+                    app:track="@drawable/switch_track"
+                    app:trackTint="@color/selector_switch_track"
+                    app:useMaterialThemeColors="false" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <!-- Visible only when some cashback is being applied -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/cashback_amount_row"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@color/grey_250" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/cashback_using"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter_regular"
+                        android:textColor="@color/black_300"
+                        android:textSize="14sp"
+                        tools:text="Used: 2 000 UZS" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/cashback_change"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/ripple_corner14"
+                        android:fontFamily="@font/inter_medium"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:text="@string/change"
+                        android:textColor="@color/primary"
+                        android:textSize="14sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
             android:id="@+id/order"

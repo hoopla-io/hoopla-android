@@ -81,6 +81,14 @@ class OrderInfoScreen : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
             binding.comment.text = orderInfo.comment
         }
 
+        if ((orderInfo.promoDiscount ?: 0.0) > 0) {
+            binding.promoContainer.visible()
+            binding.promoDiscount.text =
+                "-".plus(orderInfo.promoDiscount?.formatToPrice()).plus(" UZS")
+        } else {
+            binding.promoContainer.gone()
+        }
+
         if ((orderInfo.cashbackUsed ?: 0.0) > 0) {
             binding.usedCashbackContainer.visible()
             binding.usedCashback.text =

@@ -176,6 +176,37 @@
                     tools:listitem="@layout/item_summa_info" />
 
                 <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/promo_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="7.5dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/inter_regular"
+                        android:text="@string/promo_discount_"
+                        android:textColor="@color/grey_350"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/promo_discount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/inter_regular"
+                        android:paddingHorizontal="16dp"
+                        android:textColor="@color/error_300"
+                        android:textSize="16sp"
+                        tools:text="-10 000 UZS" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/used_cashback_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

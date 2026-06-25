@@ -12,6 +12,7 @@ import uz.alphazet.data.models.order.CheckOutInfo
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.data.models.order.PaymentRequiredExceptionData
+import uz.alphazet.data.models.order.PromocodeData
 import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
@@ -22,6 +23,7 @@ import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.databinding.ScreenCheckoutBinding
 import uz.alphazet.hoopla.ui.auth.AuthActivity
+import uz.alphazet.hoopla.ui.order.InputPromocodeBD.Companion.showInputPromocodeBD
 import uz.alphazet.hoopla.ui.order.OrderActivity2.Companion.RESULT_ORDER_CREATED
 import uz.alphazet.hoopla.ui.order.SelectCashbackSummaBD.Companion.showSelectCashbackSummaBD
 import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
@@ -36,6 +38,9 @@ class CheckoutActivity : BaseActivity() {
 
     private val adapter = SummaInfoAdapter()
     private var usingCashBack = 0.0
+
+    /** The promocode the customer validated and applied; null when none. */
+    private var appliedPromo: PromocodeData? = null
 
     private val authListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -67,6 +72,10 @@ class CheckoutActivity : BaseActivity() {
 
         binding.toolbar.setNavigationOnClickListener { finish() }
 
+        binding.promoAddRow.setOnClickListener { openPromoDialog() }
+        binding.promoAppliedRow.setOnClickListener { openPromoDialog() }
+        binding.removePromo.setOnClickListener { removePromo() }
+
         binding.order.setOnClickListener {
             launch {
                 modifiers?.let { list ->
@@ -76,7 +85,8 @@ class CheckoutActivity : BaseActivity() {
                         list,
                         usingCashBack > 0,
                         usingCashBack,
-                        comment
+                        comment,
+                        appliedPromo?.code
                     ).collectLatest(::collectData)
                 }
             }
@@ -85,6 +95,43 @@ class CheckoutActivity : BaseActivity() {
         launch {
             viewModel.userDataFlow.collectLatest(::collectUserData)
         }
+    }
+
+    /** Opens the promocode input dialog (pre-filled when a code is already applied). */
+    private fun openPromoDialog() {
+        showInputPromocodeBD(
+            orderData?.shop?.id ?: -1,
+            orderData?.drink?.id ?: -1,
+            modifiers ?: arrayListOf(),
+            appliedPromo?.code
+        ) { data -> applyPromo(data) }
+    }
+
+    /** Switches the promocode card into its "applied" state and re-prices the order. */
+    private fun applyPromo(data: PromocodeData) {
+        appliedPromo = data
+
+        // A freshly applied discount may now exceed the bill — trim the cashback to fit.
+        val afterPromo = subtotal() - (data.discountAmount ?: 0.0)
+        if (usingCashBack > afterPromo) {
+            usingCashBack = afterPromo.coerceAtLeast(0.0)
+            updateCashbackRow()
+        }
+
+        binding.promoAddRow.gone()
+        binding.promoAppliedRow.visible()
+        binding.promoAppliedCode.text = data.code
+        binding.promoAppliedDiscount.text =
+            "-".plus((data.discountAmount ?: 0.0).formatToPrice()).plus(" UZS")
+
+        binding.totalSumma.text = calculatePrice().formatToPrice().plus(" UZS")
+    }
+
+    private fun removePromo() {
+        appliedPromo = null
+        binding.promoAppliedRow.gone()
+        binding.promoAddRow.visible()
+        binding.totalSumma.text = calculatePrice().formatToPrice().plus(" UZS")
     }
 
     private fun collectData(t: UIResource<CheckOutInfo>) = t.collect { data ->
@@ -103,27 +150,52 @@ class CheckoutActivity : BaseActivity() {
     }
 
     private fun collectUserData(t: UIResource<UserData>) = t.collect { userData ->
-        binding.useCashback.isEnabled = (userData?.balance ?: 0.0) > 0.0
-        binding.available.text = userData?.balance?.formatToPrice().plus(" UZS")
+        val balance = userData?.balance ?: 0.0
+        binding.useCashback.isEnabled = balance > 0.0
+        binding.cashbackAvailable.text =
+            getString(R.string.cashback_available, balance.formatToPrice().plus(" UZS"))
 
-        binding.useCashback.setOnCheckedChangeListener { view, isChecked ->
-            if (isChecked) {
-                orderData?.let { data ->
-                    var maxLimit = orderData?.drink?.amount ?: 0.0
-
-                    modifiers?.forEach { (_, _, _, modifierPrice, _) ->
-                        maxLimit += modifierPrice
-                    }
-                    showSelectCashbackSummaBD(data, userData, maxLimit, usingCashBack) { summa ->
-                        usingCashBack = summa
-                        binding.totalSumma.text = calculatePrice().formatToPrice().plus(" UZS")
-                    }
-                }
-            } else {
-                usingCashBack = 0.0
-                binding.totalSumma.text = calculatePrice().formatToPrice().plus(" UZS")
-            }
+        binding.useCashback.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) openCashbackSelector(userData) else clearCashback()
         }
+        binding.cashbackChange.setOnClickListener { openCashbackSelector(userData) }
+    }
+
+    /** Opens the amount picker; cashback can only cover what's left after the promocode. */
+    private fun openCashbackSelector(userData: UserData?) {
+        val data = orderData ?: return
+        val maxLimit = (subtotal() - (appliedPromo?.discountAmount ?: 0.0)).coerceAtLeast(0.0)
+        showSelectCashbackSummaBD(data, userData, maxLimit, usingCashBack) { summa ->
+            usingCashBack = summa
+            updateCashbackRow()
+            binding.totalSumma.text = calculatePrice().formatToPrice().plus(" UZS")
+        }
+    }
+
+    private fun clearCashback() {
+        usingCashBack = 0.0
+        updateCashbackRow()
+        binding.totalSumma.text = calculatePrice().formatToPrice().plus(" UZS")
+    }
+
+    /** Shows or hides the "using X cashback" row inside the cashback card. */
+    private fun updateCashbackRow() {
+        if (usingCashBack > 0) {
+            binding.cashbackUsing.text =
+                getString(R.string.cashback_using, usingCashBack.formatToPrice().plus(" UZS"))
+            binding.cashbackAmountRow.visible()
+        } else {
+            binding.cashbackAmountRow.gone()
+        }
+    }
+
+    /** Drink price plus every selected modifier — before promocode and cashback. */
+    private fun subtotal(): Double {
+        var sum = orderData?.drink?.amount ?: 0.0
+        modifiers?.forEach { (_, _, _, modifierPrice, _) ->
+            sum += modifierPrice
+        }
+        return sum
     }
 
     override fun onPaymentException(
@@ -158,12 +230,20 @@ class CheckoutActivity : BaseActivity() {
     }
 
     private fun calculatePrice(): Double {
-        var price = orderData?.drink?.amount ?: 0.0
+        var price = subtotal()
 
-        modifiers?.forEach { (_, _, _, modifierPrice, _) ->
-            price += modifierPrice
+        // The promocode reduces the order total first.
+        val promoDiscount = appliedPromo?.discountAmount ?: 0.0
+        if (promoDiscount > 0) {
+            price -= promoDiscount
+            binding.promoDiscount.text = "-".plus(promoDiscount.formatToPrice()).plus(" UZS")
+            binding.promoDiscountContainer.visible()
+        } else {
+            binding.promoDiscountContainer.gone()
         }
+        if (price < 0) price = 0.0
 
+        // Then cashback comes off what's left.
         if (usingCashBack > 0) {
             price -= usingCashBack
             binding.usedCashback.text = "-".plus(usingCashBack.formatToPrice()).plus(" UZS")
@@ -172,6 +252,7 @@ class CheckoutActivity : BaseActivity() {
             binding.useCashback.isChecked = false
             binding.usedCashbackContainer.gone()
         }
+        if (price < 0) price = 0.0
 
         updateEarnCashback(price)
 

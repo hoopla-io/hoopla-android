@@ -90,7 +90,7 @@ class OrdersVMTest {
 
     @Test
     fun getOrderInfo_updates_orderInfoFlow() = runTest {
-        val info = OrderInfo(50.0, 0.0, null, null, "Latte", null, 7, emptyList(), "completed", 25000.0, null, null, "Hoopla", null, null)
+        val info = OrderInfo(50.0, 0.0, null, null, "Latte", null, 7, emptyList(), "completed", 25000.0, null, null, "Hoopla", null, null, null, null)
         coEvery { repo.getOrderInfo(7) } returns UIResource.Success(info)
 
         vm.orderInfoFlow.test {

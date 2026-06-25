@@ -149,6 +149,17 @@
     <string name="feedback_comment_hint">Поделитесь впечатлением</string>
     <string name="order_comment_title">Комментарий</string>
     <string name="order_comment_hint">Комментарий к заказу (необязательно)</string>
+    <string name="promo_title">Промокод</string>
+    <string name="promo_add">Добавить промокод</string>
+    <string name="promo_apply">Применить</string>
+    <string name="promo_remove">Убрать</string>
+    <string name="promo_enter_code">Введите промокод</string>
+    <string name="promo_invalid">Промокод недействителен</string>
+    <string name="promo_discount_">Скидка по промокоду:</string>
+    <string name="cashback_title">Кэшбэк</string>
+    <string name="cashback_available">Доступно: %1$s</string>
+    <string name="cashback_using">Использовано: %1$s</string>
+    <string name="change">Изменить</string>
     <string name="feedback_submit">Отправить отзыв</string>
     <string name="rate_order">Оценить заказ</string>
 

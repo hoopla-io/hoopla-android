@@ -25,17 +25,47 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
         service.validateOrder(body)
     }
 
+    suspend fun checkPromocode(
+        code: String,
+        shopId: Int,
+        drinkId: Int,
+        modifiers: ArrayList<ModifierItemData>
+    ) = handleFlow {
+        val json = JSONObject().apply {
+            put("code", code.trim())
+            put("shopId", shopId)
+            put("drinkId", drinkId)
+            put("modifiers", JSONArray().apply {
+                modifiers.forEach {
+                    put(JSONObject().apply {
+                        put("modifierId", it.modifierId)
+                        put("modifierGroupId", it.modifierGroupId)
+                        put("modifierKey", it.modifierKey)
+                        put("modifierPrice", it.modifierPrice)
+                    })
+                }
+            })
+        }
+
+        val requestBody = json.toString()
+            .toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull())
+
+        service.checkPromocode(requestBody)
+    }
+
     suspend fun createOrder(
         shopId: Int,
         drinkId: Int,
         modifiers: ArrayList<ModifierItemData>,
-        comment: String? = null
+        comment: String? = null,
+        promoCode: String? = null
     ) =
         handleFlow {
             val json = JSONObject().apply {
                 put("shopId", shopId)
                 put("drinkId", drinkId)
                 if (!comment.isNullOrBlank()) put("comment", comment.trim())
+                if (!promoCode.isNullOrBlank()) put("promo_code", promoCode.trim())
                 put("modifiers", JSONArray().apply {
                     modifiers.forEach {
                         put(JSONObject().apply {
@@ -60,7 +90,8 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
         modifiers: ArrayList<ModifierItemData>,
         useCashback: Boolean,
         cashbackAmount: Double,
-        comment: String? = null
+        comment: String? = null,
+        promoCode: String? = null
     ) =
         handleFlow {
             val json = JSONObject().apply {
@@ -69,6 +100,7 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
                 put("use_cashback", useCashback)
                 put("cashback_amount", cashbackAmount)
                 if (!comment.isNullOrBlank()) put("comment", comment.trim())
+                if (!promoCode.isNullOrBlank()) put("promo_code", promoCode.trim())
                 put("modifiers", JSONArray().apply {
                     modifiers.forEach {
                         put(JSONObject().apply {

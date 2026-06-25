@@ -31,7 +31,9 @@ import uz.alphazet.data.models.order.CheckOutInfo
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.data.models.order.OrderInfoData
+import uz.alphazet.data.models.order.PromocodeData
 import uz.alphazet.data.services.OrderService
+import uz.alphazet.domain.network.BadRequestException
 import uz.alphazet.domain.network.PaymentException
 import uz.alphazet.domain.network.UnauthorizedException
 import uz.alphazet.domain.network.ValidationException
@@ -237,6 +239,34 @@ class OrderRepoTest {
     }
 
     @Test
+    fun createOrderRahmat_includes_promo_code_when_provided() = runTest(dispatcher) {
+        val slot = slot<RequestBody>()
+        coEvery { service.createOrderRahmat(capture(slot)) } returns Response.success(
+            wrap(CheckOutInfo(null, null, null, null, null, null))
+        )
+
+        repo.createOrderRahmat(
+            shopId = 1, drinkId = 2, modifiers = arrayListOf(),
+            useCashback = false, cashbackAmount = 0.0, promoCode = "  summer25  "
+        ).test { awaitItem(); awaitComplete() }
+
+        assertEquals("summer25", JSONObject(slot.captured.asString()).getString("promo_code"))
+    }
+
+    @Test
+    fun createOrderRahmat_omits_promo_code_when_blank_or_null() = runTest(dispatcher) {
+        val slot = slot<RequestBody>()
+        coEvery { service.createOrderRahmat(capture(slot)) } returns Response.success(
+            wrap(CheckOutInfo(null, null, null, null, null, null))
+        )
+
+        repo.createOrderRahmat(1, 2, arrayListOf(), useCashback = false, cashbackAmount = 0.0)
+            .test { awaitItem(); awaitComplete() }
+
+        assertFalse(JSONObject(slot.captured.asString()).has("promo_code"))
+    }
+
+    @Test
     fun createOrderRahmat_includes_comment_when_provided() = runTest(dispatcher) {
         val slot = slot<RequestBody>()
         coEvery { service.createOrderRahmat(capture(slot)) } returns Response.success(
@@ -313,6 +343,73 @@ class OrderRepoTest {
             awaitComplete()
         }
     }
+
+    // --- checkPromocode ---
+
+    @Test
+    fun checkPromocode_sends_code_shopId_drinkId_and_modifiers() = runTest(dispatcher) {
+        val slot = slot<RequestBody>()
+        coEvery { service.checkPromocode(capture(slot)) } returns Response.success(
+            wrap(samplePromocode())
+        )
+
+        val modifiers = arrayListOf(
+            ModifierItemData(
+                modifierId = "m1", modifierGroupId = "g1",
+                modifierKey = "size", modifierPrice = 2_000.0
+            )
+        )
+
+        repo.checkPromocode(code = "  SUMMER25  ", shopId = 44, drinkId = 367, modifiers = modifiers)
+            .test { awaitItem(); awaitComplete() }
+
+        val json = JSONObject(slot.captured.asString())
+        assertEquals("SUMMER25", json.getString("code"))
+        assertEquals(44, json.getInt("shopId"))
+        assertEquals(367, json.getInt("drinkId"))
+        assertEquals(1, json.getJSONArray("modifiers").length())
+        coVerify(exactly = 1) { service.checkPromocode(any()) }
+    }
+
+    @Test
+    fun checkPromocode_success_emits_promocode_data() = runTest(dispatcher) {
+        val promo = samplePromocode()
+        coEvery { service.checkPromocode(any()) } returns Response.success(wrap(promo))
+
+        repo.checkPromocode("SUMMER25", 44, 367, arrayListOf()).test {
+            val item = awaitItem()
+            assertTrue(item is UIResource.Success)
+            assertEquals(promo, (item as UIResource.Success).data)
+            awaitComplete()
+        }
+    }
+
+    @Test
+    fun checkPromocode_400_emits_bad_request_error() = runTest(dispatcher) {
+        coEvery { service.checkPromocode(any()) } returns Response.error(
+            400,
+            """{"message":"promocode not found"}""".toResponseBody("application/json".toMediaType())
+        )
+
+        repo.checkPromocode("NOPE", 44, 367, arrayListOf()).test {
+            val item = awaitItem()
+            assertTrue(item is UIResource.Error)
+            val throwable = (item as UIResource.Error).throwable
+            assertTrue(throwable is BadRequestException)
+            assertEquals("promocode not found", throwable.message)
+            awaitComplete()
+        }
+    }
+
+    private fun samplePromocode(): PromocodeData = PromocodeData(
+        valid = true,
+        code = "SUMMER25",
+        discountType = "percent",
+        discountValue = 25.0,
+        discountAmount = 50.0,
+        subtotal = 200.0,
+        total = 150.0
+    )
 
     private fun sampleOrderDetails(): OrderDetails = OrderDetails(
         modifications = OrderDetails.Modification(null, null, null, null),

@@ -145,6 +145,17 @@
     <string name="feedback_comment_hint">Share your experience</string>
     <string name="order_comment_title">Comment</string>
     <string name="order_comment_hint">Order comment (optional)</string>
+    <string name="promo_title">Promocode</string>
+    <string name="promo_add">Add promocode</string>
+    <string name="promo_apply">Apply</string>
+    <string name="promo_remove">Remove</string>
+    <string name="promo_enter_code">Enter a promocode</string>
+    <string name="promo_invalid">Invalid promocode</string>
+    <string name="promo_discount_">Promocode discount:</string>
+    <string name="cashback_title">Cashback</string>
+    <string name="cashback_available">Available: %1$s</string>
+    <string name="cashback_using">Used: %1$s</string>
+    <string name="change">Change</string>
     <string name="feedback_submit">Submit feedback</string>
     <string name="rate_order">Rate order</string>
 

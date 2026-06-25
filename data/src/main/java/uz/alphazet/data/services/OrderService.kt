@@ -8,6 +8,7 @@ import uz.alphazet.data.BaseResponse
 import uz.alphazet.data.models.order.CheckOutInfo
 import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.data.models.order.OrderInfoData
+import uz.alphazet.data.models.order.PromocodeData
 
 interface OrderService {
 
@@ -15,6 +16,11 @@ interface OrderService {
     suspend fun validateOrder(
         @Body body: RequestBody
     ): BaseResponse<OrderDetails>
+
+    @POST("v1/user/orders/check-promocode")
+    suspend fun checkPromocode(
+        @Body body: RequestBody
+    ): BaseResponse<PromocodeData>
 
     @POST("v1/user/orders/create")
     suspend fun createOrder(
