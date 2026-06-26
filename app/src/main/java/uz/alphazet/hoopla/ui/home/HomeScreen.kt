@@ -221,6 +221,10 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         binding.search.setOnClickListener {
             val intent = Intent(requireContext(), SearchScreen::class.java)
+            currentLocation?.let {
+                intent.putExtra(SearchScreen.EXTRA_LAT, it.latitude)
+                intent.putExtra(SearchScreen.EXTRA_LONG, it.longitude)
+            }
             val options = ActivityOptionsCompat.makeCustomAnimation(
                 requireContext(),
                 R.anim.slide_in_right,

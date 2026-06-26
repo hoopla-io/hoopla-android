@@ -8,7 +8,10 @@ data class ShopItemData(
     val pictureUrl: String?,
     val distance: Double?,
     val location: LocationData?,
-    val logoUrl: String? = null
+    val logoUrl: String? = null,
+    val partnerId: Int? = null,
+    val acceptingOrders: Boolean? = null,
+    val pausedUntil: String? = null
 ) : BaseItem {
     override val uniqueId: String
         get() = shopId.toString()

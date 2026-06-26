@@ -10,6 +10,7 @@ import uz.alphazet.hoopla.ui.profile.ProfileVM
 import uz.alphazet.hoopla.ui.profile.payment.PaymentVM
 import uz.alphazet.hoopla.ui.profile.subscriptions.SubscriptionVM
 import uz.alphazet.hoopla.ui.orders.OrdersVM
+import uz.alphazet.hoopla.ui.search.SearchVM
 import uz.alphazet.hoopla.ui.shop_details.ShopVM
 
 object AppModule {
@@ -25,6 +26,7 @@ object AppModule {
         factory { PaymentVM(get()) }
         factory { NotificationVM(get(), get(), get()) }
         factory { StoryViewerVM(get()) }
+        factory { SearchVM(get()) }
     }
 
 }

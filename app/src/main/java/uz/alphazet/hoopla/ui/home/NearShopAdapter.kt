@@ -33,6 +33,11 @@ class NearShopAdapter(showDistance: Boolean = true) : BaseAdapter<ShopItemData>(
             binding.distance.isVisible = showDistance
             binding.distance.text = itemView.context.formatDistance(itemData.distance ?: -1.0)
             binding.image.load(itemData.pictureUrl)
+
+            // Live cashier-pause state: shop is paused only when explicitly false.
+            val paused = itemData.acceptingOrders == false
+            binding.pausedScrim.isVisible = paused
+            binding.pausedLabel.isVisible = paused
         }
     }
 

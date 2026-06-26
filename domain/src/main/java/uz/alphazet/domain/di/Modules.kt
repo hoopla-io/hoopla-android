@@ -29,6 +29,7 @@ import uz.alphazet.data.services.OrderService
 import uz.alphazet.data.services.PaymentService
 import uz.alphazet.data.services.ProfileService
 import uz.alphazet.data.services.OrdersService
+import uz.alphazet.data.services.PartnerService
 import uz.alphazet.data.services.ShopService
 import uz.alphazet.data.services.StoryService
 import uz.alphazet.data.services.SubscriptionService
@@ -48,6 +49,7 @@ import uz.alphazet.domain.repositories.OrderRepo
 import uz.alphazet.domain.repositories.PaymentServiceRepo
 import uz.alphazet.domain.repositories.ProfileRepo
 import uz.alphazet.domain.repositories.OrdersRepo
+import uz.alphazet.domain.repositories.PartnerRepo
 import uz.alphazet.domain.repositories.ShopRepo
 import uz.alphazet.domain.repositories.StoryRepo
 import uz.alphazet.domain.repositories.SubscriptionRepo
@@ -78,6 +80,7 @@ object Modules {
         single { provideNotificationService(get()) }
         single { provideCategoryService(get()) }
         single { provideStoryService(get()) }
+        single { providePartnerService(get()) }
     }
 
     val repositoryModule = module {
@@ -94,6 +97,7 @@ object Modules {
         factory { NotificationRepo(get()) }
         factory { CategoryRepo(get()) }
         factory { StoryRepo(get()) }
+        factory { PartnerRepo(get()) }
     }
 
     private fun provideAuthService(retrofit: Retrofit) = retrofit.create(AuthService::class.java)
@@ -120,6 +124,9 @@ object Modules {
 
     private fun provideStoryService(retrofit: Retrofit) =
         retrofit.create(StoryService::class.java)
+
+    private fun providePartnerService(retrofit: Retrofit) =
+        retrofit.create(PartnerService::class.java)
 
     private fun provideAppCacheSharedPreferences(
         context: Context
