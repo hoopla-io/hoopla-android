@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="visible"
-                    app:constraint_referenced_ids="user_desc_card,tariff_info_card,balance_info_card,subscription" />
+                    app:constraint_referenced_ids="user_desc_card,tariff_info_card,balance_info_card,subscription,gift_card" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/unAuthGroup"
@@ -323,6 +323,17 @@
                     app:layout_constraintTop_toBottomOf="@id/tariff_info_card" />
 
                 <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/gift_card"
+                    style="@style/DetailButtonStyle"
+                    android:drawableStart="@drawable/ic_gift_card"
+                    android:elevation="4dp"
+                    android:text="@string/gift_card_use"
+                    app:drawableEndCompat="@drawable/ic_arrow_right_black300"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/subscription" />
+
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/languages"
                     style="@style/DetailButtonStyle"
                     android:drawableStart="@drawable/ic_language"
@@ -331,7 +342,7 @@
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/subscription" />
+                    app:layout_constraintTop_toBottomOf="@id/gift_card" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/theme"

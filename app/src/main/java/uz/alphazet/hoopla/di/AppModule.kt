@@ -7,6 +7,7 @@ import uz.alphazet.hoopla.ui.home.NotificationVM
 import uz.alphazet.hoopla.ui.home.StoryViewerVM
 import uz.alphazet.hoopla.ui.order.OrderVM
 import uz.alphazet.hoopla.ui.profile.ProfileVM
+import uz.alphazet.hoopla.ui.profile.giftcard.GiftCardVM
 import uz.alphazet.hoopla.ui.profile.payment.PaymentVM
 import uz.alphazet.hoopla.ui.profile.subscriptions.SubscriptionVM
 import uz.alphazet.hoopla.ui.orders.OrdersVM
@@ -19,6 +20,7 @@ object AppModule {
         factory { AuthVM(get()) }
         factory { HomeVM(get(), get(), get(), get()) }
         factory { ProfileVM(get()) }
+        factory { GiftCardVM(get()) }
         factory { ShopVM(get()) }
         factory { OrderVM(get(), get()) }
         factory { OrdersVM(get(), get(), get()) }

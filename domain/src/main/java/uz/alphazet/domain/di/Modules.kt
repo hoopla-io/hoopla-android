@@ -22,6 +22,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import uz.alphazet.data.BaseResponse
 import uz.alphazet.data.models.AccessTokenData
 import uz.alphazet.data.services.AuthService
+import uz.alphazet.data.services.GiftCardService
 import uz.alphazet.data.services.HomeService
 import uz.alphazet.data.services.CategoryService
 import uz.alphazet.data.services.NotificationService
@@ -41,6 +42,7 @@ import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.permission.PermissionManagerImpl
 import uz.alphazet.domain.repositories.AuthRepo
 import uz.alphazet.domain.repositories.CategoryRepo
+import uz.alphazet.domain.repositories.GiftCardRepo
 import uz.alphazet.domain.repositories.HomeRepo
 import uz.alphazet.domain.repositories.NotificationDataSource
 import uz.alphazet.domain.repositories.NotificationRepo
@@ -81,6 +83,7 @@ object Modules {
         single { provideCategoryService(get()) }
         single { provideStoryService(get()) }
         single { providePartnerService(get()) }
+        single { provideGiftCardService(get()) }
     }
 
     val repositoryModule = module {
@@ -98,6 +101,7 @@ object Modules {
         factory { CategoryRepo(get()) }
         factory { StoryRepo(get()) }
         factory { PartnerRepo(get()) }
+        factory { GiftCardRepo(get()) }
     }
 
     private fun provideAuthService(retrofit: Retrofit) = retrofit.create(AuthService::class.java)
@@ -127,6 +131,9 @@ object Modules {
 
     private fun providePartnerService(retrofit: Retrofit) =
         retrofit.create(PartnerService::class.java)
+
+    private fun provideGiftCardService(retrofit: Retrofit) =
+        retrofit.create(GiftCardService::class.java)
 
     private fun provideAppCacheSharedPreferences(
         context: Context

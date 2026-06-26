@@ -160,6 +160,14 @@
     <string name="promo_enter_code">Введите промокод</string>
     <string name="promo_invalid">Промокод недействителен</string>
     <string name="promo_discount_">Скидка по промокоду:</string>
+
+    <string name="gift_card_use">Использовать подарочную карту</string>
+    <string name="gift_card_title">Подарочная карта</string>
+    <string name="gift_card_enter_code">Введите код карты</string>
+    <string name="gift_card_redeem">Активировать</string>
+    <string name="gift_card_added">+%1$s добавлено на баланс</string>
+    <string name="gift_card_invalid">Подарочная карта недействительна</string>
+
     <string name="cashback_title">Кэшбэк</string>
     <string name="cashback_available">Доступно: %1$s</string>
     <string name="cashback_using">Использовано: %1$s</string>

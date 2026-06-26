@@ -156,6 +156,14 @@
     <string name="promo_enter_code">Enter a promocode</string>
     <string name="promo_invalid">Invalid promocode</string>
     <string name="promo_discount_">Promocode discount:</string>
+
+    <string name="gift_card_use">Use gift card</string>
+    <string name="gift_card_title">Gift card</string>
+    <string name="gift_card_enter_code">Enter card code</string>
+    <string name="gift_card_redeem">Redeem</string>
+    <string name="gift_card_added">+%1$s added to balance</string>
+    <string name="gift_card_invalid">Invalid gift card</string>
+
     <string name="cashback_title">Cashback</string>
     <string name="cashback_available">Available: %1$s</string>
     <string name="cashback_using">Used: %1$s</string>

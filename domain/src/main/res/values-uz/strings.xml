@@ -156,6 +156,14 @@
     <string name="promo_enter_code">Promokod kiriting</string>
     <string name="promo_invalid">Promokod yaroqsiz</string>
     <string name="promo_discount_">Promokod chegirmasi:</string>
+
+    <string name="gift_card_use">Sovg\'a kartasidan foydalanish</string>
+    <string name="gift_card_title">Sovg\'a kartasi</string>
+    <string name="gift_card_enter_code">Karta kodini kiriting</string>
+    <string name="gift_card_redeem">Faollashtirish</string>
+    <string name="gift_card_added">+%1$s balansga qo\'shildi</string>
+    <string name="gift_card_invalid">Sovg\'a kartasi yaroqsiz</string>
+
     <string name="cashback_title">Keshbek</string>
     <string name="cashback_available">Mavjud: %1$s</string>
     <string name="cashback_using">Ishlatilgan: %1$s</string>
