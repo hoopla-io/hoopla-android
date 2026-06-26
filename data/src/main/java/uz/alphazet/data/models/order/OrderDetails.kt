@@ -13,7 +13,9 @@ data class OrderDetails(
     val validatedAt: String?,
     val validatedAtUnix: Int?,
     @SerializedName("cashback_percent")
-    val cashbackPercent: Float?
+    val cashbackPercent: Float?,
+    // NEW — named groups with min/max selection rules; null/empty falls back to [modifications].
+    val modifierGroups: List<ModifierGroupData>? = null
 ) : Parcelable {
     @Parcelize
     data class Modification(

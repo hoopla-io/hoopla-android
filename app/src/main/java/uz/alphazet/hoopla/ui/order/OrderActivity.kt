@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DrinkItemData
+import uz.alphazet.data.models.order.ModifierGroupData
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.data.models.order.OrderInfoData
@@ -21,6 +22,7 @@ import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.gone
+import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.databinding.ScreenOrderBinding
 import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
@@ -42,6 +44,10 @@ class OrderActivity : BaseActivity() {
     private val sugarAdapter = SizeAdapter()
     private val milkAdapter = ModificationAdapter()
     private val syrupAdapter = ModificationAdapter()
+
+    /** Dynamic modifier-group list (new flow); active only when the API returns modifierGroups. */
+    private val groupAdapter = ModifierGroupAdapter { onModifierSelectionChanged() }
+    private var usingGroups = false
 
     private val authListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -74,6 +80,7 @@ class OrderActivity : BaseActivity() {
         binding.sugars.adapter = sugarAdapter
         binding.milkTypes.adapter = milkAdapter
         binding.syrups.adapter = syrupAdapter
+        binding.modifierGroupsRv.adapter = groupAdapter
 
         binding.toolbar.setNavigationOnClickListener { finish() }
 
@@ -113,6 +120,57 @@ class OrderActivity : BaseActivity() {
         binding.name.text = data?.drink?.name
         binding.cafeName.text = getString(R.string.label_by_shop, data?.shop?.name)
         viewModel.defaultPrice = data?.drink?.amount
+
+        val groups = data?.modifierGroups
+        if (data != null && !groups.isNullOrEmpty()) {
+            setupGroups(data, groups)
+        } else {
+            setupLegacy(data)
+        }
+    }
+
+    /** New flow: render the named modifier groups with their min/max rules. */
+    private fun setupGroups(data: OrderDetails, groups: List<ModifierGroupData>) {
+        usingGroups = true
+
+        // Hide the legacy fixed sections; the dynamic group list replaces them.
+        listOf(
+            binding.sizeTitle, binding.sizes,
+            binding.sugarTitle, binding.sugars,
+            binding.milkTitle, binding.milkTypes,
+            binding.syrupTitle, binding.syrups
+        ).forEach { it.gone() }
+        binding.modifierGroupsRv.visible()
+
+        groupAdapter.setGroups(groups)
+        binding.order.text = calculatePrice().formatToPrice().plus(" UZS")
+
+        binding.order.setOnClickListener {
+            val unmet = groupAdapter.firstUnsatisfiedGroup()
+            if (unmet != null) {
+                showErrorMessage(
+                    getString(
+                        R.string.modifier_select_at_least,
+                        unmet.minSelect,
+                        unmet.name?.takeIf { it.isNotBlank() } ?: unmet.key
+                    )
+                )
+                return@setOnClickListener
+            }
+
+            val modifiers = groupAdapter.buildModifiers()
+            val intent1 = Intent(this, CheckoutActivity::class.java)
+            intent1.putExtra(Constants.DATA, data)
+            intent1.putExtra(Constants.MODIFIERS, modifiers)
+            intent1.putExtra(Constants.COMMENT, binding.commentInput.text?.toString()?.trim())
+            checkoutListener.launch(intent1)
+        }
+    }
+
+    /** Legacy flow: the fixed size/sugar/milk/syrup sections read from the modifications map. */
+    private fun setupLegacy(data: OrderDetails?) {
+        usingGroups = false
+        binding.modifierGroupsRv.gone()
         binding.order.text = data?.drink?.amount?.formatToPrice().plus(" UZS")
 
         initModification(
@@ -236,7 +294,16 @@ class OrderActivity : BaseActivity() {
         }
     }
 
+    /** Re-prices the order button whenever a modifier-group selection changes. */
+    private fun onModifierSelectionChanged() {
+        binding.order.text = calculatePrice().formatToPrice().plus(" UZS")
+    }
+
     private fun calculatePrice(): Double {
+        if (usingGroups) {
+            return (viewModel.defaultPrice ?: 0.0) + groupAdapter.totalModifierPrice()
+        }
+
         var price = viewModel.defaultPrice ?: 0.0
         val size = sizeAdapter.getSelectedItem()
         val sugar = sugarAdapter.getSelectedItem()

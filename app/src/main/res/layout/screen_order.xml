@@ -85,6 +85,21 @@
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@id/image">
 
+                <!-- Dynamic modifier groups (new). Shown when validate-order returns modifierGroups;
+                     the legacy size/sugar/milk/syrup sections below are hidden in that case. -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/modifier_groups_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="2"
+                    tools:listitem="@layout/item_modifier_group"
+                    tools:visibility="visible" />
+
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/size_title"
                     android:layout_width="match_parent"

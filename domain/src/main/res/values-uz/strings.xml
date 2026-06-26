@@ -145,6 +145,10 @@
     <string name="feedback_comment_hint">O\'z fikringizni bildiring</string>
     <string name="order_comment_title">Izoh</string>
     <string name="order_comment_hint">Buyurtmaga izoh (ixtiyoriy)</string>
+    <string name="modifier_rule_pick_one">Bittasini tanlang</string>
+    <string name="modifier_rule_at_least">Kamida %d ta</string>
+    <string name="modifier_rule_up_to">%d tagacha</string>
+    <string name="modifier_select_at_least">Iltimos, «%2$s» uchun kamida %1$d ta variant tanlang</string>
     <string name="promo_title">Promokod</string>
     <string name="promo_add">Promokod qo\'shish</string>
     <string name="promo_apply">Qo\'llash</string>

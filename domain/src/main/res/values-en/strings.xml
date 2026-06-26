@@ -145,6 +145,10 @@
     <string name="feedback_comment_hint">Share your experience</string>
     <string name="order_comment_title">Comment</string>
     <string name="order_comment_hint">Order comment (optional)</string>
+    <string name="modifier_rule_pick_one">Pick one</string>
+    <string name="modifier_rule_at_least">Choose at least %d</string>
+    <string name="modifier_rule_up_to">Up to %d</string>
+    <string name="modifier_select_at_least">Please select at least %1$d option(s) for \"%2$s\"</string>
     <string name="promo_title">Promocode</string>
     <string name="promo_add">Add promocode</string>
     <string name="promo_apply">Apply</string>
