@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.GridLayoutManager
 import coil3.load
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.flow.collectLatest
@@ -60,8 +59,10 @@ class ShopDetailActivity : BaseActivity() {
 
     // category name -> section root view
     private val sectionViews = mutableListOf<Pair<String, View>>()
+
     // category name -> chip
     private val categoryChips = mutableMapOf<String, Chip>()
+
     // prevent chip listener from triggering scroll while we update chip from scroll
     private var isSyncingChip = false
 
@@ -170,6 +171,8 @@ class ShopDetailActivity : BaseActivity() {
         val firstImage = data?.pictures?.firstOrNull()
         if (firstImage != null) {
             binding.headerImage.load(firstImage.pictureUrl)
+        } else {
+            binding.headerImage.load(data?.pictureUrl)
         }
 
         // Show remaining images in carousel if more than 1

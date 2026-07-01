@@ -14,7 +14,6 @@ import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.formatToPrice
-import uz.alphazet.domain.utils.getDateDMMMMYYYY
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.log
@@ -54,7 +53,6 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
     override fun initialize() {
 
         binding.edit.setOnClickListener(this)
-        binding.selectTariff.setOnClickListener(this)
         binding.subscription.setOnClickListener(this)
         binding.giftCard.setOnClickListener(this)
         binding.topUp.setOnClickListener(this)
@@ -84,16 +82,6 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
         binding.name.text = it?.name
         binding.phoneNumber.text = it?.phoneNumber?.formatPhoneNumber()
         binding.balance.text = it?.balance?.formatToPrice().plus(" ${it?.currency}")
-
-        if (it?.subscription != null) {
-            binding.activeTariffInfoCard.visible()
-            binding.selectTariff.gone()
-            binding.subscriptionName.text = it.subscription?.name
-            binding.subscriptionEndDate.text = it.subscription?.endDateUnix?.getDateDMMMMYYYY()
-        } else {
-            binding.activeTariffInfoCard.gone()
-            binding.selectTariff.visible()
-        }
     }
 
     private fun collectLogoutData(t: UIResource<Any>) = t.collect {
@@ -108,7 +96,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
                 authListener.launch(intent1)
             }
 
-            R.id.select_tariff, R.id.subscription -> {
+            R.id.subscription -> {
                 val intent1 = Intent(requireActivity(), SubscriptionActivity::class.java)
                 subscriptionListener.launch(intent1)
             }

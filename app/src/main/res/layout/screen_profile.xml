@@ -51,14 +51,16 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingBottom="80dp">
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/authGroup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="visible"
-                    app:constraint_referenced_ids="user_desc_card,tariff_info_card,balance_info_card,subscription,gift_card" />
+                    app:constraint_referenced_ids="user_desc_card,balance_info_card,gift_card_card,subscription" />
 
                 <androidx.constraintlayout.widget.Group
                     android:id="@+id/unAuthGroup"
@@ -130,138 +132,51 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/tariff_info_card"
-                    android:layout_width="0dp"
-                    android:layout_height="160dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="6dp"
-                    android:background="@drawable/bg_corner20_white"
-                    android:elevation="3dp"
-                    android:orientation="vertical"
-                    app:layout_constraintEnd_toStartOf="@id/balance_info_card"
-                    app:layout_constraintStart_toStartOf="@id/user_desc_card"
-                    app:layout_constraintTop_toBottomOf="@id/user_desc_card">
-
-                    <LinearLayout
-                        android:id="@+id/active_tariff_info_card"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
-                        android:orientation="vertical"
-                        android:padding="16dp"
-                        android:visibility="invisible">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_regular"
-                            android:text="@string/your_subscription__"
-                            android:textColor="@color/black_300"
-                            android:textSize="14sp" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/subscription_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_medium"
-                            android:textColor="@color/black_300"
-                            android:textSize="28sp"
-                            tools:text="Routine" />
-
-                        <com.google.android.material.divider.MaterialDivider
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginVertical="12dp" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_regular"
-                            android:text="@string/valid_until_"
-                            android:textColor="@color/black_300"
-                            android:textSize="14sp" />
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/subscription_end_date"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_bold"
-                            android:textColor="@color/black_300"
-                            android:textSize="16sp"
-                            tools:text="12 June 2025" />
-                    </LinearLayout>
-
-                    <RelativeLayout
-                        android:id="@+id/select_tariff"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/bg_corner22_primary300"
-                        android:backgroundTint="@color/primary"
-                        android:orientation="vertical"
-                        android:padding="16dp"
-                        android:visibility="invisible">
-
-                        <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/inter_medium"
-                            android:lineHeight="28sp"
-                            android:maxLines="3"
-                            android:text="@string/select_subscription"
-                            android:textColor="@color/white"
-                            android:textSize="22sp"
-                            app:autoSizeMaxTextSize="28sp"
-                            app:autoSizeMinTextSize="16sp"
-                            app:autoSizeStepGranularity="1sp"
-                            app:autoSizeTextType="uniform" />
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="44dp"
-                            android:layout_height="44dp"
-                            android:layout_alignParentBottom="true"
-                            android:background="@drawable/bg_corner22_primary300"
-                            android:backgroundTint="@color/white"
-                            android:paddingHorizontal="12dp"
-                            android:src="@drawable/ic_arrow_right_black300"
-                            app:tint="@color/primary" />
-
-                    </RelativeLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/balance_info_card"
                     android:layout_width="0dp"
                     android:layout_height="160dp"
-                    android:layout_marginStart="6dp"
                     android:layout_marginTop="12dp"
+                    android:layout_marginStart="6dp"
                     android:background="@drawable/bg_corner20_white"
                     android:clipToPadding="false"
                     android:elevation="3dp"
-                    android:orientation="vertical"
                     android:padding="16dp"
                     app:layout_constraintEnd_toEndOf="@id/user_desc_card"
-                    app:layout_constraintStart_toEndOf="@id/tariff_info_card"
+                    app:layout_constraintStart_toEndOf="@id/gift_card_card"
                     app:layout_constraintTop_toBottomOf="@id/user_desc_card">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/balance_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_top_up_balance"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/primary" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/balance_title"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/inter_regular"
+                        android:layout_marginStart="8dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:maxLines="1"
                         android:text="@string/balance__"
                         android:textColor="@color/black_300"
-                        android:textSize="14sp"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="@id/balance_icon"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/balance_icon"
+                        app:layout_constraintTop_toTopOf="@id/balance_icon" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/balance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
                         android:ellipsize="end"
                         android:fontFamily="@font/inter_medium"
-                        android:gravity="bottom"
-                        android:lineHeight="28sp"
                         android:maxLines="1"
                         android:textColor="@color/black_300"
                         android:textSize="28sp"
@@ -269,20 +184,18 @@
                         app:autoSizeMinTextSize="16sp"
                         app:autoSizeStepGranularity="1sp"
                         app:autoSizeTextType="uniform"
-                        app:layout_constraintTop_toBottomOf="@id/balance_title"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/balance_icon"
                         tools:text="200 049 sum" />
-
 
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/top_up"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="44dp"
                         android:background="@drawable/bg_corner22_primary300"
                         android:backgroundTint="@color/primary"
-                        android:drawableStart="@drawable/ic_top_up_balance"
-                        android:drawablePadding="12dp"
                         android:fontFamily="@font/inter_medium"
-                        android:gravity="start|center_vertical"
+                        android:gravity="center"
                         android:maxLines="1"
                         android:paddingHorizontal="12dp"
                         android:text="@string/top_up"
@@ -290,10 +203,91 @@
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         app:autoSizeMaxTextSize="16sp"
-                        app:autoSizeMinTextSize="10sp"
+                        app:autoSizeMinTextSize="11sp"
                         app:autoSizeStepGranularity="1sp"
                         app:autoSizeTextType="uniform"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/gift_card_card"
+                    android:layout_width="0dp"
+                    android:layout_height="160dp"
+                    android:layout_marginEnd="6dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_corner20_white"
+                    android:clipToPadding="false"
+                    android:elevation="3dp"
+                    android:padding="16dp"
+                    app:layout_constraintEnd_toStartOf="@id/balance_info_card"
+                    app:layout_constraintStart_toStartOf="@id/user_desc_card"
+                    app:layout_constraintTop_toBottomOf="@id/user_desc_card">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/gift_card_icon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_gift_card"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/primary" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/gift_card_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_medium"
+                        android:text="@string/gift_card_title"
+                        android:textColor="@color/black_300"
+                        android:textSize="15sp"
+                        app:layout_constraintBottom_toBottomOf="@id/gift_card_icon"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/gift_card_icon"
+                        app:layout_constraintTop_toTopOf="@id/gift_card_icon" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/gift_card_desc"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:maxLines="3"
+                        android:text="@string/gift_card_desc"
+                        android:textColor="@color/black_100"
+                        android:textSize="12sp"
+                        app:layout_constraintBottom_toTopOf="@id/gift_card"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/gift_card_icon"
+                        app:layout_constraintVertical_bias="0" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/gift_card"
+                        android:layout_width="0dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_corner22_primary300"
+                        android:backgroundTint="@color/primary"
+                        android:fontFamily="@font/inter_medium"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:paddingHorizontal="12dp"
+                        android:text="@string/gift_card_redeem"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:autoSizeMaxTextSize="16sp"
+                        app:autoSizeMinTextSize="11sp"
+                        app:autoSizeStepGranularity="1sp"
+                        app:autoSizeTextType="uniform"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -320,18 +314,7 @@
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tariff_info_card" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/gift_card"
-                    style="@style/DetailButtonStyle"
-                    android:drawableStart="@drawable/ic_gift_card"
-                    android:elevation="4dp"
-                    android:text="@string/gift_card_use"
-                    app:drawableEndCompat="@drawable/ic_arrow_right_black300"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/subscription" />
+                    app:layout_constraintTop_toBottomOf="@id/gift_card_card" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/languages"
@@ -342,7 +325,7 @@
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/gift_card" />
+                    app:layout_constraintTop_toBottomOf="@id/subscription" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/theme"
