@@ -44,6 +44,7 @@
     <string name="order_received_">Order received! 🎉</string>
     <string name="label_order_received_">&quot;%1$s&quot; is being prepared at %2$s. Hang tight — it’ll be ready soon 😉</string>
     <string name="can_not_accepting_orders">The cafe shop is temporarily not accepting orders</string>
+    <string name="not_accepting_orders">Not accepting orders</string>
 
 
     //QR code screen

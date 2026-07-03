@@ -45,6 +45,7 @@
     <string name="order_received_">Заказ принят! 🎉</string>
     <string name="label_order_received_">&quot;%1$s&quot; готовится в магазине %2$s. Пожалуйста, подождите — скоро будет готов 😉</string>
     <string name="can_not_accepting_orders">Кофейня временно не принимает заказы</string>
+    <string name="not_accepting_orders">Не принимает заказы</string>
 
 
     //QR code screen

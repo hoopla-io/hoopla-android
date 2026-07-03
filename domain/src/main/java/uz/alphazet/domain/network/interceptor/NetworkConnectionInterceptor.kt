@@ -23,6 +23,7 @@ import uz.alphazet.data.services.AuthService
 import uz.alphazet.domain.R
 import uz.alphazet.domain.cache.AppCache
 import uz.alphazet.domain.network.NetworkStatus
+import uz.alphazet.domain.utils.getSecureDeviceId
 import uz.alphazet.domain.utils.log
 
 class NetworkConnectionInterceptor(
@@ -32,6 +33,14 @@ class NetworkConnectionInterceptor(
 
     private val connectivityManager: ConnectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+    private val deviceName: String = "${Build.MANUFACTURER} ${Build.MODEL}".trim()
+
+    private fun appVersionName(): String = try {
+        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
+    } catch (e: Exception) {
+        ""
+    }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         when (getCurrentNetworkStatus()) {
@@ -93,6 +102,11 @@ class NetworkConnectionInterceptor(
 
                     val builder = chain.request().newBuilder()
 
+                    builder.addHeader("X-Device-Name", deviceName)
+                    builder.addHeader("X-Platform", PLATFORM)
+                    builder.addHeader("X-Device-Id", context.getSecureDeviceId())
+                    builder.addHeader("X-App-Version", appVersionName())
+
                     if (appCache.accessToken != null) builder.addHeader(
                         "Authorization",
                         "Bearer ${appCache.accessToken}"
@@ -102,6 +116,10 @@ class NetworkConnectionInterceptor(
                 }
             }
         }
+    }
+
+    companion object {
+        private const val PLATFORM = "android"
     }
 
     private suspend fun getNewToken(

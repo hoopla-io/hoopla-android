@@ -181,6 +181,9 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
      * [ShopItemData] so a marker tap can open [ShopDetailActivity].
      */
     private class ShopClusterItem(val shop: ShopItemData) : ClusterItem {
+        // Paused only when explicitly false — matches the list overlay semantics.
+        val paused: Boolean = shop.acceptingOrders == false
+
         private val latLng = LatLng(
             shop.location?.lat ?: 0.0,
             shop.location?.lng ?: 0.0
@@ -209,20 +212,28 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
 
         private val iconCache = mutableMapOf<String, BitmapDescriptor>()
 
+        // Icons are cached per logo + paused state, since the same logo renders
+        // differently (dimmed) when the shop is not accepting orders.
+        private fun cacheKey(item: ShopClusterItem): String? {
+            val url = item.shop.logoUrl
+            if (url.isNullOrBlank()) return null
+            return "$url|${item.paused}"
+        }
+
         override fun onBeforeClusterItemRendered(
             item: ShopClusterItem,
             markerOptions: MarkerOptions
         ) {
-            val icon = item.shop.logoUrl?.let(iconCache::get) ?: iconFactory.placeholder
+            val icon = cacheKey(item)?.let(iconCache::get) ?: iconFactory.placeholderFor(item.paused)
             markerOptions.icon(icon).anchor(0.5f, 1f).title(item.title)
         }
 
         override fun onClusterItemRendered(item: ShopClusterItem, marker: Marker) {
-            val url = item.shop.logoUrl
-            if (url.isNullOrBlank() || iconCache.containsKey(url)) return
+            val key = cacheKey(item) ?: return
+            if (iconCache.containsKey(key)) return
             scope.launch {
-                val descriptor = iconFactory.create(url)
-                iconCache[url] = descriptor
+                val descriptor = iconFactory.create(item.shop.logoUrl, item.paused)
+                iconCache[key] = descriptor
                 runCatching { marker.setIcon(descriptor) }
             }
         }

@@ -27,7 +27,19 @@ class ShopVMTest {
 
     @Test
     fun getShopDetail_returns_shop_data() = runTest {
-        val shop = ShopData(3, 1, "Hoopla Central", true, null, emptyList(), emptyList(), emptyList(), emptyList(), emptyList())
+        val shop = ShopData(
+            id = 3,
+            partnerId = 1,
+            name = "Hoopla Central",
+            pictureUrl = null,
+            canAcceptOrders = true,
+            location = null,
+            phoneNumbers = emptyList(),
+            workingHours = emptyList(),
+            pictures = emptyList(),
+            drinks = emptyList(),
+            urls = emptyList(),
+        )
         coEvery { repo.getShopDetail(3) } returns flowOf(UIResource.Success(shop))
 
         val flow = vm.getShopDetail(3)

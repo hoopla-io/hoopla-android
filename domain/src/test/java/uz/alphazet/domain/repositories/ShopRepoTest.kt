@@ -48,6 +48,7 @@ class ShopRepoTest {
             id = 42,
             partnerId = 7,
             name = "Hoopla Chilonzor",
+            pictureUrl = null,
             canAcceptOrders = true,
             location = null,
             phoneNumbers = null,

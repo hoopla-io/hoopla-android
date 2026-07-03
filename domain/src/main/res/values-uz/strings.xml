@@ -44,6 +44,7 @@
     <string name="order_received_">Buyurtma qabul qilindi! 🎉</string>
     <string name="label_order_received_">\"%1$s\" %2$s do\‘konida tayyorlanmoqda. Sabr qiling, tez orada tayyor bo\'ladi 😉</string>
     <string name="can_not_accepting_orders">Vaqtincha buyurtma berib bo\'lmaydi</string>
+    <string name="not_accepting_orders">Buyurtma qabul qilinmaydi</string>
 
 
     //QR code screen

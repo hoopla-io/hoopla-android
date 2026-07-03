@@ -21,7 +21,6 @@ import org.koin.test.KoinTestRule
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import uz.alphazet.data.UIResource
-import uz.alphazet.data.models.SubscriptionData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.domain.cache.AppCache
 import uz.alphazet.hoopla.R
@@ -36,9 +35,6 @@ import uz.alphazet.hoopla.rules.MainDispatcherRule
  *  - [ProfileVM.getUser] is called on view creation.
  *  - Success state → auth group is visible, user name is displayed.
  *  - Balance text is rendered with the currency suffix.
- *  - Subscription branch: with a subscription the active-tariff card is shown
- *    and the "select tariff" CTA is hidden; without, the CTA is shown and the
- *    card is hidden.
  *  - [ProfileScreen.onUnauthorizedException] shows the unauthenticated group.
  *  - [ProfileScreen.showLoading] / [ProfileScreen.hideLoading] toggle the
  *    [SwipeRefreshLayout] indicator.
@@ -85,9 +81,8 @@ class ProfileScreenTest {
         phone: String? = null,
         balance: Double? = 0.0,
         currency: String? = "UZS",
-        subscription: SubscriptionData? = null,
     ) = UserData(
-        name, phone, balance, 0.0, currency, null, null, 1, subscription, 0
+        name, phone, balance, 0.0, currency, null, null, 1, null, 0
     )
 
     // -----------------------------------------------------------------------
@@ -150,61 +145,6 @@ class ProfileScreenTest {
             assertTrue(
                 "Balance text must end with the currency suffix, was: '$balance'",
                 balance.endsWith(" UZS")
-            )
-        }
-    }
-
-    /**
-     * With a non-null [SubscriptionData] → the active-tariff card is shown,
-     * the "select tariff" CTA is hidden, and the subscription name is rendered.
-     */
-    @Test
-    fun success_with_subscription_shows_active_tariff_card_and_hides_select_tariff() {
-        val sub = SubscriptionData(id = 1, name = "Routine", endDate = null, endDateUnix = null)
-        userFlow.value = UIResource.Success(user(subscription = sub))
-
-        val scenario = launchFragmentInContainer<ProfileScreen>(themeResId = R.style.Theme_Hoopla)
-
-        scenario.onFragment { fragment ->
-            val root = fragment.requireView()
-            assertEquals(
-                "active_tariff_info_card must be VISIBLE when user has a subscription",
-                View.VISIBLE,
-                root.findViewById<View>(R.id.active_tariff_info_card).visibility
-            )
-            assertEquals(
-                "select_tariff CTA must be GONE when user has a subscription",
-                View.GONE,
-                root.findViewById<View>(R.id.select_tariff).visibility
-            )
-            assertEquals(
-                "Routine",
-                root.findViewById<TextView>(R.id.subscription_name).text.toString()
-            )
-        }
-    }
-
-    /**
-     * With a null [SubscriptionData] → the opposite: active-tariff card hidden,
-     * "select tariff" CTA visible.
-     */
-    @Test
-    fun success_without_subscription_shows_select_tariff_and_hides_active_tariff_card() {
-        userFlow.value = UIResource.Success(user(subscription = null))
-
-        val scenario = launchFragmentInContainer<ProfileScreen>(themeResId = R.style.Theme_Hoopla)
-
-        scenario.onFragment { fragment ->
-            val root = fragment.requireView()
-            assertEquals(
-                "active_tariff_info_card must be GONE when user has no subscription",
-                View.GONE,
-                root.findViewById<View>(R.id.active_tariff_info_card).visibility
-            )
-            assertEquals(
-                "select_tariff CTA must be VISIBLE when user has no subscription",
-                View.VISIBLE,
-                root.findViewById<View>(R.id.select_tariff).visibility
             )
         }
     }

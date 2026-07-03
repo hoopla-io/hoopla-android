@@ -162,6 +162,8 @@ class ShopDetailActivity : BaseActivity() {
 
     private fun collectData(t: UIResource<ShopData>) = t.collect { data ->
         canAcceptOrders = data?.canAcceptOrders == true
+        // Paused state matches the list overlay: shown only when explicitly false.
+        binding.pausedBadge.isVisible = data?.canAcceptOrders == false
         binding.collapsingToolbar.title = data?.name
 
         // Shop name below header

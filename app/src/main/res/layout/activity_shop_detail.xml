@@ -110,6 +110,24 @@
 
             </LinearLayout>
 
+            <!-- Shown only when the shop is paused (canAcceptOrders == false). -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/paused_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_paused_badge"
+                android:fontFamily="@font/inter_medium"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"
+                android:text="@string/not_accepting_orders"
+                android:textColor="@color/error_400"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/working_hours_row"
+                tools:visibility="visible" />
+
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_call"
                 android:layout_width="wrap_content"
