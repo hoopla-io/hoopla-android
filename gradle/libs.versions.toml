@@ -43,6 +43,7 @@ robolectric = "4.13"
 androidxTestCore = "1.6.1"
 fragmentTesting = "1.8.5"
 uiautomator = "2.3.0"
+securityCrypto = "1.1.0-alpha06"
 
 
 [libraries]
@@ -96,6 +97,7 @@ fragment-testing = { group = "androidx.fragment", name = "fragment-testing", ver
 fragment-testing-manifest = { group = "androidx.fragment", name = "fragment-testing-manifest", version.ref = "fragmentTesting" }
 uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 koin-test-junit4 = { module = "io.insert-koin:koin-test-junit4", version.ref = "koinVersion" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version.ref = "securityCrypto" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

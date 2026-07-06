@@ -168,6 +168,10 @@
     <string name="gift_card_added">+%1$s добавлено на баланс</string>
     <string name="gift_card_invalid">Подарочная карта недействительна</string>
     <string name="gift_card_desc">Есть код? Активируйте и пополните баланс.</string>
+    <string name="gift_card_success_title">Подарочная карта активирована!</string>
+    <string name="gift_card_success_credited">+%1$s</string>
+    <string name="gift_card_success_balance">Ваш баланс: %1$s</string>
+    <string name="gift_card_success_action">Отлично</string>
 
     <string name="cashback_title">Кэшбэк</string>
     <string name="cashback_available">Доступно: %1$s</string>
@@ -198,5 +202,15 @@
     <string name="whats_your_name">Как вас зовут?</string>
     <string name="enter_your_name">Введите ваше имя</string>
     <string name="save">Сохранить</string>
+
+    <!-- Devices / active sessions -->
+    <string name="question_revoke_device">Выйти из этого устройства?</string>
+    <string name="unknown_device">Неизвестное устройство</string>
+    <string name="this_device">Это устройство</string>
+    <string name="no_sessions">Нет активных сессий</string>
+    <string name="no_sessions_desc">Здесь появятся устройства, на которых выполнен вход</string>
+    <string name="last_active">Активно: %1$s</string>
+    <string name="active_orders">Активные заказы</string>
+    <string name="current_order">Текущий заказ</string>
 
 </resources>

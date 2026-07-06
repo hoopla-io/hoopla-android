@@ -25,6 +25,7 @@ import uz.alphazet.data.services.AuthService
 import uz.alphazet.data.services.GiftCardService
 import uz.alphazet.data.services.HomeService
 import uz.alphazet.data.services.CategoryService
+import uz.alphazet.data.services.DevicesService
 import uz.alphazet.data.services.NotificationService
 import uz.alphazet.data.services.OrderService
 import uz.alphazet.data.services.PaymentService
@@ -37,11 +38,14 @@ import uz.alphazet.data.services.SubscriptionService
 import uz.alphazet.domain.BuildConfig
 import uz.alphazet.domain.cache.AppCache
 import uz.alphazet.domain.cache.AppCacheImpl
+import uz.alphazet.domain.cache.SecurePrefs
+import uz.alphazet.domain.network.DeviceInfoProvider
 import uz.alphazet.domain.network.interceptor.NetworkConnectionInterceptor
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.permission.PermissionManagerImpl
 import uz.alphazet.domain.repositories.AuthRepo
 import uz.alphazet.domain.repositories.CategoryRepo
+import uz.alphazet.domain.repositories.DeviceRepo
 import uz.alphazet.domain.repositories.GiftCardRepo
 import uz.alphazet.domain.repositories.HomeRepo
 import uz.alphazet.domain.repositories.NotificationDataSource
@@ -64,13 +68,14 @@ object Modules {
     val utilsModule = module {
         single<AppCache> { AppCacheImpl(get()) }
         single<PermissionManager> { PermissionManagerImpl(androidContext()) }
+        single { DeviceInfoProvider(androidContext()) }
     }
 
     val apiModule = module {
         single { provideAppCacheSharedPreferences(androidContext()) }
 //        single { AppInterceptor(get()) }
         single { provideRetrofit(get()) }
-        single { provideOkHttpClient(androidContext(), get()) }
+        single { provideOkHttpClient(androidContext(), get(), get()) }
         single { provideAuthService(get()) }
         single { provideHomeService(get()) }
         single { provideProfileService(get()) }
@@ -84,12 +89,13 @@ object Modules {
         single { provideStoryService(get()) }
         single { providePartnerService(get()) }
         single { provideGiftCardService(get()) }
+        single { provideDevicesService(get()) }
     }
 
     val repositoryModule = module {
-        factory { AuthRepo(get()) }
+        factory { AuthRepo(get(), get()) }
         factory { HomeRepo(get()) }
-        factory { ProfileRepo(get()) }
+        factory { ProfileRepo(get(), get()) }
         factory { ShopRepo(get()) }
         factory { OrderRepo(get()) }
         factory { OrdersRepo(get()) }
@@ -102,6 +108,7 @@ object Modules {
         factory { StoryRepo(get()) }
         factory { PartnerRepo(get()) }
         factory { GiftCardRepo(get()) }
+        factory { DeviceRepo(get()) }
     }
 
     private fun provideAuthService(retrofit: Retrofit) = retrofit.create(AuthService::class.java)
@@ -135,9 +142,12 @@ object Modules {
     private fun provideGiftCardService(retrofit: Retrofit) =
         retrofit.create(GiftCardService::class.java)
 
+    private fun provideDevicesService(retrofit: Retrofit) =
+        retrofit.create(DevicesService::class.java)
+
     private fun provideAppCacheSharedPreferences(
         context: Context
-    ): SharedPreferences = context.getSharedPreferences(APP_CACHE, Context.MODE_PRIVATE)
+    ): SharedPreferences = SecurePrefs.create(context, legacyName = APP_CACHE)
 
     private fun provideRetrofit(client: OkHttpClient) =
         Retrofit.Builder()
@@ -147,7 +157,11 @@ object Modules {
             .build()
 
 
-    private fun provideOkHttpClient(context: Context, appCache: AppCache): OkHttpClient {
+    private fun provideOkHttpClient(
+        context: Context,
+        appCache: AppCache,
+        deviceInfo: DeviceInfoProvider
+    ): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor { message ->
             message.log("HTTP_LOGGING_INTERCEPTOR")
         }
@@ -157,7 +171,7 @@ object Modules {
                 addInterceptor(ChuckerInterceptor.Builder(context).build())
         }
 //            .addInterceptor(HeaderInterceptor())
-            .addInterceptor(NetworkConnectionInterceptor(context, appCache))
+            .addInterceptor(NetworkConnectionInterceptor(context, appCache, deviceInfo))
             .addNetworkInterceptor(NetworkInterceptor())
             .authenticator(TokenAuthenticator(appCache))
             .addInterceptor(loggingInterceptor)

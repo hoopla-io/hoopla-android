@@ -164,6 +164,10 @@
     <string name="gift_card_added">+%1$s added to balance</string>
     <string name="gift_card_invalid">Invalid gift card</string>
     <string name="gift_card_desc">Have a code? Redeem it to top up your balance.</string>
+    <string name="gift_card_success_title">Gift card activated!</string>
+    <string name="gift_card_success_credited">+%1$s</string>
+    <string name="gift_card_success_balance">Your balance: %1$s</string>
+    <string name="gift_card_success_action">Great</string>
 
     <string name="cashback_title">Cashback</string>
     <string name="cashback_available">Available: %1$s</string>
@@ -194,4 +198,14 @@
     <string name="whats_your_name">What\'s your name?</string>
     <string name="enter_your_name">Enter your name</string>
     <string name="save">Save</string>
+
+    <!-- Devices / active sessions -->
+    <string name="question_revoke_device">Log out this device?</string>
+    <string name="unknown_device">Unknown device</string>
+    <string name="this_device">This device</string>
+    <string name="no_sessions">No active sessions</string>
+    <string name="no_sessions_desc">Devices where you\'re signed in will appear here</string>
+    <string name="last_active">Last active: %1$s</string>
+    <string name="active_orders">Active orders</string>
+    <string name="current_order">Current order</string>
 </resources>

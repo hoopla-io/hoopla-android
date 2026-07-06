@@ -13,3 +13,12 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Signing — never commit keys or their credentials
+keystore.properties
+*.jks
+*.keystore
+/app/hoopla_key_store
+
+# Firebase / secrets (keep these out of VCS; inject in CI)
+# google-services.json

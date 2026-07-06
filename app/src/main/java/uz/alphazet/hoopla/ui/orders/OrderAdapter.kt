@@ -13,6 +13,75 @@ import uz.alphazet.domain.utils.setTextStringRes
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ItemOrderBinding
 
+/**
+ * Shared presentational binding for an order row ([R.layout.item_order]).
+ * Used by the paged history ([OrderAdapter]) and the non-paged active-orders
+ * list ([ActiveOrderAdapter]) so status/cashback rendering stays in one place.
+ */
+fun ItemOrderBinding.bindOrderItem(itemData: OrderItemData) {
+    image.load(itemData.shopIconUrl)
+    drinkName.text = itemData.drinkName
+    price.text = itemData.productPrice?.formatToPrice().plus(" UZS")
+    time.text = itemData.purchasedAtUnix?.getDateDDMMMMYYYYHHmm()
+
+    when (itemData.orderStatus) {
+        OrderStatus.PendingPayment -> {
+            status.setTextStringRes(uz.alphazet.domain.R.string.pending_payment)
+            status.setTextColorRes(uz.alphazet.domain.R.color.purple_80)
+        }
+
+        OrderStatus.Paid -> {
+            status.setTextStringRes(uz.alphazet.domain.R.string.completed)
+            status.setTextColorRes(uz.alphazet.domain.R.color.green_80)
+        }
+
+        OrderStatus.Pending -> {
+            status.setTextStringRes(uz.alphazet.domain.R.string.pending)
+            status.setTextColorRes(uz.alphazet.domain.R.color.purple_80)
+        }
+
+        OrderStatus.Completed -> {
+            status.setTextStringRes(uz.alphazet.domain.R.string.completed)
+            status.setTextColorRes(uz.alphazet.domain.R.color.green_80)
+        }
+
+        OrderStatus.PaymentFailed -> {
+            status.setTextStringRes(uz.alphazet.domain.R.string.payment_failed)
+            status.setTextColorRes(uz.alphazet.domain.R.color.error_300)
+        }
+
+        OrderStatus.PaymentExpired -> {
+            status.setTextStringRes(uz.alphazet.domain.R.string.payment_expired)
+            status.setTextColorRes(uz.alphazet.domain.R.color.error_300)
+        }
+
+        OrderStatus.Cancelled -> {
+            status.setTextStringRes(uz.alphazet.domain.R.string.cancelled)
+            status.setTextColorRes(uz.alphazet.domain.R.color.error_300)
+        }
+
+        OrderStatus.Error -> {
+            status.setTextStringRes(uz.alphazet.domain.R.string.error)
+            status.setTextColorRes(uz.alphazet.domain.R.color.error_300)
+        }
+
+        "created" -> {
+            status.setTextStringRes(uz.alphazet.domain.R.string.created)
+            status.setTextColorRes(uz.alphazet.domain.R.color.purple_80)
+        }
+
+        "preparing" -> {
+            status.setTextStringRes(uz.alphazet.domain.R.string.preparing)
+            status.setTextColorRes(uz.alphazet.domain.R.color.blue_80)
+        }
+    }
+
+    if ((itemData.cashbackEarned ?: 0.0) > 0) {
+        status.text = itemData.cashbackEarned?.formatToPrice().plus(" UZS")
+        status.setTextColorRes(uz.alphazet.domain.R.color.green_300)
+    }
+}
+
 class OrderAdapter : BasePagingAdapter<OrderItemData>() {
 
     override fun onCreateViewHolder(view: View, viewType: Int): BaseVH {
@@ -24,69 +93,7 @@ class OrderAdapter : BasePagingAdapter<OrderItemData>() {
     inner class VH(private val binding: ItemOrderBinding) : BaseVH(binding.root) {
         override fun bind(position: Int) {
             val itemData = getItem(absoluteAdapterPosition) ?: return
-
-            binding.image.load(itemData.shopIconUrl)
-            binding.drinkName.text = itemData.drinkName
-            binding.price.text = itemData.productPrice?.formatToPrice().plus(" UZS")
-            binding.time.text = itemData.purchasedAtUnix?.getDateDDMMMMYYYYHHmm()
-
-            when (itemData.orderStatus) {
-                OrderStatus.PendingPayment -> {
-                    binding.status.setTextStringRes(uz.alphazet.domain.R.string.pending_payment)
-                    binding.status.setTextColorRes(uz.alphazet.domain.R.color.purple_80)
-                }
-
-                OrderStatus.Paid -> {
-                    binding.status.setTextStringRes(uz.alphazet.domain.R.string.completed)
-                    binding.status.setTextColorRes(uz.alphazet.domain.R.color.green_80)
-                }
-
-                OrderStatus.Pending -> {
-                    binding.status.setTextStringRes(uz.alphazet.domain.R.string.pending)
-                    binding.status.setTextColorRes(uz.alphazet.domain.R.color.purple_80)
-                }
-
-                OrderStatus.Completed -> {
-                    binding.status.setTextStringRes(uz.alphazet.domain.R.string.completed)
-                    binding.status.setTextColorRes(uz.alphazet.domain.R.color.green_80)
-                }
-
-                OrderStatus.PaymentFailed -> {
-                    binding.status.setTextStringRes(uz.alphazet.domain.R.string.payment_failed)
-                    binding.status.setTextColorRes(uz.alphazet.domain.R.color.error_300)
-                }
-
-                OrderStatus.PaymentExpired -> {
-                    binding.status.setTextStringRes(uz.alphazet.domain.R.string.payment_expired)
-                    binding.status.setTextColorRes(uz.alphazet.domain.R.color.error_300)
-                }
-
-                OrderStatus.Cancelled -> {
-                    binding.status.setTextStringRes(uz.alphazet.domain.R.string.cancelled)
-                    binding.status.setTextColorRes(uz.alphazet.domain.R.color.error_300)
-                }
-
-                OrderStatus.Error -> {
-                    binding.status.setTextStringRes(uz.alphazet.domain.R.string.error)
-                    binding.status.setTextColorRes(uz.alphazet.domain.R.color.error_300)
-                }
-
-                "created" -> {
-                    binding.status.setTextStringRes(uz.alphazet.domain.R.string.created)
-                    binding.status.setTextColorRes(uz.alphazet.domain.R.color.purple_80)
-                }
-
-                "preparing" -> {
-                    binding.status.setTextStringRes(uz.alphazet.domain.R.string.preparing)
-                    binding.status.setTextColorRes(uz.alphazet.domain.R.color.blue_80)
-                }
-            }
-
-            if ((itemData.cashbackEarned ?: 0.0) > 0) {
-                binding.status.text = itemData.cashbackEarned?.formatToPrice().plus(" UZS")
-                binding.status.setTextColorRes(uz.alphazet.domain.R.color.green_300)
-            }
-
+            binding.bindOrderItem(itemData)
         }
     }
 

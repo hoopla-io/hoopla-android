@@ -21,6 +21,9 @@ interface OrdersService {
         @Query("itemsPerPage") itemsPerPage: Int
     ): BaseResponse<List<OrderItemData>>
 
+    @GET("v1/user/orders/active")
+    suspend fun getActiveOrders(): BaseResponse<List<OrderItemData>>
+
     @GET("v1/user/orders/{id}")
     suspend fun getOrderInfo(@Path("id") id: Int): BaseResponse<OrderInfo>
 

@@ -8,7 +8,7 @@ import java.util.Locale
 import java.util.TimeZone
 
 fun getMapImageUrl(long: String?, lat: String?): String {
-    return "http://static-maps.yandex.ru/1.x/?lang=en-US&ll=$long,$lat&size=450,450&z=14&l=map&pt=$long,$lat,vkbkm"
+    return "https://static-maps.yandex.ru/1.x/?lang=en-US&ll=$long,$lat&size=450,450&z=14&l=map&pt=$long,$lat,vkbkm"
 }
 
 fun getGoogleMapImageUrl(long: String?, lat: String?, apiKey: String? = null): String {

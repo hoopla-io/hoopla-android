@@ -35,10 +35,19 @@ android {
 
     signingConfigs {
         create("release") {
-            keyAlias = "hoopla_alias"
-            keyPassword = "hoopla"
-            storePassword = "hoopla"
-            storeFile = file("..\\app\\hoopla_key_store")
+            // Credentials live in keystore.properties (gitignored), never in VCS.
+            // If the file is absent (fresh clone / CI without secrets) the release
+            // signing config stays empty and only release *signing* will fail.
+            val keystorePropsFile = rootProject.file("keystore.properties")
+            if (keystorePropsFile.exists()) {
+                val keystoreProps = Properties().apply {
+                    keystorePropsFile.inputStream().use(::load)
+                }
+                storeFile = rootProject.file(keystoreProps.getProperty("storeFile"))
+                storePassword = keystoreProps.getProperty("storePassword")
+                keyAlias = keystoreProps.getProperty("keyAlias")
+                keyPassword = keystoreProps.getProperty("keyPassword")
+            }
         }
     }
 

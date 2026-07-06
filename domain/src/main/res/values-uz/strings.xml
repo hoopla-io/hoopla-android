@@ -164,6 +164,10 @@
     <string name="gift_card_added">+%1$s balansga qo\'shildi</string>
     <string name="gift_card_invalid">Sovg\'a kartasi yaroqsiz</string>
     <string name="gift_card_desc">Kodingiz bormi? Faollashtirib balansni to\'ldiring.</string>
+    <string name="gift_card_success_title">Sovg\'a kartasi faollashtirildi!</string>
+    <string name="gift_card_success_credited">+%1$s</string>
+    <string name="gift_card_success_balance">Balansingiz: %1$s</string>
+    <string name="gift_card_success_action">Ajoyib</string>
 
     <string name="cashback_title">Keshbek</string>
     <string name="cashback_available">Mavjud: %1$s</string>
@@ -194,5 +198,15 @@
     <string name="whats_your_name">Ismingiz nima?</string>
     <string name="enter_your_name">Ismingizni kiriting</string>
     <string name="save">Saqlash</string>
+
+    <!-- Devices / active sessions -->
+    <string name="question_revoke_device">Bu qurilmadan chiqilsinmi?</string>
+    <string name="unknown_device">Noma\'lum qurilma</string>
+    <string name="this_device">Bu qurilma</string>
+    <string name="no_sessions">Aktiv sessiyalar yo\'q</string>
+    <string name="no_sessions_desc">Siz kirgan qurilmalar shu yerda ko\'rinadi</string>
+    <string name="last_active">Faol: %1$s</string>
+    <string name="active_orders">Faol buyurtmalar</string>
+    <string name="current_order">Joriy buyurtma</string>
 
 </resources>

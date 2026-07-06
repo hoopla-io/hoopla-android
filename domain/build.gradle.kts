@@ -78,6 +78,9 @@ dependencies {
     api(libs.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.common.java8)
 
+    // Encrypts auth tokens at rest (see cache/SecurePrefs.kt)
+    implementation(libs.androidx.security.crypto)
+
     api(libs.androidx.paging.runtime.ktx)
 
     //localization

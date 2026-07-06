@@ -151,6 +151,19 @@
                     tools:listitem="@layout/item_story"
                     tools:visibility="visible" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/active_orders_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingTop="8dp"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:itemCount="1"
+                    tools:listitem="@layout/item_active_order"
+                    tools:visibility="visible" />
+
             </LinearLayout>
 
             <!-- Categories: pinned directly under the top bar while scrolling -->

@@ -6,8 +6,12 @@ import okhttp3.RequestBody
 import org.json.JSONObject
 import uz.alphazet.data.services.AuthService
 import uz.alphazet.domain.network.BaseRepo
+import uz.alphazet.domain.network.DeviceInfoProvider
 
-class AuthRepo(private val authService: AuthService) : BaseRepo() {
+class AuthRepo(
+    private val authService: AuthService,
+    private val deviceInfo: DeviceInfoProvider
+) : BaseRepo() {
 
     suspend fun sendSMS(phoneNumber: String) = handle {
 
@@ -43,6 +47,10 @@ class AuthRepo(private val authService: AuthService) : BaseRepo() {
 
         jsonParams["code"] = code
         jsonParams["sessionId"] = sessionId
+        jsonParams["deviceName"] = deviceInfo.deviceName
+        jsonParams["platform"] = deviceInfo.platform
+        jsonParams["deviceId"] = deviceInfo.deviceId
+        jsonParams["appVersion"] = deviceInfo.appVersion
 
         val body: RequestBody = RequestBody.create(
             "application/json".toMediaTypeOrNull(),

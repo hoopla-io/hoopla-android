@@ -29,6 +29,7 @@ import uz.alphazet.data.models.ConfirmSMSData
 import uz.alphazet.data.models.LoginSessionData
 import uz.alphazet.data.services.AuthService
 import uz.alphazet.domain.network.BadRequestException
+import uz.alphazet.domain.network.DeviceInfoProvider
 import uz.alphazet.domain.network.UnauthorizedException
 import uz.alphazet.domain.network.ValidationException
 
@@ -38,7 +39,8 @@ class AuthRepoTest {
 
     private val dispatcher = StandardTestDispatcher()
     private val authService: AuthService = mockk()
-    private val repo = AuthRepo(authService)
+    private val deviceInfo: DeviceInfoProvider = mockk(relaxed = true)
+    private val repo = AuthRepo(authService, deviceInfo)
 
     @Before
     fun setUp() {

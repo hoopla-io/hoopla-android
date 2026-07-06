@@ -19,6 +19,7 @@ import uz.alphazet.data.models.UserData
 import uz.alphazet.domain.network.RemoteException
 import uz.alphazet.domain.repositories.CategoryRepo
 import uz.alphazet.domain.repositories.HomeRepo
+import uz.alphazet.domain.repositories.OrdersRepo
 import uz.alphazet.domain.repositories.ProfileRepo
 import uz.alphazet.domain.repositories.StoryRepo
 import uz.alphazet.hoopla.rules.MainDispatcherRule
@@ -33,8 +34,9 @@ class HomeVMTest {
     private val profileRepo: ProfileRepo = mockk()
     private val categoryRepo: CategoryRepo = mockk()
     private val storyRepo: StoryRepo = mockk()
+    private val ordersRepo: OrdersRepo = mockk()
 
-    private val vm by lazy { HomeVM(homeRepo, profileRepo, categoryRepo, storyRepo) }
+    private val vm by lazy { HomeVM(homeRepo, profileRepo, categoryRepo, storyRepo, ordersRepo) }
 
     // --- getUser (Pattern B — StateFlow) ----------------------------------
 

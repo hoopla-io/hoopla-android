@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Release/main network policy.
+  - No cleartext (HTTP) traffic anywhere: every request must be HTTPS.
+  - Trust only system CAs (user-installed CAs are NOT trusted), which blocks
+    casual MITM via a user-added proxy certificate on the device.
+  Debug builds override this with a permissive config (src/debug) so you can
+  still proxy traffic and hit local http servers while developing.
+
+  OPTIONAL — TLS certificate pinning for the API:
+  api.hoopla.uz is served by Let's Encrypt, whose LEAF and INTERMEDIATE certs
+  rotate roughly every 90 days — pinning either WILL brick the app when they
+  rotate. Pin only the long-lived ISRG roots (valid for years), always keep a
+  backup pin, and review before the pin-set `expiration`. Confirm there is no
+  CDN (Cloudflare/Google/...) fronting the API first. Then add a domain-config:
+
+      <domain-config>
+          <domain includeSubdomains="true">hoopla.uz</domain>
+          <pin-set expiration="2026-12-31">
+              <pin digest="SHA-256">C5+lpZ7tcVwmwQIMcRtPbsQtWLABXhQzejna0wHFr8M=</pin>
+              <pin digest="SHA-256">diGVwiVYbubAI3RW4hB9xU8e/CH2GnkuvVFZE8zmgzI=</pin>
+          </pin-set>
+      </domain-config>
+
+  where the pins are ISRG Root X1 (primary) and ISRG Root X2 (backup).
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

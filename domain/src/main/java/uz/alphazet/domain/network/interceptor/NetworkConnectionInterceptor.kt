@@ -20,27 +20,21 @@ import retrofit2.converter.gson.GsonConverterFactory
 import uz.alphazet.data.BaseResponse
 import uz.alphazet.data.models.AccessTokenData
 import uz.alphazet.data.services.AuthService
+import uz.alphazet.domain.BuildConfig
 import uz.alphazet.domain.R
 import uz.alphazet.domain.cache.AppCache
+import uz.alphazet.domain.network.DeviceInfoProvider
 import uz.alphazet.domain.network.NetworkStatus
-import uz.alphazet.domain.utils.getSecureDeviceId
 import uz.alphazet.domain.utils.log
 
 class NetworkConnectionInterceptor(
     private val context: Context,
-    private val appCache: AppCache
+    private val appCache: AppCache,
+    private val deviceInfo: DeviceInfoProvider
 ) : Interceptor {
 
     private val connectivityManager: ConnectivityManager =
         context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-
-    private val deviceName: String = "${Build.MANUFACTURER} ${Build.MODEL}".trim()
-
-    private fun appVersionName(): String = try {
-        context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: ""
-    } catch (e: Exception) {
-        ""
-    }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         when (getCurrentNetworkStatus()) {
@@ -102,10 +96,10 @@ class NetworkConnectionInterceptor(
 
                     val builder = chain.request().newBuilder()
 
-                    builder.addHeader("X-Device-Name", deviceName)
-                    builder.addHeader("X-Platform", PLATFORM)
-                    builder.addHeader("X-Device-Id", context.getSecureDeviceId())
-                    builder.addHeader("X-App-Version", appVersionName())
+                    builder.addHeader("X-Device-Name", deviceInfo.deviceName)
+                    builder.addHeader("X-Platform", deviceInfo.platform)
+                    builder.addHeader("X-Device-Id", deviceInfo.deviceId)
+                    builder.addHeader("X-App-Version", deviceInfo.appVersion)
 
                     if (appCache.accessToken != null) builder.addHeader(
                         "Authorization",
@@ -116,10 +110,6 @@ class NetworkConnectionInterceptor(
                 }
             }
         }
-    }
-
-    companion object {
-        private const val PLATFORM = "android"
     }
 
     private suspend fun getNewToken(
@@ -133,7 +123,7 @@ class NetworkConnectionInterceptor(
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://api.hoopla.uz/api/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

@@ -37,7 +37,7 @@ class UtilsTest {
         val url = getMapImageUrl(long = "69.24", lat = "41.31")
 
         assertEquals(
-            "http://static-maps.yandex.ru/1.x/?lang=en-US&ll=69.24,41.31" +
+            "https://static-maps.yandex.ru/1.x/?lang=en-US&ll=69.24,41.31" +
                 "&size=450,450&z=14&l=map&pt=69.24,41.31,vkbkm",
             url
         )

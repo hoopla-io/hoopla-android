@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/logo_hoopla_new_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Hoopla"
-        android:usesCleartextTraffic="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:targetApi="31">
 
         <meta-data
@@ -140,6 +140,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.profile.EditProfileScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.profile.devices.DevicesActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
 

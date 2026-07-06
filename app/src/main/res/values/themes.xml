@@ -21,4 +21,13 @@
         <item name="android:windowBackground">@color/black</item>
     </style>
 
+    <!-- Full-screen dialog (e.g. gift card success). Non-floating so the
+         DialogFragment window fills the screen instead of a centered card. -->
+    <style name="FullScreenDialogTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
 </resources>

@@ -2,7 +2,6 @@ package uz.alphazet.hoopla.ui.profile
 
 import android.content.Intent
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.flow.collectLatest
@@ -24,11 +23,12 @@ import uz.alphazet.hoopla.databinding.ScreenProfileBinding
 import uz.alphazet.hoopla.ui.MainActivity
 import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.home.HomeScreen
+import uz.alphazet.hoopla.ui.profile.devices.DevicesActivity
+import uz.alphazet.hoopla.ui.profile.giftcard.GiftCardSuccessDF.Companion.showGiftCardSuccessDF
 import uz.alphazet.hoopla.ui.profile.giftcard.RedeemGiftCardBD.Companion.showRedeemGiftCardBD
 import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
 import uz.alphazet.hoopla.ui.profile.settings.SelectLanguageBD.Companion.showSelectLanguageBD
 import uz.alphazet.hoopla.ui.profile.settings.SelectThemeBD.Companion.showSelectThemeBD
-import uz.alphazet.hoopla.ui.profile.subscriptions.SubscriptionActivity
 
 class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.OnRefreshListener {
 
@@ -40,11 +40,6 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
             viewModel.getUser()
         }
 
-    private val subscriptionListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-
-        }
-
     private val paymentListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 
@@ -53,11 +48,12 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
     override fun initialize() {
 
         binding.edit.setOnClickListener(this)
-        binding.subscription.setOnClickListener(this)
         binding.giftCard.setOnClickListener(this)
         binding.topUp.setOnClickListener(this)
         binding.languages.setOnClickListener(this)
         binding.theme.setOnClickListener(this)
+        binding.devices.setOnClickListener(this)
+        binding.devices.visible()
         binding.logout.setOnClickListener(this)
         binding.login.setOnClickListener(this)
         binding.support.setOnClickListener(this)
@@ -96,19 +92,9 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
                 authListener.launch(intent1)
             }
 
-            R.id.subscription -> {
-                val intent1 = Intent(requireActivity(), SubscriptionActivity::class.java)
-                subscriptionListener.launch(intent1)
-            }
-
             R.id.gift_card -> {
                 showRedeemGiftCardBD { data ->
-                    val credited = data.credited?.formatToPrice().orEmpty()
-                    Toast.makeText(
-                        requireContext(),
-                        getString(uz.alphazet.domain.R.string.gift_card_added, credited),
-                        Toast.LENGTH_LONG
-                    ).show()
+                    showGiftCardSuccessDF(data)
                     viewModel.getUser()
                 }
             }
@@ -144,6 +130,11 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
             R.id.theme -> {
                 showSelectThemeBD()
+            }
+
+            R.id.devices -> {
+                val intent1 = Intent(requireActivity(), DevicesActivity::class.java)
+                startActivity(intent1)
             }
 
             R.id.privacyPolicy -> {

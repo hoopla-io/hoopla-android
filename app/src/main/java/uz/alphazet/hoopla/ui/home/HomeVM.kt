@@ -13,8 +13,10 @@ import uz.alphazet.data.models.LoyaltyItemData
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.data.models.StoryItemData
 import uz.alphazet.data.models.UserData
+import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.domain.repositories.CategoryRepo
 import uz.alphazet.domain.repositories.HomeRepo
+import uz.alphazet.domain.repositories.OrdersRepo
 import uz.alphazet.domain.repositories.ProfileRepo
 import uz.alphazet.domain.repositories.StoryRepo
 import uz.alphazet.domain.ui.BaseVM
@@ -24,8 +26,17 @@ class HomeVM(
     private val homeRepo: HomeRepo,
     private val profileRepo: ProfileRepo,
     private val categoryRepo: CategoryRepo,
-    private val storyRepo: StoryRepo
+    private val storyRepo: StoryRepo,
+    private val ordersRepo: OrdersRepo
 ) : BaseVM() {
+
+    private val activeOrdersEmitter: MutableStateFlow<UIResource<List<OrderItemData>>> =
+        MutableStateFlow(UIResource.Loading)
+    val activeOrdersFlow: StateFlow<UIResource<List<OrderItemData>>> get() = activeOrdersEmitter
+
+    fun getActiveOrders() {
+        launch { activeOrdersEmitter.load { ordersRepo.getActiveOrders() } }
+    }
 
     private val pendingFeedbackEmitter: MutableStateFlow<UIResource<FeedbackDetail>> =
         MutableStateFlow(UIResource.Loading)

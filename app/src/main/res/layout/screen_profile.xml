@@ -311,6 +311,7 @@
                     android:drawableStart="@drawable/ic_subscription"
                     android:elevation="4dp"
                     android:text="@string/subscriptions"
+                    android:visibility="gone"
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -325,7 +326,8 @@
                     app:drawableEndCompat="@drawable/ic_arrow_right_black300"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/subscription" />
+                    app:layout_constraintTop_toBottomOf="@id/subscription"
+                    app:layout_goneMarginTop="20dp" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/theme"

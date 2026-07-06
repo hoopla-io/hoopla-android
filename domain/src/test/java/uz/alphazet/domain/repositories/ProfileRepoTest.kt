@@ -29,6 +29,7 @@ import uz.alphazet.data.BaseResponseData
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.UserData
 import uz.alphazet.data.services.ProfileService
+import uz.alphazet.domain.cache.AppCache
 import uz.alphazet.domain.network.UnauthorizedException
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -37,7 +38,8 @@ class ProfileRepoTest {
 
     private val dispatcher = StandardTestDispatcher()
     private val api: ProfileService = mockk()
-    private val repo = ProfileRepo(api)
+    private val appCache: AppCache = mockk(relaxed = true)
+    private val repo = ProfileRepo(api, appCache)
 
     @Before
     fun setUp() {
@@ -145,19 +147,19 @@ class ProfileRepoTest {
 
     @Test
     fun logout_success_emits_success() = runTest(dispatcher) {
-        coEvery { api.logout() } returns Response.success(wrap<Any>(null))
+        coEvery { api.logout(any()) } returns Response.success(wrap<Any>(null))
 
         repo.logout().test {
             val item = awaitItem()
             assertTrue(item is UIResource.Success)
             awaitComplete()
         }
-        coVerify(exactly = 1) { api.logout() }
+        coVerify(exactly = 1) { api.logout(any()) }
     }
 
     @Test
     fun logout_401_emits_unauthorized_error() = runTest(dispatcher) {
-        coEvery { api.logout() } returns Response.error(
+        coEvery { api.logout(any()) } returns Response.error(
             401,
             """{"message":"expired"}""".toResponseBody("application/json".toMediaType())
         )

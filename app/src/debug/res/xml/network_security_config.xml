@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  DEBUG builds only. Overrides the hardened src/main config so developers can:
+    - hit local http:// servers, and
+    - intercept HTTPS with a proxy (Charles / Proxyman / mitmproxy) whose CA is
+      installed as a user certificate.
+  The release build never sees this file, so production stays HTTPS-only with
+  system-CA trust.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

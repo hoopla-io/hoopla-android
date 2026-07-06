@@ -35,8 +35,10 @@ import uz.alphazet.data.models.StoryItemData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.hoopla.ui.home.FeedbackBD.Companion.showFeedbackBD
 import uz.alphazet.data.models.ShopItemData
+import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.ui.BaseFragment
+import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.log
@@ -46,6 +48,8 @@ import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenHomeBinding
 import uz.alphazet.hoopla.ui.MainActivity
 import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
+import uz.alphazet.hoopla.ui.orders.ActiveOrderAdapter
+import uz.alphazet.hoopla.ui.orders.OrderInfoScreen
 import uz.alphazet.hoopla.ui.search.SearchScreen
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DISTANCE
@@ -64,6 +68,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
     private val loyaltyAdapter = LoyaltyAdapter()
     private val categoryAdapter = CategoryAdapter()
     private val storyAdapter = StoryAdapter()
+    private val activeOrderAdapter = ActiveOrderAdapter()
 
     private var selectedCategoryId: Int? = null
 
@@ -91,6 +96,11 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
     private val notificationLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             viewModel.getUser()
+        }
+
+    private val orderInfoLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            viewModel.getActiveOrders()
         }
 
     private val storyViewerLauncher =
@@ -133,6 +143,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         binding.partnersRv.adapter = adapter
         binding.categoriesRv.adapter = categoryAdapter
         binding.storiesRv.adapter = storyAdapter
+        binding.activeOrdersRv.adapter = activeOrderAdapter
 //        binding.loyaltyRv.adapter = loyaltyAdapter
 
 //        launch {
@@ -143,6 +154,12 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         viewModel.getUser()
         viewModel.getCategories()
         viewModel.getStories()
+
+        activeOrderAdapter.setOnItemClickListener { order ->
+            val intent = Intent(requireActivity(), OrderInfoScreen::class.java)
+            intent.putExtra(Constants.ID, order.id ?: -1)
+            orderInfoLauncher.launch(intent)
+        }
 
         categoryAdapter.setOnItemClickListener { category ->
             val newId = if (selectedCategoryId == category.id) null else category.id
@@ -165,6 +182,10 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         launch {
             viewModel.storiesFlow.collectLatest(::collectStories)
+        }
+
+        launch {
+            viewModel.activeOrdersFlow.collectLatest(::collectActiveOrders)
         }
 
         storyAdapter.setOnItemClickListener { story ->
@@ -318,6 +339,16 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         }
     }
 
+    private fun collectActiveOrders(t: UIResource<List<OrderItemData>>) =
+        t.collect(onLoading = {}, onError = {}) { data ->
+            if (!data.isNullOrEmpty()) {
+                activeOrderAdapter.submitList(data)
+                binding.activeOrdersRv.visible()
+            } else {
+                binding.activeOrdersRv.gone()
+            }
+        }
+
     private fun collectPendingFeedback(t: UIResource<FeedbackDetail>) = t.collect { data ->
         if (data != null) {
             showFeedbackBD(data) { viewModel.getPendingFeedbacks() }
@@ -459,8 +490,22 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             binding.swipeRefreshLayout.isRefreshing = false
     }
 
+    // Refresh active orders every time the home screen is shown: onResume covers the
+    // first open and returning from background; onHiddenChanged covers bottom-nav tab
+    // switches, where the fragment is shown/hidden without an onResume.
+    override fun onResume() {
+        super.onResume()
+        viewModel.getActiveOrders()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) viewModel.getActiveOrders()
+    }
+
     override fun onRefresh() {
         viewModel.getCategories()
+        viewModel.getActiveOrders()
         if (currentLocation != null)
             launch {
                 viewModel.getNearShops(

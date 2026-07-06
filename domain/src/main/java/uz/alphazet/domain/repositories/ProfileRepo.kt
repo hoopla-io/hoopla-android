@@ -6,9 +6,13 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import uz.alphazet.data.services.ProfileService
+import uz.alphazet.domain.cache.AppCache
 import uz.alphazet.domain.network.BaseRepo
 
-class ProfileRepo(private val api: ProfileService) : BaseRepo() {
+class ProfileRepo(
+    private val api: ProfileService,
+    private val appCache: AppCache
+) : BaseRepo() {
 
     suspend fun getMe() = handle { api.getMe() }
     suspend fun editMe() = handle { api.editMe() }
@@ -25,8 +29,10 @@ class ProfileRepo(private val api: ProfileService) : BaseRepo() {
         api.updateMe(body)
     }
 
+    // Multi-device aware: revokes only this device's session, leaving the
+    // user's other devices signed in.
     suspend fun logout() = handleFlow {
-        api.logout()
+        api.logout(appCache.refreshToken)
     }
 
     suspend fun deactivate() = handleFlow {
