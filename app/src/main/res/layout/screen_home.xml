@@ -7,7 +7,7 @@
     android:background="@color/grey_100"
     android:orientation="vertical">
 
-    <!-- Always-pinned top bar (logo + notification) -->
+    <!-- Always-pinned top bar (logo + search + notification) -->
     <FrameLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
@@ -33,6 +33,33 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/search_card"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="12dp"
+                app:cardBackgroundColor="@color/primary"
+                app:cardCornerRadius="22dp"
+                app:cardElevation="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/notification_card"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeColor="@color/white"
+                app:strokeWidth="1dp">
+
+                <ImageButton
+                    android:id="@+id/search"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/search"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_search"
+                    android:tint="@color/white" />
+
+            </com.google.android.material.card.MaterialCardView>
 
             <FrameLayout
                 android:id="@+id/notification_card"
@@ -105,36 +132,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_scrollFlags="scroll">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/search_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="20dp"
-                    android:layout_marginTop="12dp"
-                    app:cardBackgroundColor="@color/grey_200"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp"
-                    app:strokeWidth="0dp">
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/search"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackground"
-                        android:drawableStart="@drawable/ic_search"
-                        android:drawablePadding="14dp"
-                        android:elevation="0dp"
-                        android:fontFamily="@font/inter_medium"
-                        android:gravity="center_vertical"
-                        android:paddingHorizontal="18dp"
-                        android:paddingVertical="14dp"
-                        android:text="@string/search"
-                        android:textAllCaps="false"
-                        android:textColor="@color/grey_400"
-                        android:textSize="15sp" />
-
-                </com.google.android.material.card.MaterialCardView>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/stories_rv"
@@ -291,6 +288,7 @@
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="15sp"
+            android:visibility="gone"
             app:backgroundTint="@color/primary"
             app:cornerRadius="28dp"
             app:elevation="6dp"

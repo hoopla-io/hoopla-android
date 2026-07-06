@@ -283,12 +283,14 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             .start()
 
         binding.searchCard.alpha = 0f
-        binding.searchCard.translationY = 30f
+        binding.searchCard.scaleX = 0.8f
+        binding.searchCard.scaleY = 0.8f
         binding.searchCard.animate()
             .alpha(1f)
-            .translationY(0f)
+            .scaleX(1f)
+            .scaleY(1f)
             .setDuration(duration)
-            .setStartDelay(150)
+            .setStartDelay(50)
             .setInterpolator(interpolator)
             .start()
 
