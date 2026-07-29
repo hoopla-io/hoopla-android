@@ -29,7 +29,7 @@
         android:textColor="@color/black_300"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@id/time"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/price_barrier"
         app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toTopOf="@id/image"
         app:layout_constraintVertical_chainStyle="packed"
@@ -45,14 +45,14 @@
         android:textColor="@color/grey_400"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="@id/image"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/price_barrier"
         app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toBottomOf="@id/drink_name"
         tools:text="24 Dec 2024 12:04" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/price"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/inter_regular"
@@ -61,14 +61,13 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@id/status"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toTopOf="@id/image"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="25 000 UZS" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/status"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/inter_regular"
@@ -77,10 +76,16 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="@id/image"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/image"
         app:layout_constraintTop_toBottomOf="@id/price"
         app:lineHeight="30sp"
         tools:text="@string/cancelled" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/price_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="price,status" />
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"

@@ -33,7 +33,7 @@
         android:textColor="@color/black_300"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/subtitle"
-        app:layout_constraintEnd_toStartOf="@id/revoke"
+        app:layout_constraintEnd_toStartOf="@id/action_barrier"
         app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
@@ -48,7 +48,7 @@
         android:textColor="@color/grey_400"
         android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@id/lastActive"
-        app:layout_constraintEnd_toStartOf="@id/revoke"
+        app:layout_constraintEnd_toStartOf="@id/action_barrier"
         app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toBottomOf="@id/name"
         tools:text="android · v1.3.11" />
@@ -62,7 +62,7 @@
         android:textColor="@color/grey_400"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/revoke"
+        app:layout_constraintEnd_toStartOf="@id/action_barrier"
         app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toBottomOf="@id/subtitle"
         tools:text="Last active: 3 July, 2026  12:00" />
@@ -97,5 +97,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/action_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierAllowsGoneWidgets="false"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="revoke,thisDevice" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
