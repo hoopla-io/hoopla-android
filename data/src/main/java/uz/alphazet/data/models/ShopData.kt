@@ -15,6 +15,7 @@ data class ShopData(
     val pictures: List<PictureData?>?,
     val drinks: List<DrinkItemData>?,
     val urls: List<UrlData>?,
+    val shareUrl: String? = null,
 ) {
     data class WorkHour(
         val weekDay: String?,

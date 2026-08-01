@@ -11,7 +11,8 @@ data class ShopItemData(
     val logoUrl: String? = null,
     val partnerId: Int? = null,
     val acceptingOrders: Boolean? = null,
-    val pausedUntil: String? = null
+    val pausedUntil: String? = null,
+    val shareUrl: String? = null
 ) : BaseItem {
     override val uniqueId: String
         get() = shopId.toString()

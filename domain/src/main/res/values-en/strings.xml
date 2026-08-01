@@ -208,4 +208,6 @@
     <string name="last_active">Last active: %1$s</string>
     <string name="active_orders">Active orders</string>
     <string name="current_order">Current order</string>
+
+    <string name="share">Share</string>
 </resources>

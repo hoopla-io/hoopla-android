@@ -213,4 +213,6 @@
     <string name="active_orders">Активные заказы</string>
     <string name="current_order">Текущий заказ</string>
 
+    <string name="share">Поделиться</string>
+
 </resources>

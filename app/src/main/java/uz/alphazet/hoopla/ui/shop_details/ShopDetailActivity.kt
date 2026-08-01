@@ -56,6 +56,7 @@ class ShopDetailActivity : BaseActivity() {
 
     private var isClickable = true
     private var canAcceptOrders = false
+    private var shareUrl: String? = null
 
     // category name -> section root view
     private val sectionViews = mutableListOf<Pair<String, View>>()
@@ -85,6 +86,19 @@ class ShopDetailActivity : BaseActivity() {
         binding.workTimeRv.adapter = workTimeAdapter
 
         binding.toolbar.setNavigationOnClickListener { finish() }
+
+        binding.toolbar.inflateMenu(uz.alphazet.hoopla.R.menu.menu_shop_detail)
+        binding.toolbar.menu.findItem(uz.alphazet.hoopla.R.id.action_share)?.isVisible = false
+        binding.toolbar.setOnMenuItemClickListener { item ->
+            when (item.itemId) {
+                uz.alphazet.hoopla.R.id.action_share -> {
+                    shareShop()
+                    true
+                }
+
+                else -> false
+            }
+        }
 
         setupAppBarAnimation()
 
@@ -162,6 +176,11 @@ class ShopDetailActivity : BaseActivity() {
 
     private fun collectData(t: UIResource<ShopData>) = t.collect { data ->
         canAcceptOrders = data?.canAcceptOrders == true
+
+        // Share action: shown once the shop (and its shareUrl) has loaded.
+        shareUrl = data?.shareUrl
+        binding.toolbar.menu.findItem(uz.alphazet.hoopla.R.id.action_share)?.isVisible =
+            !data?.shareUrl.isNullOrBlank()
         // Paused state matches the list overlay: shown only when explicitly false.
         binding.pausedBadge.isVisible = data?.canAcceptOrders == false
         binding.collapsingToolbar.title = data?.name
@@ -216,6 +235,16 @@ class ShopDetailActivity : BaseActivity() {
                 intentToCall(phoneNumber.phoneNumber?.formatPhoneNumber() ?: "")
             }
         }
+    }
+
+    private fun shareShop() {
+        val url = shareUrl
+        if (url.isNullOrBlank()) return
+        val sendIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, url)
+        }
+        startActivity(Intent.createChooser(sendIntent, getString(R.string.share)))
     }
 
     private fun collectDrinks(t: UIResource<ShopDrinksData>) = t.collect { data ->
