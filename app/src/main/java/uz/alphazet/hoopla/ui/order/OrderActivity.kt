@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DrinkItemData
+import uz.alphazet.data.models.ShopData
 import uz.alphazet.data.models.order.ModifierGroupData
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderDetails
@@ -39,6 +40,11 @@ class OrderActivity : BaseActivity() {
     private val shopId by lazy { intent.getIntExtra(SHOP_ID, -1) }
     private val shopName by lazy { intent.getStringExtra(SHOP_NAME) }
     private val drinkData by lazy { intent.getParcelableExtra<DrinkItemData>(DRINK_DATA) }
+
+    /** Passed straight through to checkout, where it constrains the pickup-time picker. */
+    private val workingHours by lazy {
+        intent.getParcelableArrayListExtra<ShopData.WorkHour>(Constants.WORKING_HOURS)
+    }
 
     private val sizeAdapter = SizeAdapter()
     private val sugarAdapter = SizeAdapter()
@@ -163,6 +169,7 @@ class OrderActivity : BaseActivity() {
             intent1.putExtra(Constants.DATA, data)
             intent1.putExtra(Constants.MODIFIERS, modifiers)
             intent1.putExtra(Constants.COMMENT, binding.commentInput.text?.toString()?.trim())
+            intent1.putParcelableArrayListExtra(Constants.WORKING_HOURS, workingHours)
             checkoutListener.launch(intent1)
         }
     }
@@ -261,6 +268,7 @@ class OrderActivity : BaseActivity() {
             intent1.putExtra(Constants.DATA, data)
             intent1.putExtra(Constants.MODIFIERS, modifiers)
             intent1.putExtra(Constants.COMMENT, binding.commentInput.text?.toString()?.trim())
+            intent1.putParcelableArrayListExtra(Constants.WORKING_HOURS, workingHours)
             checkoutListener.launch(intent1)
         }
 

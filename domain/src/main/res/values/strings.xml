@@ -217,4 +217,22 @@
     <string name="test_mode_disabled">Тестовый режим выключен</string>
     <string name="share">Поделиться</string>
 
+    <!-- Scheduled pickup time (optional; orders default to as-soon-as-possible) -->
+    <string name="pickup_time_title">Время получения</string>
+    <string name="pickup_asap">Как можно скорее</string>
+    <!-- Compact form for the checkout row, where it shares space with the order button. -->
+    <string name="pickup_asap_short">Сейчас</string>
+    <string name="pickup_asap_hint">Заберите заказ, как только он будет готов</string>
+    <string name="pickup_choose_time">Выбрать время</string>
+    <string name="pickup_today">Сегодня</string>
+    <string name="pickup_tomorrow">Завтра</string>
+    <string name="pickup_today_at">Сегодня, %1$s</string>
+    <string name="pickup_tomorrow_at">Завтра, %1$s</string>
+    <string name="pickup_confirm">Готово</string>
+    <string name="pickup_at_value">Получение: %1$s</string>
+    <string name="pickup_no_slots">В ближайшие 24 часа нет доступного времени — заказ будет
+        готов как можно скорее</string>
+    <string name="pickup_time_unavailable">Это время получения больше недоступно. Выберите
+        другое.</string>
+
 </resources>

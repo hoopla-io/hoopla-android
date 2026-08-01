@@ -17,4 +17,10 @@ object Constants {
     const val DATA = "data"
     const val MODIFIERS = "modifiers"
     const val COMMENT = "comment"
+
+    /**
+     * The shop's weekly schedule, carried from the shop detail screen down to checkout so the
+     * pickup-time picker can be constrained without a second shop request.
+     */
+    const val WORKING_HOURS = "working_hours"
 }

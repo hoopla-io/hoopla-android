@@ -53,12 +53,18 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
         service.checkPromocode(requestBody)
     }
 
+    /**
+     * [pickupAt] is an RFC3339 instant with an explicit offset (see
+     * `uz.alphazet.domain.utils.PickupTime.format`). Omitting it keeps the order ASAP, which
+     * is the behaviour every order had before scheduled pickup existed.
+     */
     suspend fun createOrder(
         shopId: Int,
         drinkId: Int,
         modifiers: ArrayList<ModifierItemData>,
         comment: String? = null,
-        promoCode: String? = null
+        promoCode: String? = null,
+        pickupAt: String? = null
     ) =
         handleFlow {
             val json = JSONObject().apply {
@@ -66,6 +72,7 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
                 put("drinkId", drinkId)
                 if (!comment.isNullOrBlank()) put("comment", comment.trim())
                 if (!promoCode.isNullOrBlank()) put("promo_code", promoCode.trim())
+                if (!pickupAt.isNullOrBlank()) put("pickup_at", pickupAt.trim())
                 put("modifiers", JSONArray().apply {
                     modifiers.forEach {
                         put(JSONObject().apply {
@@ -84,6 +91,7 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
             service.createOrder(requestBody)
         }
 
+    /** See [createOrder] for the shape of [pickupAt]; omitting it keeps the order ASAP. */
     suspend fun createOrderRahmat(
         shopId: Int,
         drinkId: Int,
@@ -91,7 +99,8 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
         useCashback: Boolean,
         cashbackAmount: Double,
         comment: String? = null,
-        promoCode: String? = null
+        promoCode: String? = null,
+        pickupAt: String? = null
     ) =
         handleFlow {
             val json = JSONObject().apply {
@@ -101,6 +110,7 @@ class OrderRepo(private val service: OrderService) : BaseRepo() {
                 put("cashback_amount", cashbackAmount)
                 if (!comment.isNullOrBlank()) put("comment", comment.trim())
                 if (!promoCode.isNullOrBlank()) put("promo_code", promoCode.trim())
+                if (!pickupAt.isNullOrBlank()) put("pickup_at", pickupAt.trim())
                 put("modifiers", JSONArray().apply {
                     modifiers.forEach {
                         put(JSONObject().apply {

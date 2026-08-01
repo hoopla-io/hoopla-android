@@ -6,5 +6,7 @@ data class CheckOutInfo(
     val deeplink: String?,
     val expires_at: String?,
     val order_id: Int?,
-    val short_link: String?
+    val short_link: String?,
+    /** Scheduled pickup instant echoed back by checkout; null for an ASAP order. */
+    val pickup_at: String? = null
 )

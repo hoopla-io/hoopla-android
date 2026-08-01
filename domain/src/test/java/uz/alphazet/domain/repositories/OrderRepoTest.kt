@@ -179,6 +179,42 @@ class OrderRepoTest {
     }
 
     @Test
+    fun createOrder_includes_pickup_at_when_a_time_was_chosen() = runTest(dispatcher) {
+        val slot = slot<RequestBody>()
+        coEvery { service.createOrder(capture(slot)) } returns Response.success(
+            wrap(OrderInfoData(1, null, null, null, null, null, null))
+        )
+
+        repo.createOrder(
+            shopId = 1,
+            drinkId = 2,
+            modifiers = arrayListOf(),
+            pickupAt = " 2026-07-30T17:30:00+05:00 "
+        ).test { awaitItem(); awaitComplete() }
+
+        val json = JSONObject(slot.captured.asString())
+        assertEquals("2026-07-30T17:30:00+05:00", json.getString("pickup_at"))
+    }
+
+    @Test
+    fun createOrder_omits_pickup_at_for_an_asap_order() = runTest(dispatcher) {
+        val slot = slot<RequestBody>()
+        coEvery { service.createOrder(capture(slot)) } returns Response.success(
+            wrap(OrderInfoData(1, null, null, null, null, null, null))
+        )
+
+        // Null and blank both mean "as soon as possible" — the field must not be sent at all,
+        // which is what keeps pre-pickup behaviour byte-identical.
+        repo.createOrder(shopId = 1, drinkId = 2, modifiers = arrayListOf())
+            .test { awaitItem(); awaitComplete() }
+        assertFalse(JSONObject(slot.captured.asString()).has("pickup_at"))
+
+        repo.createOrder(shopId = 1, drinkId = 2, modifiers = arrayListOf(), pickupAt = "  ")
+            .test { awaitItem(); awaitComplete() }
+        assertFalse(JSONObject(slot.captured.asString()).has("pickup_at"))
+    }
+
+    @Test
     fun createOrder_success_emits_order_info() = runTest(dispatcher) {
         val info = OrderInfoData(1, "Hoopla", "Chilonzor", "now", 1L, "Latte", "PENDING")
         coEvery { service.createOrder(any()) } returns Response.success(wrap(info))
@@ -237,6 +273,29 @@ class OrderRepoTest {
         assertEquals(500.0, json.getDouble("cashback_amount"), 0.0)
         assertEquals(1, json.getJSONArray("modifiers").length())
     }
+
+    @Test
+    fun createOrderRahmat_carries_pickup_at_through_the_live_checkout_path() =
+        runTest(dispatcher) {
+            val slot = slot<RequestBody>()
+            coEvery { service.createOrderRahmat(capture(slot)) } returns Response.success(
+                wrap(CheckOutInfo(null, null, null, null, null, null))
+            )
+
+            repo.createOrderRahmat(
+                shopId = 1, drinkId = 2, modifiers = arrayListOf(),
+                useCashback = false, cashbackAmount = 0.0,
+                pickupAt = "2026-07-30T17:30:00+05:00"
+            ).test { awaitItem(); awaitComplete() }
+            assertEquals(
+                "2026-07-30T17:30:00+05:00",
+                JSONObject(slot.captured.asString()).getString("pickup_at")
+            )
+
+            repo.createOrderRahmat(1, 2, arrayListOf(), useCashback = false, cashbackAmount = 0.0)
+                .test { awaitItem(); awaitComplete() }
+            assertFalse(JSONObject(slot.captured.asString()).has("pickup_at"))
+        }
 
     @Test
     fun createOrderRahmat_includes_promo_code_when_provided() = runTest(dispatcher) {

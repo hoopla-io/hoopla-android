@@ -13,6 +13,10 @@ import uz.alphazet.data.models.LocationData
 import uz.alphazet.data.models.NotificationItemData
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.data.models.UserData
+import uz.alphazet.data.models.order.CheckOutInfo
+import uz.alphazet.data.models.order.OrderInfo
+import uz.alphazet.data.models.order.OrderInfoData
+import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.data.models.order.PaymentRequiredExceptionData
 
 /**
@@ -242,5 +246,47 @@ class ModelDeserializationTest {
         assertEquals("2030-01-01", data.expiresAt)
         assertEquals(88, data.orderId)
         assertEquals("http://s/x", data.shortLink)
+    }
+
+    // The scheduled pickup instant arrives under two different names depending on the
+    // endpoint — snake_case from checkout, camelCase from the order list and detail — so
+    // each mapping is pinned separately.
+
+    @Test
+    fun checkout_responses_map_pickup_at_from_snake_case() {
+        val checkout = gson.fromJson(
+            """{"order_id": 4, "pickup_at": "2026-07-30T17:30:00+05:00"}""",
+            CheckOutInfo::class.java
+        )
+        assertEquals("2026-07-30T17:30:00+05:00", checkout.pickup_at)
+
+        val created = gson.fromJson(
+            """{"id": 4, "pickup_at": "2026-07-30T17:30:00+05:00"}""",
+            OrderInfoData::class.java
+        )
+        assertEquals("2026-07-30T17:30:00+05:00", created.pickupAt)
+    }
+
+    @Test
+    fun order_list_and_detail_map_pickup_at_from_camel_case() {
+        val item = gson.fromJson(
+            """{"id": 7, "pickupAt": "2026-07-30T17:30:00+05:00"}""",
+            OrderItemData::class.java
+        )
+        assertEquals("2026-07-30T17:30:00+05:00", item.pickupAt)
+
+        val info = gson.fromJson(
+            """{"id": 7, "pickupAt": "2026-07-30T17:30:00+05:00"}""",
+            OrderInfo::class.java
+        )
+        assertEquals("2026-07-30T17:30:00+05:00", info.pickupAt)
+    }
+
+    @Test
+    fun an_asap_order_leaves_pickup_at_null() {
+        // Every order placed before scheduled pickup existed looks like this.
+        assertNull(gson.fromJson("""{"id": 7}""", OrderItemData::class.java).pickupAt)
+        assertNull(gson.fromJson("""{"id": 7}""", OrderInfo::class.java).pickupAt)
+        assertNull(gson.fromJson("""{"id": 7, "pickupAt": null}""", OrderItemData::class.java).pickupAt)
     }
 }

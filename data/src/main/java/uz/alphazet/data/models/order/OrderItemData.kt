@@ -18,7 +18,12 @@ data class OrderItemData(
     val cashbackUsed: Double?,
     @SerializedName("checkout_url")
     val checkoutUrl: String?,
-    val fiscalLink: String?
+    val fiscalLink: String?,
+    /**
+     * Scheduled pickup instant (ISO-8601 with offset), or null when the customer ordered
+     * ASAP — which is every order placed before scheduled pickup existed.
+     */
+    val pickupAt: String? = null
 ) : BaseItem {
     override val uniqueId: String
         get() = id.toString()

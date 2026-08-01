@@ -88,9 +88,17 @@ abstract class BaseRepo {
         } catch (e: Exception) {
             null
         }
+
+        // Not every endpoint wraps its reason in the usual {"message": ...} envelope — the
+        // scheduled-pickup 409s answer with a bare sentence. Without this fallback the
+        // customer would get a blank toast instead of an actionable "pick another time".
+        val reason = errorData?.message?.takeIf { it.isNotBlank() }
+            ?: message?.takeIf { it.isNotBlank() }
+            ?: errorBodyJson.asPlainTextReason()
+
         throw return when (code) {
-            400 -> BadRequestException(errorData?.message ?: message, code)
-            401 -> UnauthorizedException(errorData?.message ?: message, code)
+            400 -> BadRequestException(reason, code)
+            401 -> UnauthorizedException(reason, code)
             402 -> {
                 val errorBody = try {
                     Gson().fromJson<BaseResponseData<PaymentRequiredExceptionData>>(
@@ -101,21 +109,38 @@ abstract class BaseRepo {
                 } catch (e: Throwable) {
                     null
                 }
-                PaymentException(errorBody?.data, errorData?.message ?: message, code)
+                PaymentException(errorBody?.data, reason, code)
             }
 
-            403 -> ForbiddenException(errorData?.message ?: message, code)
-            404 -> NotFoundException(errorData?.message ?: message, code)
-            409 -> ConflictException(errorData?.message ?: message, code)
-            422 -> ValidationException(errorData?.message ?: message, code)
-            428 -> PreconditionRequiredException(errorData?.message ?: message, code)
-            429 -> TooManyRequestException(errorData?.message ?: message, code)
-            in 500..599 -> ServerErrorException(errorData?.message ?: message, code)
+            403 -> ForbiddenException(reason, code)
+            404 -> NotFoundException(reason, code)
+            409 -> ConflictException(reason, code)
+            422 -> ValidationException(reason, code)
+            428 -> PreconditionRequiredException(reason, code)
+            429 -> TooManyRequestException(reason, code)
+            in 500..599 -> ServerErrorException(reason, code)
 
             //check other cases
 
-            else -> RemoteException(code = code, message = errorData?.message ?: message)
+            else -> RemoteException(code = code, message = reason)
         }
+    }
+
+    /**
+     * The raw error body, when it looks like a human-readable reason rather than a structure
+     * we failed to parse. JSON, arrays and HTML error pages are rejected — showing those to a
+     * customer is worse than showing nothing.
+     */
+    private fun String?.asPlainTextReason(): String? {
+        val raw = this?.trim() ?: return null
+        if (raw.isEmpty() || raw.length > MAX_PLAIN_TEXT_REASON) return null
+        if (raw.startsWith("{") || raw.startsWith("[") || raw.startsWith("<")) return null
+        return raw
+    }
+
+    private companion object {
+        /** Longer than this and it is a page or a stack trace, not a message for a customer. */
+        const val MAX_PLAIN_TEXT_REASON = 300
     }
 
     private fun handleDeviceException(e: Throwable): Throwable {

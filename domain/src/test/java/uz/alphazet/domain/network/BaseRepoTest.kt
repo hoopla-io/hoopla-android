@@ -204,6 +204,47 @@ class BaseRepoTest {
         assertEquals(400, (err as BadRequestException).code)
     }
 
+    @Test
+    fun plain_text_error_body_becomes_the_exception_message() = runTest(dispatcher) {
+        // Scheduled-pickup rejections answer with a bare sentence rather than the usual
+        // {"message": ...} envelope; without the fallback this reaches the customer blank.
+        val reason = "pickup time must be at least 10 minutes from now"
+        val result = repo.runHandle<Unit> { Response.error(409, reason.toBody()) }
+
+        assertTrue(result is UIResource.Error)
+        val err = (result as UIResource.Error).throwable
+        assertTrue(err is ConflictException)
+        assertEquals(reason, err.message)
+    }
+
+    @Test
+    fun json_error_body_still_wins_over_the_raw_text() = runTest(dispatcher) {
+        val result = repo.runHandle<Unit> {
+            Response.error(409, errorJson("shop is closed at the requested pickup time").toBody())
+        }
+
+        assertEquals(
+            "shop is closed at the requested pickup time",
+            (result as UIResource.Error).throwable.message
+        )
+    }
+
+    @Test
+    fun markup_error_body_is_never_shown_to_the_customer() = runTest(dispatcher) {
+        val result = repo.runHandle<Unit> {
+            Response.error(409, "<html><body>502 Bad Gateway</body></html>".toBody())
+        }
+
+        assertNull((result as UIResource.Error).throwable.message)
+    }
+
+    @Test
+    fun oversized_plain_text_error_body_is_never_shown_to_the_customer() = runTest(dispatcher) {
+        val result = repo.runHandle<Unit> { Response.error(409, "x".repeat(301).toBody()) }
+
+        assertNull((result as UIResource.Error).throwable.message)
+    }
+
     // --- device-level exceptions ------------------------------------------
 
     @Test

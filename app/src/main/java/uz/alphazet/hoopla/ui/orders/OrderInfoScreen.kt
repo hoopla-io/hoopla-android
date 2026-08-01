@@ -18,6 +18,7 @@ import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.Constants
+import uz.alphazet.domain.utils.PickupTime
 import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.getDateDDMMMMYYYYHHmm
 import uz.alphazet.domain.utils.gone
@@ -73,6 +74,16 @@ class OrderInfoScreen : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         binding.totalSumma.text = orderInfo.productPrice?.formatToPrice().plus(" UZS")
 
         binding.orderNumber.text = orderInfo.id.toString()
+
+        // Scheduled pickup: shown alongside the "ordered at" stamp in the toolbar so the
+        // customer can tell at a glance this isn't an ASAP order.
+        val pickupAt = PickupTime.parse(orderInfo.pickupAt)
+        if (pickupAt == null) {
+            binding.pickupContainer.gone()
+        } else {
+            binding.pickupContainer.visible()
+            binding.pickupTime.text = PickupTime.formatDayTimeForDisplay(pickupAt)
+        }
 
         if (orderInfo.comment.isNullOrBlank()) {
             binding.commentContainer.gone()

@@ -52,17 +52,20 @@ class OrderVM(
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
+    /** [pickupAt] is null for the default ASAP order; see `PickupTime.format` otherwise. */
     suspend fun createOrder(
         shopId: Int,
         drinkId: Int,
         modifiers: ArrayList<ModifierItemData>,
         comment: String? = null,
-        promoCode: String? = null
+        promoCode: String? = null,
+        pickupAt: String? = null
     ): SharedFlow<UIResource<OrderInfoData>> {
-        return repo.createOrder(shopId, drinkId, modifiers, comment, promoCode)
+        return repo.createOrder(shopId, drinkId, modifiers, comment, promoCode, pickupAt)
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 
+    /** [pickupAt] is null for the default ASAP order; see `PickupTime.format` otherwise. */
     suspend fun createOrderRahmat(
         shopId: Int,
         drinkId: Int,
@@ -70,10 +73,11 @@ class OrderVM(
         useCashback: Boolean,
         cashbackAmount: Double,
         comment: String? = null,
-        promoCode: String? = null
+        promoCode: String? = null,
+        pickupAt: String? = null
     ): SharedFlow<UIResource<CheckOutInfo>> {
         return repo.createOrderRahmat(
-            shopId, drinkId, modifiers, useCashback, cashbackAmount, comment, promoCode
+            shopId, drinkId, modifiers, useCashback, cashbackAmount, comment, promoCode, pickupAt
         ).shareIn(viewModelScope, SharingStarted.Lazily, 0)
     }
 

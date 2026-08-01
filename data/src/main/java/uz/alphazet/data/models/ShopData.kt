@@ -1,5 +1,7 @@
 package uz.alphazet.data.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import uz.alphazet.data.models.PartnerData.UrlData
 import uz.alphazet.data.rv.BaseItem
 
@@ -17,11 +19,14 @@ data class ShopData(
     val urls: List<UrlData>?,
     val shareUrl: String? = null,
 ) {
+    // Parcelable so the schedule can travel to the checkout screen, where it constrains the
+    // pickup-time picker without a second shop-detail request.
+    @Parcelize
     data class WorkHour(
         val weekDay: String?,
         val closeAt: String?,
         val openAt: String?
-    ) : BaseItem {
+    ) : BaseItem, Parcelable {
         override val uniqueId: String
             get() = weekDay.toString()
     }

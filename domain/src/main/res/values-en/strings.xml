@@ -212,4 +212,22 @@
     <string name="test_mode_enabled">Test mode enabled</string>
     <string name="test_mode_disabled">Test mode disabled</string>
     <string name="share">Share</string>
+
+    <!-- Scheduled pickup time (optional; orders default to as-soon-as-possible) -->
+    <string name="pickup_time_title">Pickup time</string>
+    <string name="pickup_asap">As soon as possible</string>
+    <!-- Compact form for the checkout row, where it shares space with the order button. -->
+    <string name="pickup_asap_short">ASAP</string>
+    <string name="pickup_asap_hint">Collect your order as soon as it\'s ready</string>
+    <string name="pickup_choose_time">Choose a time</string>
+    <string name="pickup_today">Today</string>
+    <string name="pickup_tomorrow">Tomorrow</string>
+    <string name="pickup_today_at">Today, %1$s</string>
+    <string name="pickup_tomorrow_at">Tomorrow, %1$s</string>
+    <string name="pickup_confirm">Done</string>
+    <string name="pickup_at_value">Pickup at %1$s</string>
+    <string name="pickup_no_slots">No pickup times available in the next 24 hours — your order
+        will be ready as soon as possible</string>
+    <string name="pickup_time_unavailable">That pickup time is no longer available. Please
+        choose another one.</string>
 </resources>

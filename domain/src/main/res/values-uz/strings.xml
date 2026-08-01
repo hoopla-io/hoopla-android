@@ -213,4 +213,22 @@
     <string name="test_mode_disabled">Test rejimi o\'chirildi</string>
     <string name="share">Ulashish</string>
 
+    <!-- Scheduled pickup time (optional; orders default to as-soon-as-possible) -->
+    <string name="pickup_time_title">Olib ketish vaqti</string>
+    <string name="pickup_asap">Imkon qadar tezroq</string>
+    <!-- Compact form for the checkout row, where it shares space with the order button. -->
+    <string name="pickup_asap_short">Hozir</string>
+    <string name="pickup_asap_hint">Buyurtmangizni tayyor bo\'lishi bilan olib keting</string>
+    <string name="pickup_choose_time">Vaqtni tanlash</string>
+    <string name="pickup_today">Bugun</string>
+    <string name="pickup_tomorrow">Ertaga</string>
+    <string name="pickup_today_at">Bugun, %1$s</string>
+    <string name="pickup_tomorrow_at">Ertaga, %1$s</string>
+    <string name="pickup_confirm">Tayyor</string>
+    <string name="pickup_at_value">Olib ketish: %1$s</string>
+    <string name="pickup_no_slots">Keyingi 24 soat ichida bo\'sh vaqt yo\'q — buyurtma imkon
+        qadar tezroq tayyorlanadi</string>
+    <string name="pickup_time_unavailable">Bu olib ketish vaqti endi mavjud emas. Boshqasini
+        tanlang.</string>
+
 </resources>

@@ -22,7 +22,12 @@ data class OrderInfo(
     val hasFeedback: Boolean?,
     val comment: String?,
     val promoCode: String?,
-    val promoDiscount: Double?
+    val promoDiscount: Double?,
+    /**
+     * Scheduled pickup instant (ISO-8601 with offset), or null when the customer ordered
+     * ASAP — which is every order placed before scheduled pickup existed.
+     */
+    val pickupAt: String? = null
 ) {
     data class Item(
         @SerializedName("item_type")

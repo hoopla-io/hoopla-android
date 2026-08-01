@@ -7,6 +7,7 @@ import coil3.load
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
+import uz.alphazet.data.models.ShopData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.data.models.order.CheckOutInfo
 import uz.alphazet.data.models.order.ModifierItemData
@@ -17,15 +18,18 @@ import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.utils.Constants
+import uz.alphazet.domain.utils.PickupTime
 import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToBrowser
+import uz.alphazet.domain.utils.setTextColorRes
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.databinding.ScreenCheckoutBinding
 import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.order.InputPromocodeBD.Companion.showInputPromocodeBD
 import uz.alphazet.hoopla.ui.order.OrderActivity2.Companion.RESULT_ORDER_CREATED
 import uz.alphazet.hoopla.ui.order.SelectCashbackSummaBD.Companion.showSelectCashbackSummaBD
+import uz.alphazet.hoopla.ui.order.SelectPickupTimeBD.Companion.showSelectPickupTimeBD
 import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
 
 class CheckoutActivity : BaseActivity() {
@@ -35,12 +39,21 @@ class CheckoutActivity : BaseActivity() {
     private val orderData by lazy { intent.getParcelableExtra<OrderDetails>(Constants.DATA) }
     private val modifiers by lazy { intent.getParcelableArrayListExtra<ModifierItemData>(Constants.MODIFIERS) }
     private val comment by lazy { intent.getStringExtra(Constants.COMMENT) }
+    private val workingHours by lazy {
+        intent.getParcelableArrayListExtra<ShopData.WorkHour>(Constants.WORKING_HOURS)
+    }
 
     private val adapter = SummaInfoAdapter()
     private var usingCashBack = 0.0
 
     /** The promocode the customer validated and applied; null when none. */
     private var appliedPromo: PromocodeData? = null
+
+    /**
+     * The scheduled pickup instant in epoch millis, or null for the default ASAP order —
+     * which is how every order behaved before scheduled pickup existed.
+     */
+    private var pickupAtMillis: Long? = null
 
     private val authListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -76,9 +89,20 @@ class CheckoutActivity : BaseActivity() {
         binding.promoAppliedRow.setOnClickListener { openPromoDialog() }
         binding.removePromo.setOnClickListener { removePromo() }
 
+        binding.pickupRow.setOnClickListener { openPickupTimeDialog() }
+        updatePickupRow()
+
         binding.order.setOnClickListener {
             launch {
                 modifiers?.let { list ->
+                    // The picker may have been open a while; re-check the lead time so an
+                    // obviously stale slot is caught here instead of by a server round-trip.
+                    val pickup = pickupAtMillis
+                    if (pickup != null && !PickupTime.isSelectable(pickup, workingHours)) {
+                        onPickupTimeRejected(getString(R.string.pickup_time_unavailable))
+                        return@launch
+                    }
+
                     viewModel.createOrderRahmat(
                         orderData?.shop?.id ?: -1,
                         orderData?.drink?.id ?: -1,
@@ -86,7 +110,8 @@ class CheckoutActivity : BaseActivity() {
                         usingCashBack > 0,
                         usingCashBack,
                         comment,
-                        appliedPromo?.code
+                        appliedPromo?.code,
+                        pickup?.let { PickupTime.format(it) }
                     ).collectLatest(::collectData)
                 }
             }
@@ -95,6 +120,63 @@ class CheckoutActivity : BaseActivity() {
         launch {
             viewModel.userDataFlow.collectLatest(::collectUserData)
         }
+    }
+
+    /** Opens the pickup-time picker; the sheet reports null when the customer keeps ASAP. */
+    private fun openPickupTimeDialog() {
+        showSelectPickupTimeBD(workingHours, pickupAtMillis) { millis ->
+            pickupAtMillis = millis
+            updatePickupRow()
+        }
+    }
+
+    /**
+     * Mirrors the current choice into the control beside the order button. Labels are the
+     * compact variants — it shares that row with the primary action.
+     */
+    private fun updatePickupRow() {
+        val millis = pickupAtMillis
+        binding.pickupValue.text = when {
+            millis == null -> getString(R.string.pickup_asap_short)
+            PickupTime.dayOffset(millis) <= 0 ->
+                getString(R.string.pickup_today_at, PickupTime.formatForDisplay(millis))
+
+            else -> getString(R.string.pickup_tomorrow_at, PickupTime.formatForDisplay(millis))
+        }
+
+        // The row stays quiet on the default and only picks up colour once the customer has
+        // actually scheduled something — that is the part worth noticing before paying.
+        binding.pickupValue.setTextColorRes(
+            if (millis == null) R.color.grey_400 else R.color.primary_300
+        )
+    }
+
+    /**
+     * A scheduled time the shop can no longer honour. Every reason the backend gives is
+     * customer-actionable — pick another time — so the message is shown as-is and the picker
+     * is reopened rather than dropping the customer back on a screen that just failed.
+     */
+    private fun onPickupTimeRejected(message: String?) {
+        pickupAtMillis = null
+        updatePickupRow()
+        showMessageDF(
+            getString(R.string.pickup_time_title),
+            // A blank reason would leave the dialog with nothing but a title.
+            message?.takeIf { it.isNotBlank() } ?: getString(R.string.pickup_time_unavailable),
+            "OK"
+        ) {
+            openPickupTimeDialog()
+        }
+    }
+
+    /**
+     * The backend answers 409 when the pickup time is too soon, too far ahead, or outside the
+     * shop's hours. Hours and pause state can change between populating the picker and
+     * checking out, so this stays reachable even with the client-side constraints.
+     */
+    override fun onConflictException(message: String?, code: Int) {
+        if (pickupAtMillis != null) onPickupTimeRejected(message)
+        else super.onConflictException(message, code)
     }
 
     /** Opens the promocode input dialog (pre-filled when a code is already applied). */
@@ -135,15 +217,23 @@ class CheckoutActivity : BaseActivity() {
     }
 
     private fun collectData(t: UIResource<CheckOutInfo>) = t.collect { data ->
-        showMessageDF(
-            getString(R.string.order_received_),
-            getString(
-                R.string.label_order_received_,
-                orderData?.drink?.name ?: "",
-                orderData?.shop?.name ?: ""
-            ),
-            "OK"
-        ) {
+        val received = getString(
+            R.string.label_order_received_,
+            orderData?.drink?.name ?: "",
+            orderData?.shop?.name ?: ""
+        )
+
+        // An ASAP order and a 17:30 order look identical at this point, so confirm the
+        // scheduled time back. The instant the backend echoed wins over the local choice.
+        val pickup = PickupTime.parse(data?.pickup_at) ?: pickupAtMillis
+        val message =
+            if (pickup == null) received
+            else received + "\n\n" + getString(
+                R.string.pickup_at_value,
+                PickupTime.formatDayTimeForDisplay(pickup)
+            )
+
+        showMessageDF(getString(R.string.order_received_), message, "OK") {
             setResult(RESULT_ORDER_CREATED)
             finish()
         }

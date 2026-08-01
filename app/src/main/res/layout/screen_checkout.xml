@@ -59,12 +59,12 @@
                 android:paddingHorizontal="16dp"
                 android:textColor="@color/black_400"
                 android:textSize="24sp"
-                tools:text="Cappuccino"
                 app:layout_constraintBottom_toTopOf="@id/cafe_name"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/image"
                 app:layout_constraintTop_toTopOf="@id/image"
-                app:layout_constraintVertical_chainStyle="packed" />
+                app:layout_constraintVertical_chainStyle="packed"
+                tools:text="Cappuccino" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/cafe_name"
@@ -479,17 +479,79 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
-            android:id="@+id/order"
-            style="@style/PrimaryColorButtonStyle"
-            android:layout_gravity="bottom"
-            android:text="@string/order"
-            android:textAllCaps="false"
-            app:finalCornerAngle="10dp"
-            app:initialCornerAngle="10dp"
-            app:spinning_bar_color="@color/white"
-            app:spinning_bar_padding="6dp"
-            app:spinning_bar_width="4dp" />
+        <!-- ===================== Pickup time + Order ========================= -->
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="50dp">
+
+            <!-- An optional tweak, not a step in the flow: it rides alongside the primary
+                 action as a compact secondary control instead of taking a card of its own.
+                 Defaults to ASAP, which is what every order did before this existed. -->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/pickup_row"
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_corner28_grey300"
+                android:clickable="true"
+                android:contentDescription="@string/pickup_time_title"
+                android:focusable="true"
+                android:foreground="@drawable/ripple_corner28"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_clock"
+                    app:tint="@color/grey_350" />
+
+                <!-- Turns primary-coloured once a time is chosen, so a non-default choice
+                     reads at a glance without shouting when it is the default. -->
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/pickup_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/inter_medium"
+                    android:maxWidth="110dp"
+                    android:maxLines="1"
+                    android:text="@string/pickup_asap_short"
+                    android:textColor="@color/grey_400"
+                    android:textSize="13sp"
+                    tools:text="Завтра, 09:15" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <!-- The wrapper carries the weight, not the button: the loading morph animates
+                 the button's layoutParams.width, which a weighted child would have its width
+                 recomputed away from on every measure pass. -->
+
+            <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+                android:id="@+id/order"
+                style="@style/PrimaryColorButtonStyle"
+                android:layout_gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/bg_corner28_primary300"
+                android:text="@string/order"
+                android:textAllCaps="false"
+                app:finalCornerAngle="28dp"
+                app:initialCornerAngle="28dp"
+                app:spinning_bar_color="@color/white"
+                app:spinning_bar_padding="6dp"
+                app:spinning_bar_width="4dp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

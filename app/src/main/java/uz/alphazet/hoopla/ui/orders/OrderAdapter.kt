@@ -6,6 +6,7 @@ import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.data.models.order.OrderStatus
 import uz.alphazet.domain.rv.BasePagingAdapter
 import uz.alphazet.domain.rv.BaseVH
+import uz.alphazet.domain.utils.PickupTime
 import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.getDateDDMMMMYYYYHHmm
 import uz.alphazet.domain.utils.setTextColorRes
@@ -22,7 +23,18 @@ fun ItemOrderBinding.bindOrderItem(itemData: OrderItemData) {
     image.load(itemData.shopIconUrl)
     drinkName.text = itemData.drinkName
     price.text = itemData.productPrice?.formatToPrice().plus(" UZS")
-    time.text = itemData.purchasedAtUnix?.getDateDDMMMMYYYYHHmm()
+
+    // A scheduled order reads very differently from an ASAP one, so in this compact row the
+    // pickup time takes the place of the "ordered at" stamp when there is one.
+    val pickupAt = PickupTime.parse(itemData.pickupAt)
+    time.text = if (pickupAt == null) {
+        itemData.purchasedAtUnix?.getDateDDMMMMYYYYHHmm()
+    } else {
+        time.context.getString(
+            uz.alphazet.domain.R.string.pickup_at_value,
+            PickupTime.formatDayTimeForDisplay(pickupAt)
+        )
+    }
 
     when (itemData.orderStatus) {
         OrderStatus.PendingPayment -> {

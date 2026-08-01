@@ -20,6 +20,7 @@ import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
+import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToCall
@@ -57,6 +58,9 @@ class ShopDetailActivity : BaseActivity() {
     private var isClickable = true
     private var canAcceptOrders = false
     private var shareUrl: String? = null
+
+    /** Handed to the order flow so checkout can constrain the pickup-time picker. */
+    private var workingHours: ArrayList<ShopData.WorkHour> = arrayListOf()
 
     // category name -> section root view
     private val sectionViews = mutableListOf<Pair<String, View>>()
@@ -206,6 +210,7 @@ class ShopDetailActivity : BaseActivity() {
         }
 
         workTimeAdapter.submitList(data?.workingHours)
+        workingHours = ArrayList(data?.workingHours?.filterNotNull().orEmpty())
 
         // Working hours & time setup
         if (data?.workingHours.isNullOrEmpty()) {
@@ -344,6 +349,7 @@ class ShopDetailActivity : BaseActivity() {
                 intent1.putExtra(SHOP_ID, shopId)
                 intent1.putExtra(SHOP_NAME, binding.collapsingToolbar.title.toString())
                 intent1.putExtra(DRINK_DATA, drink)
+                intent1.putParcelableArrayListExtra(Constants.WORKING_HOURS, workingHours)
                 orderListener.launch(intent1)
             } else {
                 showMessageDF(getString(R.string.can_not_accepting_orders), "", "OK") {}
