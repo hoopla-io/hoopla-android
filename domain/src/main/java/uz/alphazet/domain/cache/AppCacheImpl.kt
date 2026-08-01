@@ -14,6 +14,7 @@ class AppCacheImpl constructor(
     override var lang: String by prefs.string(Locales.Russian.language)
     override var themeMode: String by prefs.string(ThemeModes.SYSTEM)
     override var isFirstTime: Boolean by prefs.boolean(true)
+    override var isTestMode: Boolean by prefs.boolean(false)
 
     override fun saveTokens(accessToken: String?, refreshToken: String?, tokenExpireAt: Long) {
         this.accessToken = accessToken

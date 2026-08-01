@@ -100,6 +100,8 @@ class NetworkConnectionInterceptor(
                     builder.addHeader("X-Platform", deviceInfo.platform)
                     builder.addHeader("X-Device-Id", deviceInfo.deviceId)
                     builder.addHeader("X-App-Version", deviceInfo.appVersion)
+                    // Test mode flag — toggled via the hidden secret-key dialog in Profile.
+                    builder.addHeader("x-hoopla-test", appCache.isTestMode.toString())
 
                     if (appCache.accessToken != null) builder.addHeader(
                         "Authorization",

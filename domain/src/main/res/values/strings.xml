@@ -213,6 +213,8 @@
     <string name="active_orders">Активные заказы</string>
     <string name="current_order">Текущий заказ</string>
 
+    <string name="test_mode_enabled">Тестовый режим включён</string>
+    <string name="test_mode_disabled">Тестовый режим выключен</string>
     <string name="share">Поделиться</string>
 
 </resources>

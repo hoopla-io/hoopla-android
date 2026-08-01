@@ -209,6 +209,8 @@
     <string name="active_orders">Faol buyurtmalar</string>
     <string name="current_order">Joriy buyurtma</string>
 
+    <string name="test_mode_enabled">Test rejimi yoqildi</string>
+    <string name="test_mode_disabled">Test rejimi o\'chirildi</string>
     <string name="share">Ulashish</string>
 
 </resources>

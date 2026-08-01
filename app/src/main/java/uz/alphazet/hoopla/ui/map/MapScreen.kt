@@ -4,9 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import coil3.load
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -26,6 +31,7 @@ import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.ui.BaseFragment
+import uz.alphazet.domain.utils.formatDistance
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenMapBinding
@@ -45,6 +51,9 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
 
     private var googleMap: GoogleMap? = null
     private var clusterManager: ClusterManager<ShopClusterItem>? = null
+
+    // Café currently previewed in the bottom info card, if any.
+    private var selectedShop: ShopItemData? = null
 
     private val markerIconFactory by lazy { ShopMarkerIconFactory(requireContext()) }
 
@@ -71,7 +80,11 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultPoint, defaultZoom))
 
         setupClusterManager(map)
+        setupShopCard()
         enableMyLocation(map)
+
+        // Tapping empty map space dismisses the café info card.
+        map.setOnMapClickListener { hideShopCard() }
 
         // Built-in Google place (POI) click listener.
         map.setOnPoiClickListener { poi ->
@@ -98,10 +111,12 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
         map.setOnMarkerClickListener(manager)
 
         manager.setOnClusterItemClickListener { item ->
-            openShopDetail(item.shop)
+            showShopCard(item.shop)
+            map.animateCamera(CameraUpdateFactory.newLatLng(item.position))
             true
         }
         manager.setOnClusterClickListener { cluster ->
+            hideShopCard()
             map.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     cluster.position,
@@ -138,6 +153,64 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
         intent.putExtra(SHOP_ID, shop.shopId)
         intent.putExtra(DISTANCE, shop.distance)
         shopListener.launch(intent)
+    }
+
+    /** Wires the info card's static click targets once; content is bound per tap. */
+    private fun setupShopCard() = with(binding) {
+        shopCard.setOnClickListener { selectedShop?.let(::openShopDetail) }
+        cardOrder.setOnClickListener { selectedShop?.let(::openShopDetail) }
+        cardClose.setOnClickListener { hideShopCard() }
+    }
+
+    /** Binds [shop] into the bottom info card and slides it into view. */
+    private fun showShopCard(shop: ShopItemData) = with(binding) {
+        selectedShop = shop
+
+        cardName.text = shop.name
+        cardImage.load(shop.pictureUrl)
+
+        val hasDistance = shop.distance != null
+        cardDistance.isVisible = hasDistance
+        if (hasDistance) {
+            cardDistance.text = requireContext().formatDistance(shop.distance ?: 0.0)
+        }
+
+        // Shop is paused only when explicitly not accepting orders.
+        val paused = shop.acceptingOrders == false
+        cardPausedBadge.isVisible = paused
+        cardOrder.isEnabled = !paused
+        cardOrder.alpha = if (paused) 0.5f else 1f
+
+        if (shopCard.isVisible) return@with
+
+        shopCard.visibility = View.VISIBLE
+        shopCard.alpha = 0f
+        shopCard.post {
+            shopCard.translationY = shopCard.height.toFloat()
+            shopCard.animate()
+                .translationY(0f)
+                .alpha(1f)
+                .setDuration(220)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
+    }
+
+    /** Slides the info card out of view and clears the current selection. */
+    private fun hideShopCard() = with(binding) {
+        selectedShop = null
+        if (!shopCard.isVisible) return@with
+
+        shopCard.animate()
+            .translationY(shopCard.height.toFloat())
+            .alpha(0f)
+            .setDuration(180)
+            .setInterpolator(AccelerateInterpolator())
+            .withEndAction {
+                shopCard.visibility = View.GONE
+                shopCard.translationY = 0f
+            }
+            .start()
     }
 
     override fun onStart() {

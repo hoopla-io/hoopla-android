@@ -3,6 +3,12 @@ package uz.alphazet.domain.utils
 object Constants {
     const val APP_CACHE = "app_cache"
 
+    /**
+     * Hidden hot-key: tapping the Profile header title this many times toggles
+     * test mode on/off (drives the `x-hoopla-test` request header).
+     */
+    const val TEST_MODE_TAP_COUNT = 5
+
     const val NOTIFICATION_CHANNEL_ID = "music notification channel id 78"
     const val NOTIFICATION_CHANNEL_NAME = "music notification channel 78"
     const val NOTIFICATION_ID = 178

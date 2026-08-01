@@ -22,3 +22,7 @@ keystore.properties
 
 # Firebase / secrets (keep these out of VCS; inject in CI)
 # google-services.json
+
+# Build outputs & IDE config (keep out of VCS)
+/app/release/
+/.idea/

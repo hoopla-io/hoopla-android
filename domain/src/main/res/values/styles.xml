@@ -223,5 +223,46 @@
         <item name="android:shadowRadius">4</item>
     </style>
 
+    <!-- ============================================================= -->
+    <!-- Material 3 alert dialog (RequestDF / MessageDF)               -->
+    <!-- ============================================================= -->
+
+    <!-- Rounded surface container for the confirmation/message dialogs. -->
+    <style name="Widget.Hoopla.Dialog.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/white</item>
+        <item name="cardCornerRadius">28dp</item>
+        <item name="cardElevation">6dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- Dialog headline (Material "Headline Small", brand font). -->
+    <style name="Widget.Hoopla.Dialog.Title" parent="">
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textColor">@color/black_300</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <!-- Dialog supporting text (Material "Body Medium"). -->
+    <style name="Widget.Hoopla.Dialog.Message" parent="">
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="android:textColor">@color/black_100</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+    </style>
+
+    <!-- Material text button used for dialog actions (end-aligned). -->
+    <style name="Widget.Hoopla.Dialog.Button" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textColor">@color/primary</item>
+    </style>
+
+    <style name="Widget.Hoopla.Dialog.Button.Cancel">
+        <item name="android:textColor">@color/grey_400</item>
+    </style>
+
 
 </resources>

@@ -8,6 +8,7 @@ interface AppCache {
     var lang: String
     var themeMode: String
     var isFirstTime: Boolean
+    var isTestMode: Boolean
 
     fun saveTokens(
         accessToken: String?,

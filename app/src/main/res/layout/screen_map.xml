@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
@@ -34,5 +35,126 @@
         app:mapType="normal"
         app:uiCompass="true"
         app:uiZoomControls="false" />
+
+    <!-- Info card shown when a café marker is tapped. Hidden until then. -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/shop_card"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:rippleColor="@color/grey_200"
+        tools:visibility="visible">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/card_image"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:background="@color/grey_200"
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/ItemShopImageAppearance"
+                tools:src="@color/grey_200" />
+
+            <ImageView
+                android:id="@+id/card_close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ripple_round"
+                android:contentDescription="@string/close"
+                android:padding="5dp"
+                android:src="@drawable/ic_close"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/grey_400" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/card_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_marginEnd="8dp"
+                android:ellipsize="end"
+                android:fontFamily="@font/inter_medium"
+                android:maxLines="2"
+                android:textColor="@color/black_400"
+                android:textSize="17sp"
+                app:layout_constraintEnd_toStartOf="@id/card_close"
+                app:layout_constraintStart_toEndOf="@id/card_image"
+                app:layout_constraintTop_toTopOf="@id/card_image"
+                tools:text="Safia Coffee" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/card_distance"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:drawablePadding="4dp"
+                android:fontFamily="@font/inter_regular"
+                android:gravity="center_vertical"
+                android:textColor="@color/grey_400"
+                android:textSize="14sp"
+                app:drawableStartCompat="@drawable/ic_location"
+                app:drawableTint="@color/grey_400"
+                app:layout_constraintEnd_toEndOf="@id/card_name"
+                app:layout_constraintStart_toStartOf="@id/card_name"
+                app:layout_constraintTop_toBottomOf="@id/card_name"
+                tools:text="1.2 км" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/card_paused_badge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_paused_badge"
+                android:fontFamily="@font/inter_medium"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="4dp"
+                android:text="@string/not_accepting_orders"
+                android:textColor="@color/error_400"
+                android:textSize="12sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="@id/card_name"
+                app:layout_constraintTop_toBottomOf="@id/card_distance"
+                tools:visibility="visible" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/card_row_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="card_image,card_distance,card_paused_badge" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/card_order"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/bg_corner14_primary300"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:text="@string/order"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/card_row_barrier" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

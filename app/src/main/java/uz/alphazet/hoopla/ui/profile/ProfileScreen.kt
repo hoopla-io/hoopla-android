@@ -13,6 +13,7 @@ import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.formatToPrice
+import uz.alphazet.domain.utils.Constants.TEST_MODE_TAP_COUNT
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.log
@@ -34,6 +35,9 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
 
     private val binding by viewBinding(ScreenProfileBinding::bind)
     private val viewModel: ProfileVM by viewModel()
+
+    // Counts taps on the header title for the hidden test-mode hot-key.
+    private var titleTapCount = 0
 
     private val authListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -61,6 +65,13 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
         binding.termOfUse.setOnClickListener(this)
         binding.settings.setOnClickListener(this)
 
+        binding.headerTitle.setOnClickListener {
+            if (++titleTapCount >= TEST_MODE_TAP_COUNT) {
+                titleTapCount = 0
+                toggleTestMode()
+            }
+        }
+
         binding.swipeRefreshLayout.setOnRefreshListener(this)
 
         viewModel.getUser()
@@ -83,6 +94,18 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
     private fun collectLogoutData(t: UIResource<Any>) = t.collect {
         cache.clearTokens()
         (requireActivity() as? MainActivity)?.callOnLogOut()
+    }
+
+    /** Hidden hot-key: flips the `x-hoopla-test` header flag and confirms the new state. */
+    private fun toggleTestMode() {
+        val enabled = !cache.isTestMode
+        cache.isTestMode = enabled
+        showErrorMessage(
+            getString(
+                if (enabled) uz.alphazet.domain.R.string.test_mode_enabled
+                else uz.alphazet.domain.R.string.test_mode_disabled
+            )
+        )
     }
 
     override fun onClick(view: View) {
