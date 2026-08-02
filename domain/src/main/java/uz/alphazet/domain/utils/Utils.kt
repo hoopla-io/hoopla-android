@@ -62,6 +62,12 @@ fun Context.formatDistance(distance: Double): String {
     }
 }
 
+/**
+ * Formats a shop rating (1.0–5.0) as a single decimal for display, e.g. 4.7.
+ * Forces [Locale.US] so the separator is always a dot regardless of app language.
+ */
+fun Double.formatRating(): String = String.format(Locale.US, "%.1f", this)
+
 fun Long.getDateDDMMMMYYYYHHmm(): String {
     val format = "dd MMMM, yyyy  HH:mm" // you can add the format you need
     val sdf = SimpleDateFormat(format, Locale.getDefault()) // default local

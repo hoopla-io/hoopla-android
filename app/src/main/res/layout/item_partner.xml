@@ -77,15 +77,50 @@
                 android:textSize="16sp"
                 tools:text="Safia Coffee" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/distance"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:fontFamily="@font/inter_regular"
-                android:textColor="@color/grey_400"
-                android:textSize="14sp"
-                tools:text="1.2 km" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/rating_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="13dp"
+                        android:layout_height="13dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/star_rating" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:textColor="@color/black_400"
+                        android:textSize="14sp"
+                        tools:text="4.7" />
+
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/distance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/inter_regular"
+                    android:textColor="@color/grey_400"
+                    android:textSize="14sp"
+                    tools:text="1.2 km" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

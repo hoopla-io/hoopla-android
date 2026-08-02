@@ -137,5 +137,7 @@
     <color name="orange_90">#663C00</color>
     <color name="orange_100">#331E00</color>
 
+    <!-- Gold used for shop rating stars (distinct from the burgundy primary). -->
+    <color name="rating_gold">#FFC107</color>
 
 </resources>

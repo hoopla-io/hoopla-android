@@ -128,7 +128,8 @@ class ModelDeserializationTest {
                 "name": "Hoopla Central",
                 "pictureUrl": "https://img/1.png",
                 "distance": 0.42,
-                "location": { "lat": 41.31, "lng": 69.24 }
+                "location": { "lat": 41.31, "lng": 69.24 },
+                "rating": 4.7
             }
         """.trimIndent()
 
@@ -137,10 +138,25 @@ class ModelDeserializationTest {
         assertEquals(7, shop.shopId)
         assertEquals("Hoopla Central", shop.name)
         assertEquals(0.42, shop.distance!!, 0.0)
+        assertEquals(4.7, shop.rating!!, 0.0)
         val loc: LocationData? = shop.location
         assertNotNull(loc)
         assertEquals(41.31, loc!!.lat, 0.0)
         assertEquals(69.24, loc.lng, 0.0)
+    }
+
+    @Test
+    fun shop_item_data_rating_absent_defaults_to_null() {
+        val json = """
+            {
+                "shopId": 7,
+                "name": "Hoopla Central"
+            }
+        """.trimIndent()
+
+        val shop = gson.fromJson(json, ShopItemData::class.java)
+
+        assertNull(shop.rating)
     }
 
     @Test

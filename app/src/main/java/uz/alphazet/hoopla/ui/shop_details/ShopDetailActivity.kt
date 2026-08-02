@@ -22,6 +22,7 @@ import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
 import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatPhoneNumber
+import uz.alphazet.domain.utils.formatRating
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToCall
 import uz.alphazet.domain.utils.setTextColorRes
@@ -191,6 +192,11 @@ class ShopDetailActivity : BaseActivity() {
 
         // Shop name below header
         binding.shopName.text = data?.name
+
+        // Shop rating: "★ 4.7". Hidden only if the field is somehow absent.
+        val rating = data?.rating
+        binding.ratingRow.isVisible = rating != null
+        if (rating != null) binding.shopRating.text = rating.formatRating()
 
         // Load first image into header
         val firstImage = data?.pictures?.firstOrNull()

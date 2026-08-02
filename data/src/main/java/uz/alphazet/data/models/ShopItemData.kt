@@ -12,7 +12,10 @@ data class ShopItemData(
     val partnerId: Int? = null,
     val acceptingOrders: Boolean? = null,
     val pausedUntil: String? = null,
-    val shareUrl: String? = null
+    val shareUrl: String? = null,
+    // Average of the last 100 completed-order reviews (1.0–5.0). New shops
+    // default to 5.0 server-side; always present, but kept nullable defensively.
+    val rating: Double? = null
 ) : BaseItem {
     override val uniqueId: String
         get() = shopId.toString()

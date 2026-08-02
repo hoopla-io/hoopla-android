@@ -32,6 +32,7 @@ import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.utils.formatDistance
+import uz.alphazet.domain.utils.formatRating
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenMapBinding
@@ -168,6 +169,11 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
 
         cardName.text = shop.name
         cardImage.load(shop.pictureUrl)
+
+        // Shop rating: "★ 4.7". Hidden only if the field is somehow absent.
+        val rating = shop.rating
+        cardRating.isVisible = rating != null
+        if (rating != null) cardRating.text = rating.formatRating()
 
         val hasDistance = shop.distance != null
         cardDistance.isVisible = hasDistance

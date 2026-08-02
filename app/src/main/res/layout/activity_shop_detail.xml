@@ -82,6 +82,37 @@
                 tools:text="Costa Coffee" />
 
             <LinearLayout
+                android:id="@+id/rating_row"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toStartOf="@id/btn_call"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/shop_name"
+                app:layout_constraintHorizontal_bias="0"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/star_rating" />
+
+                <TextView
+                    android:id="@+id/shop_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/inter_bold"
+                    android:textColor="@color/black_300"
+                    android:textSize="16sp"
+                    tools:text="4.7" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/working_hours_row"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -90,7 +121,7 @@
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toStartOf="@id/btn_call"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/shop_name">
+                app:layout_constraintTop_toBottomOf="@id/rating_row">
 
                 <ImageView
                     android:layout_width="14dp"
@@ -113,7 +144,7 @@
             <!-- Shown only when the shop is paused (canAcceptOrders == false). -->
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/paused_badge"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_paused_badge"

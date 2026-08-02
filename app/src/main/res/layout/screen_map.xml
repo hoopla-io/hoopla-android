@@ -98,10 +98,25 @@
                 tools:text="Safia Coffee" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/card_distance"
-                android:layout_width="0dp"
+                android:id="@+id/card_rating"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:drawablePadding="3dp"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center_vertical"
+                android:textColor="@color/black_400"
+                android:textSize="14sp"
+                app:drawableStartCompat="@drawable/star_rating"
+                app:layout_constraintStart_toStartOf="@id/card_name"
+                app:layout_constraintTop_toBottomOf="@id/card_name"
+                tools:text="4.7" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/card_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
                 android:drawablePadding="4dp"
                 android:fontFamily="@font/inter_regular"
                 android:gravity="center_vertical"
@@ -109,9 +124,9 @@
                 android:textSize="14sp"
                 app:drawableStartCompat="@drawable/ic_location"
                 app:drawableTint="@color/grey_400"
-                app:layout_constraintEnd_toEndOf="@id/card_name"
-                app:layout_constraintStart_toStartOf="@id/card_name"
-                app:layout_constraintTop_toBottomOf="@id/card_name"
+                app:layout_constraintBottom_toBottomOf="@id/card_rating"
+                app:layout_constraintStart_toEndOf="@id/card_rating"
+                app:layout_constraintTop_toTopOf="@id/card_rating"
                 tools:text="1.2 км" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -128,7 +143,7 @@
                 android:textSize="12sp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@id/card_name"
-                app:layout_constraintTop_toBottomOf="@id/card_distance"
+                app:layout_constraintTop_toBottomOf="@id/card_rating"
                 tools:visibility="visible" />
 
             <androidx.constraintlayout.widget.Barrier
@@ -136,7 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                app:constraint_referenced_ids="card_image,card_distance,card_paused_badge" />
+                app:constraint_referenced_ids="card_image,card_rating,card_paused_badge" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/card_order"

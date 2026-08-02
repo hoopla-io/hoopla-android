@@ -18,6 +18,9 @@ data class ShopData(
     val drinks: List<DrinkItemData>?,
     val urls: List<UrlData>?,
     val shareUrl: String? = null,
+    // Average of the last 100 completed-order reviews (1.0–5.0). New shops
+    // default to 5.0 server-side; always present, but kept nullable defensively.
+    val rating: Double? = null,
 ) {
     // Parcelable so the schedule can travel to the checkout screen, where it constrains the
     // pickup-time picker without a second shop-detail request.
