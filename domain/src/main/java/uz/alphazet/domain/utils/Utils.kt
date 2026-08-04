@@ -63,6 +63,19 @@ fun Context.formatDistance(distance: Double): String {
 }
 
 /**
+ * Compact distance for badges and pills — value + unit only ("1.2 км"), without
+ * the "away"/"в" wrapper of [formatDistance], which is too long for a chip.
+ */
+fun Context.formatDistanceShort(distance: Double): String {
+    val dec = DecimalFormat("#,###.##")
+    return if (distance.toInt() == 0) {
+        getString(R.string.label_distance_short, dec.format(distance * 1000), getString(R.string.short_metr))
+    } else {
+        getString(R.string.label_distance_short, dec.format(distance), getString(R.string.short_km))
+    }
+}
+
+/**
  * Formats a shop rating (1.0–5.0) as a single decimal for display, e.g. 4.7.
  * Forces [Locale.US] so the separator is always a dot regardless of app language.
  */

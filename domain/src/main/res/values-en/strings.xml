@@ -230,4 +230,11 @@
         will be ready as soon as possible</string>
     <string name="pickup_time_unavailable">That pickup time is no longer available. Please
         choose another one.</string>
+
+    <!-- Nearby-cafe card -->
+    <string name="label_distance_short">%1$s %2$s</string>
+    <string name="shop_status_open">Open</string>
+    <string name="shop_status_closed">Closed</string>
+    <string name="shop_category_cafe">Cafe</string>
+
 </resources>

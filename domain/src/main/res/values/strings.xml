@@ -235,4 +235,10 @@
     <string name="pickup_time_unavailable">Это время получения больше недоступно. Выберите
         другое.</string>
 
+    <!-- Nearby-cafe card -->
+    <string name="label_distance_short">%1$s %2$s</string>
+    <string name="shop_status_open">Открыто</string>
+    <string name="shop_status_closed">Закрыто</string>
+    <string name="shop_category_cafe">Кофейня</string>
+
 </resources>

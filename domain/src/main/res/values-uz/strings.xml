@@ -231,4 +231,10 @@
     <string name="pickup_time_unavailable">Bu olib ketish vaqti endi mavjud emas. Boshqasini
         tanlang.</string>
 
+    <!-- Nearby-cafe card -->
+    <string name="label_distance_short">%1$s %2$s</string>
+    <string name="shop_status_open">Ochiq</string>
+    <string name="shop_status_closed">Yopiq</string>
+    <string name="shop_category_cafe">Kafe</string>
+
 </resources>

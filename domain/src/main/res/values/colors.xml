@@ -140,4 +140,7 @@
     <!-- Gold used for shop rating stars (distinct from the burgundy primary). -->
     <color name="rating_gold">#FFC107</color>
 
+    <!-- Near-opaque white for badges that float over a photo. -->
+    <color name="pill_glass">#F2FFFFFF</color>
+
 </resources>
