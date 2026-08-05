@@ -263,5 +263,16 @@
     <string name="cart_clear_and_add">Очистить и добавить</string>
     <string name="cart_retry">Повторить</string>
     <string name="cart_load_failed">Не удалось загрузить корзину</string>
+    <string name="cart_browse_menu">Перейти в меню</string>
+    <string name="cart_item_removed">Позиция убрана</string>
+    <string name="cart_undo">Вернуть</string>
+    <string name="cart_view">В корзину</string>
+    <plurals name="cart_items_count">
+        <item quantity="one">%1$d позиция</item>
+        <item quantity="few">%1$d позиции</item>
+        <item quantity="many">%1$d позиций</item>
+        <item quantity="other">%1$d позиций</item>
+    </plurals>
+    <string name="cart_checkout_with_total">Оформить заказ · %1$s</string>
 
 </resources>

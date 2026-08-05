@@ -29,16 +29,21 @@
         Everything below stays hidden until a cart has actually rendered: a failed load must
         not leave a checkout button armed over blank totals.
     -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nested_scroll"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingBottom="24dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/checkout"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         tools:visibility="visible">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="24dp">
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -57,6 +62,17 @@
                 android:visibility="gone"
                 tools:text="Hoopla Central"
                 tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/item_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/inter_regular"
+                android:textColor="@color/grey_400"
+                android:textSize="14sp"
+                tools:text="3 items" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/cart_rv"
@@ -426,6 +442,8 @@
 
     </androidx.core.widget.NestedScrollView>
 
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     <!-- ============================ Empty state ============================ -->
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/empty_state"
@@ -464,6 +482,19 @@
             android:text="@string/cart_empty_message"
             android:textColor="@color/grey_400"
             android:textSize="14sp" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/browse_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_corner14_width_primary300"
+            android:fontFamily="@font/inter_medium"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="12dp"
+            android:text="@string/cart_browse_menu"
+            android:textColor="@color/primary"
+            android:textSize="15sp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
@@ -520,6 +551,11 @@
         app:spinning_bar_padding="6dp"
         app:spinning_bar_width="4dp" />
 
+    <!--
+        Shown only for the very first load, when there is nothing on screen yet. Every later
+        refresh rides the SwipeRefreshLayout spinner so the cart never blanks out under the
+        customer.
+    -->
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"

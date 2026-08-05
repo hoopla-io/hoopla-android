@@ -32,7 +32,7 @@ object AppModule {
         factory { NotificationVM(get(), get(), get()) }
         factory { StoryViewerVM(get()) }
         factory { SearchVM(get()) }
-        factory { CartVM(get(), get()) }
+        factory { CartVM(get(), get(), get()) }
     }
 
 }

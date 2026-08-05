@@ -1,7 +1,12 @@
 package uz.alphazet.hoopla.ui.cart
 
 import android.view.View
+import android.widget.ImageView
+import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import coil3.request.error
+import coil3.request.placeholder
 import uz.alphazet.data.models.cart.CartItemData
 import uz.alphazet.domain.rv.BaseAdapter
 import uz.alphazet.domain.rv.BaseVH
@@ -17,6 +22,42 @@ import uz.alphazet.hoopla.databinding.ItemCartBinding
  * action.
  */
 class CartItemAdapter : BaseAdapter<CartItemData>() {
+
+    /**
+     * drinkId -> picture, resolved from the shop's menu because the cart response carries no
+     * images. Setting it re-binds the visible rows; unknown drinks keep the placeholder.
+     */
+    var drinkImages: Map<Int, String> = emptyMap()
+        set(value) {
+            if (field == value) return
+            field = value
+            rebindRows()
+        }
+
+    private var recyclerView: RecyclerView? = null
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this.recyclerView = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        this.recyclerView = null
+    }
+
+    /**
+     * The images arrive from their own request, which can land mid-layout — notifying then
+     * throws, so it waits for the frame to finish.
+     */
+    private fun rebindRows() {
+        val view = recyclerView
+        if (view != null && (view.isComputingLayout || view.isLayoutRequested)) {
+            view.post { notifyItemRangeChanged(0, itemCount) }
+        } else {
+            notifyItemRangeChanged(0, itemCount)
+        }
+    }
 
     /** Reports the quantity the line should have; 0 means "remove this line". */
     private var onQuantityChangeListener: ((CartItemData, Int) -> Unit)? = null
@@ -45,6 +86,22 @@ class CartItemAdapter : BaseAdapter<CartItemData>() {
             val item = currentItem() ?: return
 
             binding.name.text = item.name
+
+            // The placeholder stays for drinks the menu did not resolve — a cart row without a
+            // picture still reads fine, so a miss is not worth surfacing.
+            val imageUrl = item.drinkId?.let { drinkImages[it] }
+            if (imageUrl == null) {
+                binding.image.setImageResource(uz.alphazet.domain.R.drawable.ic_coffee_cup)
+                binding.image.setPadding(PLACEHOLDER_PADDING_PX)
+                binding.image.scaleType = ImageView.ScaleType.CENTER_INSIDE
+            } else {
+                binding.image.setPadding(0)
+                binding.image.scaleType = ImageView.ScaleType.CENTER_CROP
+                binding.image.load(imageUrl) {
+                    placeholder(uz.alphazet.domain.R.drawable.ic_coffee_cup)
+                    error(uz.alphazet.domain.R.drawable.ic_coffee_cup)
+                }
+            }
 
             // Every modifier the line was added with, on one line under the name. The cart
             // response has no ids for these, so they are display-only.
@@ -78,6 +135,11 @@ class CartItemAdapter : BaseAdapter<CartItemData>() {
                 onRemoveClickListener?.invoke(current)
             }
         }
+    }
+
+    private companion object {
+        /** Inset for the placeholder glyph, which is an icon rather than a photo. */
+        const val PLACEHOLDER_PADDING_PX = 16
     }
 
 }

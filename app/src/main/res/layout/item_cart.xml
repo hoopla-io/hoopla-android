@@ -10,18 +10,42 @@
     android:backgroundTint="@color/grey_300"
     android:paddingVertical="14dp">
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/image_card"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="12dp"
+        app:cardBackgroundColor="@color/grey_200"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:padding="8dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_coffee_cup"
+            tools:ignore="ImageContrastCheck" />
+
+    </com.google.android.material.card.MaterialCardView>
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="12dp"
         android:ellipsize="end"
         android:fontFamily="@font/inter_medium"
         android:maxLines="2"
         android:textColor="@color/black_300"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@id/remove"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image_card"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Cappuccino" />
 
@@ -29,14 +53,14 @@
         android:id="@+id/modifiers"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="2dp"
         android:fontFamily="@font/inter_regular"
         android:textColor="@color/grey_400"
         android:textSize="13sp"
         android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/remove"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image_card"
         app:layout_constraintTop_toBottomOf="@id/name"
         tools:text="Oat milk, Large"
         tools:visibility="visible" />
@@ -59,7 +83,7 @@
         android:id="@+id/lineTotal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/inter_medium"
         android:textColor="@color/black_300"
@@ -67,7 +91,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/stepper"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/image_card"
         app:layout_constraintTop_toBottomOf="@id/modifiers"
         tools:text="50 000 UZS" />
 

@@ -4,12 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.firstOrNull
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.UserData
 import uz.alphazet.data.models.cart.CartData
+import uz.alphazet.data.models.cart.CartItemData
 import uz.alphazet.data.models.order.CheckOutInfo
 import uz.alphazet.data.models.order.PaymentRequiredExceptionData
 import uz.alphazet.domain.R
@@ -68,13 +75,32 @@ class CartActivity : BaseActivity() {
     /**
      * True while a cart mutation is out. `BaseRepo.handleFlow` emits only its terminal result —
      * never [UIResource.Loading] — so `collect`'s `onLoading` never fires and cannot be used to
-     * disable controls. Without this, a customer tapping "+" three times inside one round-trip
-     * would send three PATCHes all computed from the same stale quantity.
+     * disable controls.
      */
     private var isMutating = false
 
     /** True between tapping checkout and its response, so a second tap cannot order twice. */
     private var isCheckingOut = false
+
+    /** True once a cart has rendered, so later refreshes never blank the screen out. */
+    private var hasLoaded = false
+
+    /**
+     * Quantities the customer has stepped to but the server has not confirmed. The stepper has
+     * to answer the tap immediately — waiting a round-trip per tap reads as a broken button —
+     * so the row renders from here and the PATCH is debounced onto the settled value.
+     */
+    private val pendingQuantities = mutableMapOf<Int, Int>()
+    private val quantityJobs = mutableMapOf<Int, Job>()
+
+    /**
+     * Lines the customer has removed but can still undo. The DELETE is held back until the
+     * snackbar goes away un-actioned; the row disappears immediately either way.
+     */
+    private val pendingRemovals = mutableSetOf<Int>()
+
+    /** Orders cart responses so a slow earlier one cannot overwrite a newer change. */
+    private var mutationSeq = 0
 
     private val authListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -107,15 +133,12 @@ class CartActivity : BaseActivity() {
             }
         }
 
-        adapter.setOnQuantityChangeListener { item, quantity ->
-            val id = item.id ?: return@setOnQuantityChangeListener
-            mutate { viewModel.updateItemQuantity(id, quantity) }
-        }
+        adapter.setOnQuantityChangeListener(::onQuantityStepped)
+        adapter.setOnRemoveClickListener(::requestRemove)
+        attachSwipeToRemove()
 
-        adapter.setOnRemoveClickListener { item ->
-            val id = item.id ?: return@setOnRemoveClickListener
-            mutate { viewModel.removeItem(id) }
-        }
+        binding.swipeRefresh.setOnRefreshListener { viewModel.getCart() }
+        binding.browseMenu.setOnClickListener { finish() }
 
         binding.promoAddRow.setOnClickListener { openPromoDialog() }
         binding.promoAppliedRow.setOnClickListener { openPromoDialog() }
@@ -136,10 +159,12 @@ class CartActivity : BaseActivity() {
 
         launch { viewModel.cartFlow.collectLatest(::collectCart) }
         launch { viewModel.userDataFlow.collectLatest(::collectUserData) }
+        launch { viewModel.drinkImagesFlow.collectLatest { adapter.drinkImages = it } }
 
         // The cart itself is loaded by onResume, which runs on the way in as well as on the
         // way back — fetching here too would just double every launch.
         viewModel.getUser()
+        viewModel.loadDrinkImages(shopId)
     }
 
     override fun onResume() {
@@ -157,11 +182,24 @@ class CartActivity : BaseActivity() {
      */
     override fun onPause() {
         super.onPause()
+
         val typed = binding.commentInput.text?.toString()?.trim().orEmpty()
         if (typed != savedComment?.trim().orEmpty()) {
             savedComment = typed
             viewModel.setCommentInBackground(typed)
         }
+
+        // The customer already sees these applied, so they have to be committed rather than
+        // waiting out a debounce or an undo window this screen will not be around for.
+        quantityJobs.values.forEach { it.cancel() }
+        quantityJobs.clear()
+        pendingQuantities.forEach { (id, quantity) ->
+            viewModel.updateItemQuantityInBackground(id, quantity)
+        }
+        pendingQuantities.clear()
+
+        pendingRemovals.forEach { viewModel.removeItemInBackground(it) }
+        pendingRemovals.clear()
     }
 
     override fun updateStatusBarViewHeight() {
@@ -184,28 +222,157 @@ class CartActivity : BaseActivity() {
     ) { data -> render(data) }
 
     /**
-     * Every mutating call answers with the whole cart, so they all land here. The in-flight flag
-     * is cleared on both outcomes — `handleFlow` never emits Loading, so nothing else would.
+     * Runs a cart mutation, dropping taps that arrive while one is already out.
+     *
+     * Every mutating call answers with the whole cart. The sequence number makes the newest
+     * change the one that wins: a debounced quantity PATCH runs outside this gate, so without
+     * it a slow earlier response could land last and paint a cart the customer has already
+     * moved on from.
      */
-    private fun collectMutation(t: UIResource<CartData>) = t.collect(
-        onError = { throwable ->
-            isMutating = false
-            checkErrors(throwable)
-        }
-    ) { data ->
-        isMutating = false
-        render(data)
-    }
-
-    /** Runs a cart mutation, dropping taps that arrive while one is already out. */
     private fun mutate(block: suspend () -> SharedFlow<UIResource<CartData>>) {
         if (isMutating) return
         isMutating = true
-        launch { block().collectLatest(::collectMutation) }
+        val seq = ++mutationSeq
+        launch {
+            block().collectLatest { resource ->
+                resource.collect(
+                    onError = { throwable ->
+                        isMutating = false
+                        checkErrors(throwable)
+                    }
+                ) { data ->
+                    isMutating = false
+                    acceptCart(data, seq)
+                }
+            }
+        }
+    }
+
+    /** Renders a server cart unless a later change has already superseded it. */
+    private fun acceptCart(data: CartData?, seq: Int) {
+        if (seq != mutationSeq) return
+        render(data)
+    }
+
+    // ------------------------------------------------------------------ quantity
+
+    /**
+     * Answers the tap straight away and sends the settled quantity once the customer stops
+     * stepping. Three quick taps on "+" are one PATCH of +3, not three racing PATCHes whose
+     * responses could land out of order.
+     */
+    private fun onQuantityStepped(item: CartItemData, quantity: Int) {
+        val id = item.id ?: return
+
+        // Stepping below one drops the line, and that route offers an undo.
+        if (quantity <= 0) {
+            requestRemove(item)
+            return
+        }
+
+        pendingQuantities[id] = quantity
+        renderItems()
+
+        quantityJobs[id]?.cancel()
+        quantityJobs[id] = launch {
+            delay(QUANTITY_DEBOUNCE_MS)
+            val seq = ++mutationSeq
+            viewModel.updateItemQuantity(id, quantity).collectLatest { resource ->
+                resource.collect(
+                    onError = { throwable ->
+                        // The server never took it, so the optimistic number has to go back.
+                        pendingQuantities.remove(id)
+                        renderItems()
+                        checkErrors(throwable)
+                    }
+                ) { data ->
+                    pendingQuantities.remove(id)
+                    acceptCart(data, seq)
+                }
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------ removal
+
+    /**
+     * Hides the line and only commits the DELETE once the undo window closes. Re-adding is not
+     * possible after the fact — the cart echoes modifiers back without the ids needed to send
+     * them again — so the deletion is deferred rather than reversed.
+     */
+    private fun requestRemove(item: CartItemData) {
+        val id = item.id ?: return
+        if (!pendingRemovals.add(id)) return
+
+        // A queued quantity change for a line being dropped is moot.
+        quantityJobs.remove(id)?.cancel()
+        pendingQuantities.remove(id)
+        renderItems()
+
+        Snackbar.make(binding.root, getString(R.string.cart_item_removed), Snackbar.LENGTH_LONG)
+            .setAnchorView(if (binding.checkout.isVisible) binding.checkout else null)
+            .setAction(getString(R.string.cart_undo)) {
+                pendingRemovals.remove(id)
+                renderItems()
+            }
+            .addCallback(object : Snackbar.Callback() {
+                override fun onDismissed(bar: Snackbar?, event: Int) {
+                    // The undo already put the line back; anything else commits it.
+                    if (!pendingRemovals.contains(id)) return
+                    pendingRemovals.remove(id)
+                    commitRemoval(id)
+                }
+            })
+            .show()
+    }
+
+    /**
+     * Sends the DELETE the undo window has now committed to. Deliberately not routed through
+     * [mutate]: that gate drops calls made while another mutation is out, and the customer has
+     * already been told this line is gone — it cannot be the one that gets silently skipped.
+     */
+    private fun commitRemoval(id: Int) {
+        val seq = ++mutationSeq
+        launch {
+            viewModel.removeItem(id).collectLatest { resource ->
+                resource.collect(
+                    onError = { throwable ->
+                        // The line is still on the server, so put the screen back in step
+                        // with it rather than leaving it hidden.
+                        checkErrors(throwable)
+                        viewModel.getCart()
+                    }
+                ) { data -> acceptCart(data, seq) }
+            }
+        }
+    }
+
+    /** Swiping a row aside removes it, with the same undo as the delete button. */
+    private fun attachSwipeToRemove() {
+        val callback = object : ItemTouchHelper.SimpleCallback(
+            0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.absoluteAdapterPosition
+                val item = adapter.currentList.getOrNull(position)
+                if (item == null) {
+                    adapter.notifyItemChanged(position)
+                    return
+                }
+                requestRemove(item)
+            }
+        }
+        ItemTouchHelper(callback).attachToRecyclerView(binding.cartRv)
     }
 
     private fun showLoadFailure(throwable: Throwable) {
-        binding.nestedScroll.gone()
+        binding.swipeRefresh.gone()
         binding.checkout.gone()
         binding.emptyState.gone()
         binding.errorMessage.text =
@@ -213,21 +380,57 @@ class CartActivity : BaseActivity() {
         binding.errorState.visible()
     }
 
-    private fun render(data: CartData?) {
-        cart = data
+    /**
+     * The list as the customer currently sees it: the server's lines with any un-sent quantity
+     * step applied and any line awaiting its undo window taken out.
+     */
+    private fun visibleItems(): List<CartItemData> =
+        cart?.items.orEmpty()
+            .filter { it.id !in pendingRemovals }
+            .map { item ->
+                val pending = pendingQuantities[item.id] ?: return@map item
+                // Only the line's own arithmetic is echoed. The cart subtotal and total stay
+                // exactly as the server last stated them — a promocode can make them anything.
+                item.copy(
+                    quantity = pending,
+                    lineTotal = (item.unitPrice ?: 0.0) * pending
+                )
+            }
 
-        val items = data?.items.orEmpty()
+    /** Re-renders just the list and the controls that depend on it being non-empty. */
+    private fun renderItems() {
+        val items = visibleItems()
         val isEmpty = items.isEmpty()
 
-        binding.errorState.gone()
+        adapter.submitList(items)
         binding.emptyState.isVisible = isEmpty
-        binding.nestedScroll.isVisible = !isEmpty
+        binding.swipeRefresh.isVisible = !isEmpty
         binding.checkout.isVisible = !isEmpty
         binding.toolbar.menu.findItem(uz.alphazet.hoopla.R.id.action_clear_cart)?.isVisible =
             !isEmpty
+        // Drinks, not lines — two cappuccinos on one line read as "2 items" here and in the
+        // shop screen's badge and cart bar, which quote the same plural.
+        val units = items.sumOf { it.quantity ?: 0 }
+        binding.itemCount.text =
+            resources.getQuantityString(R.plurals.cart_items_count, units, units)
 
-        adapter.submitList(items)
-        if (isEmpty) return
+        // While an edit is un-sent the summary still shows the server's last word, which no
+        // longer matches the list above it. Fading it says "this is catching up" rather than
+        // quietly stating a figure that is about to change.
+        val settled = pendingQuantities.isEmpty() && pendingRemovals.isEmpty()
+        binding.summaryContainer.alpha = if (settled) 1f else PROVISIONAL_ALPHA
+    }
+
+    private fun render(data: CartData?) {
+        cart = data
+        hasLoaded = true
+
+        binding.errorState.gone()
+        binding.progress.gone()
+        binding.swipeRefresh.isRefreshing = false
+
+        renderItems()
+        if (visibleItems().isEmpty()) return
 
         resolvedShopName = shopName?.takeIf { shopId != -1 && data?.shopId == shopId }
         binding.shopName.text = resolvedShopName
@@ -263,9 +466,7 @@ class CartActivity : BaseActivity() {
             usingCashBack = payableBeforeCashback.coerceAtLeast(0.0)
         }
         updateCashbackRow()
-
-        binding.totalSumma.text =
-            (payableBeforeCashback - usingCashBack).coerceAtLeast(0.0).formatToPrice().plus(" UZS")
+        renderTotals()
 
         // Re-filling the field mid-edit would fight the customer's cursor.
         savedComment = data?.comment
@@ -293,7 +494,8 @@ class CartActivity : BaseActivity() {
     // ------------------------------------------------------------------ promocode
 
     private fun openPromoDialog() {
-        showInputCartPromoBD(cart?.promoCode) { data -> render(data) }
+        // The sheet already applied the code server-side, so its cart is the newest word.
+        showInputCartPromoBD(cart?.promoCode) { data -> acceptCart(data, ++mutationSeq) }
     }
 
     // ------------------------------------------------------------------ cashback
@@ -309,14 +511,14 @@ class CartActivity : BaseActivity() {
         ) { summa ->
             usingCashBack = summa
             updateCashbackRow()
-            binding.totalSumma.text = payableTotal().formatToPrice().plus(" UZS")
+            renderTotals()
         }
     }
 
     private fun clearCashback() {
         usingCashBack = 0.0
         updateCashbackRow()
-        binding.totalSumma.text = payableTotal().formatToPrice().plus(" UZS")
+        renderTotals()
     }
 
     private fun updateCashbackRow() {
@@ -334,6 +536,16 @@ class CartActivity : BaseActivity() {
     private fun payableTotal(): Double =
         ((cart?.total ?: 0.0) - usingCashBack).coerceAtLeast(0.0)
 
+    /**
+     * Puts the payable figure both in the summary and on the button. Carrying the amount on the
+     * primary action is what lets someone commit without scrolling back up to check it.
+     */
+    private fun renderTotals() {
+        val payable = payableTotal().formatToPrice().plus(" UZS")
+        binding.totalSumma.text = payable
+        binding.checkout.text = getString(R.string.cart_checkout_with_total, payable)
+    }
+
     // ------------------------------------------------------------------ comment
 
     /**
@@ -346,6 +558,7 @@ class CartActivity : BaseActivity() {
             andThen()
             return
         }
+        val seq = ++mutationSeq
         launch {
             viewModel.setComment(typed).collectLatest { resource ->
                 resource.collect(
@@ -356,7 +569,7 @@ class CartActivity : BaseActivity() {
                         andThen()
                     }
                 ) { data ->
-                    render(data)
+                    acceptCart(data, seq)
                     andThen()
                 }
             }
@@ -384,13 +597,55 @@ class CartActivity : BaseActivity() {
     // ------------------------------------------------------------------ checkout
 
     private fun onCheckoutClicked() {
-        // The comment save puts a round-trip between the tap and the order, and the button is
-        // still live during it — without this guard a second tap orders the cart twice.
-        if (isCheckingOut || cart?.items.isNullOrEmpty()) return
+        // The flush and the comment save each put a round-trip between the tap and the order,
+        // and the button is still live during them — without this guard a second tap orders
+        // the cart twice.
+        if (isCheckingOut || visibleItems().isEmpty()) return
         isCheckingOut = true
         morphCheckoutButton(true)
 
-        persistCommentIfChanged { checkout() }
+        flushPendingEdits { persistCommentIfChanged { checkout() } }
+    }
+
+    /**
+     * Sends anything the customer can see but the server has not been told yet — a quantity
+     * still inside its debounce, a line still inside its undo window — and only then continues.
+     *
+     * Ordering without this would bill the cart the server still holds, which is not the cart
+     * on screen: a line the customer just removed would arrive in their order.
+     */
+    private fun flushPendingEdits(andThen: () -> Unit) {
+        val quantities = pendingQuantities.toMap()
+        val removals = pendingRemovals.toList()
+        if (quantities.isEmpty() && removals.isEmpty()) {
+            andThen()
+            return
+        }
+
+        quantityJobs.values.forEach { it.cancel() }
+        quantityJobs.clear()
+        pendingQuantities.clear()
+        pendingRemovals.clear()
+
+        launch {
+            val failed = buildList {
+                quantities.forEach { (id, quantity) ->
+                    add(viewModel.updateItemQuantity(id, quantity).firstOrNull())
+                }
+                removals.forEach { add(viewModel.removeItem(itemId = it).firstOrNull()) }
+            }.filterIsInstance<UIResource.Error>()
+
+            if (failed.isNotEmpty()) {
+                // The server still holds what the screen says was changed. Ordering now would
+                // bill the cart the customer thinks they edited, so stop and resync instead.
+                onCheckoutFinished()
+                viewModel.getCart()
+                checkErrors(failed.first().throwable)
+                return@launch
+            }
+
+            andThen()
+        }
     }
 
     private fun checkout() {
@@ -466,12 +721,29 @@ class CartActivity : BaseActivity() {
         if (isLoading) binding.checkout.startAnimation() else binding.checkout.revertAnimation()
     }
 
+    /**
+     * Only the very first load gets a spinner in place of content. Once a cart is on screen a
+     * refresh must not replace it with a blank page — the pull-to-refresh indicator carries
+     * that, and a background refresh from [onResume] shows nothing at all.
+     */
     override fun showLoading() {
-        binding.progress.visible()
+        if (!hasLoaded) binding.progress.visible()
     }
 
     override fun hideLoading() {
         binding.progress.gone()
+        binding.swipeRefresh.isRefreshing = false
+    }
+
+    private companion object {
+        /**
+         * Long enough to swallow a burst of taps on the stepper, short enough that the summary
+         * catches up while the customer is still looking at the line they changed.
+         */
+        const val QUANTITY_DEBOUNCE_MS = 500L
+
+        /** Fade for a summary that has not caught up with an un-sent edit yet. */
+        const val PROVISIONAL_ALPHA = 0.45f
     }
 
 }

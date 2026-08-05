@@ -259,5 +259,14 @@
     <string name="cart_clear_and_add">Tozalash va qo\'shish</string>
     <string name="cart_retry">Qayta urinish</string>
     <string name="cart_load_failed">Savatni yuklab bo\'lmadi</string>
+    <string name="cart_browse_menu">Menyuga o\'tish</string>
+    <string name="cart_item_removed">Mahsulot o\'chirildi</string>
+    <string name="cart_undo">Qaytarish</string>
+    <string name="cart_view">Savatga</string>
+    <!-- Uzbek has a single plural form in CLDR, so "other" covers every count. -->
+    <plurals name="cart_items_count">
+        <item quantity="other">%1$d ta mahsulot</item>
+    </plurals>
+    <string name="cart_checkout_with_total">Buyurtma berish · %1$s</string>
 
 </resources>

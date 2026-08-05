@@ -12,6 +12,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import uz.alphazet.data.UIResource
+import uz.alphazet.data.models.DrinkItemData
+import uz.alphazet.data.models.ShopCategoryData
+import uz.alphazet.data.models.ShopDrinksData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.data.models.cart.CartCountData
 import uz.alphazet.data.models.cart.CartData
@@ -20,6 +23,7 @@ import uz.alphazet.data.models.order.CheckOutInfo
 import uz.alphazet.domain.network.ConflictException
 import uz.alphazet.domain.repositories.CartRepo
 import uz.alphazet.domain.repositories.ProfileRepo
+import uz.alphazet.domain.repositories.ShopRepo
 import uz.alphazet.hoopla.rules.MainDispatcherRule
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -30,8 +34,9 @@ class CartVMTest {
 
     private val cartRepo: CartRepo = mockk()
     private val profileRepo: ProfileRepo = mockk()
+    private val shopRepo: ShopRepo = mockk()
 
-    private val vm by lazy { CartVM(cartRepo, profileRepo) }
+    private val vm by lazy { CartVM(cartRepo, profileRepo, shopRepo) }
 
     // --- getCart (StateFlow-backed screen state) --------------------------
 
@@ -92,10 +97,78 @@ class CartVMTest {
     /** Unlike OrderVM, nothing is fetched until the screen asks — there is no init block. */
     @Test
     fun constructing_the_vm_does_not_hit_the_repositories() = runTest {
-        CartVM(cartRepo, profileRepo)
+        CartVM(cartRepo, profileRepo, shopRepo)
 
         coVerify(exactly = 0) { cartRepo.getCart() }
         coVerify(exactly = 0) { profileRepo.getMe() }
+        coVerify(exactly = 0) { shopRepo.getShopDrinks(any()) }
+    }
+
+    // --- drink images (resolved from the shop menu) -----------------------
+
+    @Test
+    fun loadDrinkImages_maps_drinkId_to_picture() = runTest {
+        coEvery { shopRepo.getShopDrinks(3) } returns flowOf(UIResource.Success(shopDrinks()))
+
+        vm.loadDrinkImages(3)
+
+        assertEquals(
+            mapOf(5 to "https://img/latte.png", 7 to "https://img/raf.png"),
+            vm.drinkImagesFlow.value
+        )
+    }
+
+    /** Drinks with no picture must not become null entries the adapter has to guard. */
+    @Test
+    fun loadDrinkImages_skips_drinks_without_a_picture() = runTest {
+        coEvery { shopRepo.getShopDrinks(3) } returns flowOf(
+            UIResource.Success(
+                ShopDrinksData(
+                    listOf(
+                        ShopCategoryData(
+                            1, "Coffee",
+                            listOf(
+                                DrinkItemData(5, "Latte", null, 25_000.0),
+                                DrinkItemData(6, "Blank", "  ", 25_000.0)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+
+        vm.loadDrinkImages(3)
+
+        assertTrue(vm.drinkImagesFlow.value.isEmpty())
+    }
+
+    /** A cart without pictures is still usable, so a menu failure must stay silent. */
+    @Test
+    fun loadDrinkImages_leaves_the_map_empty_when_the_menu_fails() = runTest {
+        coEvery { shopRepo.getShopDrinks(any()) } returns
+            flowOf(UIResource.Error(ConflictException("nope", 409)))
+
+        vm.loadDrinkImages(3)
+
+        assertTrue(vm.drinkImagesFlow.value.isEmpty())
+    }
+
+    @Test
+    fun loadDrinkImages_ignores_an_unknown_shop() = runTest {
+        vm.loadDrinkImages(-1)
+
+        coVerify(exactly = 0) { shopRepo.getShopDrinks(any()) }
+    }
+
+    /** Re-entering the screen must not re-fetch a menu that is already resolved. */
+    @Test
+    fun loadDrinkImages_only_fetches_once() = runTest {
+        coEvery { shopRepo.getShopDrinks(3) } returns flowOf(UIResource.Success(shopDrinks()))
+
+        vm.loadDrinkImages(3)
+        vm.loadDrinkImages(3)
+
+        coVerify(exactly = 1) { shopRepo.getShopDrinks(3) }
     }
 
     // --- one-shot actions -------------------------------------------------
@@ -266,6 +339,22 @@ class CartVMTest {
         subtotal = 55_000.0,
         promoDiscount = 0.0,
         total = 55_000.0
+    )
+
+    private fun shopDrinks() = ShopDrinksData(
+        listOf(
+            ShopCategoryData(
+                1, "Coffee",
+                listOf(
+                    DrinkItemData(5, "Latte", "https://img/latte.png", 25_000.0),
+                    DrinkItemData(6, "No picture", null, 22_000.0)
+                )
+            ),
+            ShopCategoryData(
+                2, "Specials",
+                listOf(DrinkItemData(7, "Raf", "https://img/raf.png", 30_000.0))
+            )
+        )
     )
 
     private fun sampleItem() = CartItemData(
