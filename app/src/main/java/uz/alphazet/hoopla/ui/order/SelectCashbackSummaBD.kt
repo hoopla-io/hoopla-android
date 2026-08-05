@@ -1,5 +1,6 @@
 package uz.alphazet.hoopla.ui.order
 
+import android.content.DialogInterface
 import android.view.MotionEvent
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Job
@@ -15,13 +16,27 @@ import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.DialogSelectCashbackSummaBinding
 
+/**
+ * [orderData] is null when the amount is being picked for a whole cart rather than a single
+ * drink — the sheet prices itself from [maxLimitSumma] and the balance either way.
+ */
 class SelectCashbackSummaBD(
-    private val orderData: OrderDetails,
+    private val orderData: OrderDetails?,
     private val userData: UserData?,
     private val maxLimitSumma: Double,
     private val usingCashbackSumma: Double,
+    /**
+     * Fires whenever the sheet goes away, including a swipe-away that never picked an amount —
+     * callers that mirror the choice into a switch use it to re-sync.
+     */
+    private val onDismissed: () -> Unit = {},
     private val onSummaSelected: (Double) -> Unit = {}
 ) : BaseBottomSheetDF(R.layout.dialog_select_cashback_summa) {
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissed()
+    }
 
     private val binding by viewBinding(DialogSelectCashbackSummaBinding::bind)
     private var currentSumma = 0.0
@@ -156,10 +171,11 @@ class SelectCashbackSummaBD(
         private const val TAG = "SelectCashbackSummaBD"
 
         fun BaseActivity.showSelectCashbackSummaBD(
-            orderData: OrderDetails,
+            orderData: OrderDetails?,
             userData: UserData?,
             maxLimitSumma: Double,
             usingCashbackSumma: Double,
+            onDismissed: () -> Unit = {},
             onSummaSelected: (Double) -> Unit = {}
         ) {
             val current = supportFragmentManager.findFragmentByTag(TAG)
@@ -169,6 +185,7 @@ class SelectCashbackSummaBD(
                     userData,
                     maxLimitSumma,
                     usingCashbackSumma,
+                    onDismissed,
                     onSummaSelected
                 ).show(
                     supportFragmentManager,

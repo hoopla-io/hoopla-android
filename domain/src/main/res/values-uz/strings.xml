@@ -237,4 +237,27 @@
     <string name="shop_status_closed">Yopiq</string>
     <string name="shop_category_cafe">Kafe</string>
 
+    <!-- Shopping cart -->
+    <string name="cart_title">Savat</string>
+    <string name="cart_open">Savatni ochish</string>
+    <string name="cart_empty_title">Savat bo\'sh</string>
+    <string name="cart_empty_message">Buyurtmani boshlash uchun menyudan ichimlik qo\'shing</string>
+    <string name="cart_clear">Savatni tozalash</string>
+    <string name="cart_clear_question">Savatdagi barcha mahsulotlar o\'chirilsinmi?</string>
+    <string name="cart_checkout">Buyurtma berish</string>
+    <string name="cart_subtotal_">Summa:</string>
+    <string name="cart_comment_title">Buyurtmaga izoh</string>
+    <string name="cart_remove_item">Mahsulotni o\'chirish</string>
+    <string name="cart_increase_quantity">Bittaga ko\'paytirish</string>
+    <string name="cart_decrease_quantity">Bittaga kamaytirish</string>
+    <string name="cart_order_received_message">Buyurtmangiz «%1$s» ga yuborildi</string>
+    <string name="add_to_cart">Savatga</string>
+    <string name="cart_item_added">Savatga qo\'shildi</string>
+    <string name="cart_different_shop_title">Savat boshqa kafedan</string>
+    <string name="cart_different_shop_message">Savatda boshqa kafedagi ichimliklar bor. Uni
+        tozalab, bu ichimlik qo\'shilsinmi?</string>
+    <string name="cart_clear_and_add">Tozalash va qo\'shish</string>
+    <string name="cart_retry">Qayta urinish</string>
+    <string name="cart_load_failed">Savatni yuklab bo\'lmadi</string>
+
 </resources>

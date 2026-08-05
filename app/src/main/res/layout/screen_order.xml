@@ -254,11 +254,33 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="220dp"
         android:background="@drawable/bg_bottom_sheet_dialog_fragment"
         android:elevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@id/order" />
+        app:layout_constraintTop_toTopOf="@id/add_to_cart" />
+
+    <!--
+        Secondary action: keep building an order instead of paying for this drink on its own.
+        A plain view rather than a second CircularProgressButton so the morphing price button
+        below stays the only thing that animates.
+    -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/add_to_cart"
+        android:layout_width="0dp"
+        android:layout_height="52dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_corner14_width_primary300"
+        android:elevation="2dp"
+        android:fontFamily="@font/inter_medium"
+        android:gravity="center"
+        android:text="@string/add_to_cart"
+        android:textColor="@color/primary"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@id/order"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
         android:id="@+id/order"

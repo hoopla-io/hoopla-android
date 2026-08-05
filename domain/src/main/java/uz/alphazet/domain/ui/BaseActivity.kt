@@ -146,7 +146,12 @@ abstract class BaseActivity : AppCompatActivity(), RemoteErrorListener {
         }
     }
 
-    private fun checkErrors(throwable: Throwable) {
+    /**
+     * The default error routing. Exposed so a screen that needs to do something of its own on
+     * failure — re-arm a button, drop a spinner — can still hand the throwable on to the typed
+     * `onXxxException` handlers instead of having to re-implement this dispatch.
+     */
+    protected fun checkErrors(throwable: Throwable) {
         throwable.log("REMOTE_ERROR")
         when (throwable) {
             is UnauthorizedException -> onUnauthorizedException(throwable.message, throwable.code)

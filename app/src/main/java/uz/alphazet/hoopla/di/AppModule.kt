@@ -2,6 +2,7 @@ package uz.alphazet.hoopla.di
 
 import org.koin.dsl.module
 import uz.alphazet.hoopla.ui.auth.AuthVM
+import uz.alphazet.hoopla.ui.cart.CartVM
 import uz.alphazet.hoopla.ui.home.HomeVM
 import uz.alphazet.hoopla.ui.home.NotificationVM
 import uz.alphazet.hoopla.ui.home.StoryViewerVM
@@ -31,6 +32,7 @@ object AppModule {
         factory { NotificationVM(get(), get(), get()) }
         factory { StoryViewerVM(get()) }
         factory { SearchVM(get()) }
+        factory { CartVM(get(), get()) }
     }
 
 }

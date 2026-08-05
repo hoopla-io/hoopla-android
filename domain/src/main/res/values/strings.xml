@@ -241,4 +241,27 @@
     <string name="shop_status_closed">Закрыто</string>
     <string name="shop_category_cafe">Кофейня</string>
 
+    <!-- Shopping cart -->
+    <string name="cart_title">Корзина</string>
+    <string name="cart_open">Открыть корзину</string>
+    <string name="cart_empty_title">Корзина пуста</string>
+    <string name="cart_empty_message">Добавьте напиток из меню, чтобы начать заказ</string>
+    <string name="cart_clear">Очистить корзину</string>
+    <string name="cart_clear_question">Убрать из корзины все позиции?</string>
+    <string name="cart_checkout">Оформить заказ</string>
+    <string name="cart_subtotal_">Сумма:</string>
+    <string name="cart_comment_title">Комментарий к заказу</string>
+    <string name="cart_remove_item">Убрать позицию</string>
+    <string name="cart_increase_quantity">Добавить одну</string>
+    <string name="cart_decrease_quantity">Убрать одну</string>
+    <string name="cart_order_received_message">Заказ отправлен в «%1$s»</string>
+    <string name="add_to_cart">В корзину</string>
+    <string name="cart_item_added">Добавлено в корзину</string>
+    <string name="cart_different_shop_title">Корзина из другой кофейни</string>
+    <string name="cart_different_shop_message">В корзине уже есть напитки из другой кофейни.
+        Очистить её и добавить этот напиток?</string>
+    <string name="cart_clear_and_add">Очистить и добавить</string>
+    <string name="cart_retry">Повторить</string>
+    <string name="cart_load_failed">Не удалось загрузить корзину</string>
+
 </resources>

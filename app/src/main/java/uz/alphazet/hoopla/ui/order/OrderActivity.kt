@@ -3,6 +3,7 @@ package uz.alphazet.hoopla.ui.order
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,20 +13,24 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DrinkItemData
 import uz.alphazet.data.models.ShopData
+import uz.alphazet.data.models.cart.CartData
 import uz.alphazet.data.models.order.ModifierGroupData
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.data.models.order.OrderInfoData
 import uz.alphazet.data.models.order.PaymentRequiredExceptionData
 import uz.alphazet.domain.R
+import uz.alphazet.domain.network.ConflictException
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
+import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.databinding.ScreenOrderBinding
 import uz.alphazet.hoopla.ui.auth.AuthActivity
+import uz.alphazet.hoopla.ui.cart.CartVM
 import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
 import uz.alphazet.hoopla.ui.profile.subscriptions.SubscriptionActivity
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DRINK_DATA
@@ -36,6 +41,7 @@ class OrderActivity : BaseActivity() {
 
     private lateinit var binding: ScreenOrderBinding
     private val viewModel: OrderVM by viewModel()
+    private val cartViewModel: CartVM by viewModel()
 
     private val shopId by lazy { intent.getIntExtra(SHOP_ID, -1) }
     private val shopName by lazy { intent.getStringExtra(SHOP_NAME) }
@@ -54,6 +60,12 @@ class OrderActivity : BaseActivity() {
     /** Dynamic modifier-group list (new flow); active only when the API returns modifierGroups. */
     private val groupAdapter = ModifierGroupAdapter { onModifierSelectionChanged() }
     private var usingGroups = false
+
+    /**
+     * The selection of the add-to-cart request currently in flight. It is what tells a 409
+     * apart from any other conflict, so it is read-and-cleared as soon as one arrives.
+     */
+    private var pendingCartModifiers: ArrayList<ModifierItemData>? = null
 
     private val authListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -89,6 +101,8 @@ class OrderActivity : BaseActivity() {
         binding.modifierGroupsRv.adapter = groupAdapter
 
         binding.toolbar.setNavigationOnClickListener { finish() }
+
+        binding.addToCart.setOnClickListener { onAddToCartClicked() }
 
         sizeAdapter.setOnItemClickListener { item ->
             sizeAdapter.selectItem(item.modificationId ?: "")
@@ -210,59 +224,7 @@ class OrderActivity : BaseActivity() {
         binding.order.text = price.formatToPrice().plus(" UZS")
 
         binding.order.setOnClickListener {
-            val modifiers = ArrayList<ModifierItemData>()
-
-            val size = sizeAdapter.getSelectedItem()
-            if (size != null) {
-                modifiers.add(
-                    ModifierItemData(
-                        size.modificationId ?: "",
-                        size.modificationGroupId,
-                        size.modificationKey ?: "",
-                        size.modificationPrice ?: 0.0,
-                        size.modificationName
-                    )
-                )
-            }
-
-            val sugar = sugarAdapter.getSelectedItem()
-            if (sugar != null) {
-                modifiers.add(
-                    ModifierItemData(
-                        sugar.modificationId ?: "",
-                        sugar.modificationGroupId,
-                        sugar.modificationKey ?: "",
-                        sugar.modificationPrice ?: 0.0,
-                        sugar.modificationName
-                    )
-                )
-            }
-
-            val milk = milkAdapter.getSelectedItem()
-            if (milk != null) {
-                modifiers.add(
-                    ModifierItemData(
-                        milk.modificationId ?: "",
-                        milk.modificationGroupId,
-                        milk.modificationKey ?: "",
-                        milk.modificationPrice ?: 0.0,
-                        milk.modificationName
-                    )
-                )
-            }
-
-            val syrup = syrupAdapter.getSelectedItem()
-            if (syrup != null) {
-                modifiers.add(
-                    ModifierItemData(
-                        syrup.modificationId ?: "",
-                        syrup.modificationGroupId,
-                        syrup.modificationKey ?: "",
-                        syrup.modificationPrice ?: 0.0,
-                        syrup.modificationName
-                    )
-                )
-            }
+            val modifiers = buildLegacyModifiers()
 
             val intent1 = Intent(this, CheckoutActivity::class.java)
             intent1.putExtra(Constants.DATA, data)
@@ -272,6 +234,120 @@ class OrderActivity : BaseActivity() {
             checkoutListener.launch(intent1)
         }
 
+    }
+
+    /** The fixed size/sugar/milk/syrup selections, as the API expects them. */
+    private fun buildLegacyModifiers(): ArrayList<ModifierItemData> {
+        val modifiers = ArrayList<ModifierItemData>()
+
+        listOfNotNull(
+            sizeAdapter.getSelectedItem(),
+            sugarAdapter.getSelectedItem(),
+            milkAdapter.getSelectedItem(),
+            syrupAdapter.getSelectedItem()
+        ).forEach { item ->
+            modifiers.add(
+                ModifierItemData(
+                    item.modificationId ?: "",
+                    item.modificationGroupId,
+                    item.modificationKey ?: "",
+                    item.modificationPrice ?: 0.0,
+                    item.modificationName
+                )
+            )
+        }
+
+        return modifiers
+    }
+
+    // ---------------------------------------------------------------- add to cart
+
+    /**
+     * Puts this drink in the shop's cart instead of ordering it on its own. The two flows ship
+     * side by side, so nothing about the order button changes.
+     */
+    private fun onAddToCartClicked() {
+        if (usingGroups) {
+            val unmet = groupAdapter.firstUnsatisfiedGroup()
+            if (unmet != null) {
+                showErrorMessage(
+                    getString(
+                        R.string.modifier_select_at_least,
+                        unmet.minSelect,
+                        unmet.name?.takeIf { it.isNotBlank() } ?: unmet.key
+                    )
+                )
+                return
+            }
+        }
+
+        val modifiers = if (usingGroups) groupAdapter.buildModifiers() else buildLegacyModifiers()
+        sendAddToCart(modifiers)
+    }
+
+    /**
+     * `BaseRepo.handleFlow` emits only its terminal result, never [UIResource.Loading], so
+     * `collect`'s `onLoading` cannot disable this button. It is disabled here instead and
+     * re-armed on both outcomes — otherwise a double tap adds the drink twice, and the second
+     * 409 would arrive after [pendingCartModifiers] had already been consumed.
+     */
+    private fun sendAddToCart(modifiers: ArrayList<ModifierItemData>) {
+        if (!binding.addToCart.isEnabled) return
+        pendingCartModifiers = modifiers
+        binding.addToCart.isEnabled = false
+        launch {
+            cartViewModel.addItem(shopId, drinkData?.id ?: -1, 1, modifiers)
+                .collectLatest(::collectAddToCart)
+        }
+    }
+
+    private fun collectAddToCart(t: UIResource<CartData>) = t.collect(
+        onError = { throwable ->
+            binding.addToCart.isEnabled = true
+            // A conflict is the one error that still needs the selection, to retry it after
+            // clearing; anything else must not leave it armed for an unrelated 409 to pick up.
+            if (throwable !is ConflictException) pendingCartModifiers = null
+            checkErrors(throwable)
+        }
+    ) {
+        binding.addToCart.isEnabled = true
+        pendingCartModifiers = null
+        Toast.makeText(this, getString(R.string.cart_item_added), Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * A 409 on add-to-cart means the cart already holds another shop's drinks — the only signal
+     * the API gives for that. Emptying someone's cart is destructive, so it is offered rather
+     * than done, and the original selection is retried afterwards.
+     *
+     * Any other 409 (nothing was being added) falls through to the default toast.
+     */
+    override fun onConflictException(message: String?, code: Int) {
+        val modifiers = pendingCartModifiers
+        pendingCartModifiers = null
+
+        if (modifiers == null) {
+            super.onConflictException(message, code)
+            return
+        }
+
+        showRequestDF(
+            getString(R.string.cart_different_shop_title),
+            message?.takeIf { it.isNotBlank() }
+                ?: getString(R.string.cart_different_shop_message),
+            getString(R.string.cart_clear_and_add),
+            getString(R.string.cancel)
+        ) {
+            launch {
+                cartViewModel.clearCart().collectLatest { resource ->
+                    resource.collect(
+                        // Without this the customer approves "clear and add" and, if the clear
+                        // fails, sees nothing happen at all.
+                        onError = { throwable -> checkErrors(throwable) }
+                    ) { sendAddToCart(modifiers) }
+                }
+            }
+        }
     }
 
     private fun initModification(

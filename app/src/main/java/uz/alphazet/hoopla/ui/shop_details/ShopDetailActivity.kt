@@ -16,6 +16,7 @@ import uz.alphazet.data.models.DrinkItemData
 import uz.alphazet.data.models.ShopCategoryData
 import uz.alphazet.data.models.ShopData
 import uz.alphazet.data.models.ShopDrinksData
+import uz.alphazet.data.models.cart.CartCountData
 import uz.alphazet.domain.R
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.showMessageDF
@@ -29,6 +30,8 @@ import uz.alphazet.domain.utils.setTextColorRes
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.databinding.ActivityShopDetailBinding
 import uz.alphazet.hoopla.databinding.ItemDrinkCategorySectionBinding
+import uz.alphazet.hoopla.ui.cart.CartActivity
+import uz.alphazet.hoopla.ui.cart.CartVM
 import uz.alphazet.hoopla.ui.order.OrderActivity
 import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
 import java.text.SimpleDateFormat
@@ -40,6 +43,7 @@ class ShopDetailActivity : BaseActivity() {
 
     private lateinit var binding: ActivityShopDetailBinding
     private val viewModel: ShopVM by viewModel()
+    private val cartViewModel: CartVM by viewModel()
 
     private val shopId by lazy {
         val uri = intent.data
@@ -104,6 +108,8 @@ class ShopDetailActivity : BaseActivity() {
                 else -> false
             }
         }
+
+        binding.cartAction.setOnClickListener { openCart() }
 
         setupAppBarAnimation()
 
@@ -175,6 +181,41 @@ class ShopDetailActivity : BaseActivity() {
             val top = getSectionTopInScroll(sectionView)
             binding.nestedScroll.smoothScrollTo(0, top)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // The count changes from the order screen and from the cart itself, both of which
+        // return here.
+        refreshCartCount()
+    }
+
+    /**
+     * The cart is global to the customer, not to this shop, so the action appears whenever
+     * anything is in it — including a cart belonging to a different cafe, which is exactly the
+     * case worth surfacing before they add something and hit the cross-shop conflict.
+     */
+    private fun refreshCartCount() {
+        launch { cartViewModel.getCartCount().collectLatest(::collectCartCount) }
+    }
+
+    private fun collectCartCount(t: UIResource<CartCountData>) = t.collect(
+        // A background refresh: it must not spin the screen, and a failure must not toast
+        // over a shop the customer is reading.
+        onLoading = null,
+        onError = { }
+    ) { data ->
+        val count = data?.count ?: 0
+        binding.cartAction.isVisible = count > 0
+        binding.cartBadge.isVisible = count > 0
+        binding.cartBadge.text = count.toString()
+    }
+
+    private fun openCart() {
+        val intent1 = Intent(this, CartActivity::class.java)
+        intent1.putExtra(SHOP_ID, shopId)
+        intent1.putExtra(SHOP_NAME, binding.collapsingToolbar.title?.toString())
+        orderListener.launch(intent1)
     }
 
     override fun updateStatusBarViewHeight() {}

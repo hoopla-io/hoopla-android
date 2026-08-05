@@ -237,4 +237,27 @@
     <string name="shop_status_closed">Closed</string>
     <string name="shop_category_cafe">Cafe</string>
 
+    <!-- Shopping cart -->
+    <string name="cart_title">Cart</string>
+    <string name="cart_open">Open cart</string>
+    <string name="cart_empty_title">Your cart is empty</string>
+    <string name="cart_empty_message">Add a drink from the menu to start an order</string>
+    <string name="cart_clear">Clear cart</string>
+    <string name="cart_clear_question">Remove every item from the cart?</string>
+    <string name="cart_checkout">Place order</string>
+    <string name="cart_subtotal_">Subtotal:</string>
+    <string name="cart_comment_title">Order comment</string>
+    <string name="cart_remove_item">Remove item</string>
+    <string name="cart_increase_quantity">Add one</string>
+    <string name="cart_decrease_quantity">Remove one</string>
+    <string name="cart_order_received_message">Your order has been sent to %1$s</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="cart_item_added">Added to cart</string>
+    <string name="cart_different_shop_title">Cart from another cafe</string>
+    <string name="cart_different_shop_message">Your cart already has drinks from another cafe.
+        Clear it and add this drink?</string>
+    <string name="cart_clear_and_add">Clear and add</string>
+    <string name="cart_retry">Try again</string>
+    <string name="cart_load_failed">Could not load the cart</string>
+
 </resources>
