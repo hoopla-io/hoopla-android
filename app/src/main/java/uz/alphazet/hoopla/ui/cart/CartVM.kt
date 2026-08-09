@@ -37,18 +37,35 @@ class CartVM(
     private val drinkImagesEmitter: MutableStateFlow<Map<Int, String>> = MutableStateFlow(emptyMap())
     val drinkImagesFlow: StateFlow<Map<Int, String>> get() = drinkImagesEmitter
 
-    fun loadDrinkImages(shopId: Int) {
-        if (shopId <= 0 || drinkImagesEmitter.value.isNotEmpty()) return
+    /** The cafe the cart belongs to. Also absent from the cart response. */
+    private val shopNameEmitter: MutableStateFlow<String?> = MutableStateFlow(null)
+    val shopNameFlow: StateFlow<String?> get() = shopNameEmitter
+
+    /** The shop already resolved, so re-entering the screen does not re-fetch it. */
+    private var loadedShopId: Int? = null
+
+    /**
+     * Fills in what the cart response leaves out — which cafe this is and what the drinks look
+     * like — from the shop the cart belongs to. Callers that do not know the shop up front (the
+     * cart tab) can call this again once the cart names it.
+     */
+    fun loadShopContext(shopId: Int) {
+        if (shopId <= 0 || loadedShopId == shopId) return
+        loadedShopId = shopId
+
         launch {
-            val resource = shopRepo.getShopDrinks(shopId).firstOrNull()
-            val drinks = (resource as? UIResource.Success)?.data?.categories
-                ?.flatMap { it?.drinks.orEmpty() }
-                .orEmpty()
+            val drinks = (shopRepo.getShopDrinks(shopId).firstOrNull() as? UIResource.Success)
+                ?.data?.categories?.flatMap { it?.drinks.orEmpty() }.orEmpty()
             drinkImagesEmitter.value = drinks.mapNotNull { drink ->
                 val id = drink.id ?: return@mapNotNull null
                 val url = drink.pictureUrl?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
                 id to url
             }.toMap()
+        }
+
+        launch {
+            val shop = (shopRepo.getShopDetail(shopId).firstOrNull() as? UIResource.Success)?.data
+            shopNameEmitter.value = shop?.name?.takeIf { it.isNotBlank() }
         }
     }
 

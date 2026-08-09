@@ -8,12 +8,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DrinkItemData
 import uz.alphazet.data.models.ShopCategoryData
+import uz.alphazet.data.models.ShopData
 import uz.alphazet.data.models.ShopDrinksData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.data.models.cart.CartCountData
@@ -37,6 +40,13 @@ class CartVMTest {
     private val shopRepo: ShopRepo = mockk()
 
     private val vm by lazy { CartVM(cartRepo, profileRepo, shopRepo) }
+
+    @Before
+    fun setUp() {
+        // loadShopContext always asks for both; tests that care override their half.
+        coEvery { shopRepo.getShopDetail(any()) } returns flowOf(UIResource.Success(null))
+        coEvery { shopRepo.getShopDrinks(any()) } returns flowOf(UIResource.Success(null))
+    }
 
     // --- getCart (StateFlow-backed screen state) --------------------------
 
@@ -107,10 +117,10 @@ class CartVMTest {
     // --- drink images (resolved from the shop menu) -----------------------
 
     @Test
-    fun loadDrinkImages_maps_drinkId_to_picture() = runTest {
+    fun loadShopContext_maps_drinkId_to_picture() = runTest {
         coEvery { shopRepo.getShopDrinks(3) } returns flowOf(UIResource.Success(shopDrinks()))
 
-        vm.loadDrinkImages(3)
+        vm.loadShopContext(3)
 
         assertEquals(
             mapOf(5 to "https://img/latte.png", 7 to "https://img/raf.png"),
@@ -120,7 +130,7 @@ class CartVMTest {
 
     /** Drinks with no picture must not become null entries the adapter has to guard. */
     @Test
-    fun loadDrinkImages_skips_drinks_without_a_picture() = runTest {
+    fun loadShopContext_skips_drinks_without_a_picture() = runTest {
         coEvery { shopRepo.getShopDrinks(3) } returns flowOf(
             UIResource.Success(
                 ShopDrinksData(
@@ -137,38 +147,80 @@ class CartVMTest {
             )
         )
 
-        vm.loadDrinkImages(3)
+        vm.loadShopContext(3)
 
         assertTrue(vm.drinkImagesFlow.value.isEmpty())
     }
 
     /** A cart without pictures is still usable, so a menu failure must stay silent. */
     @Test
-    fun loadDrinkImages_leaves_the_map_empty_when_the_menu_fails() = runTest {
+    fun loadShopContext_leaves_the_map_empty_when_the_menu_fails() = runTest {
         coEvery { shopRepo.getShopDrinks(any()) } returns
             flowOf(UIResource.Error(ConflictException("nope", 409)))
 
-        vm.loadDrinkImages(3)
+        vm.loadShopContext(3)
 
         assertTrue(vm.drinkImagesFlow.value.isEmpty())
     }
 
     @Test
-    fun loadDrinkImages_ignores_an_unknown_shop() = runTest {
-        vm.loadDrinkImages(-1)
+    fun loadShopContext_ignores_an_unknown_shop() = runTest {
+        vm.loadShopContext(-1)
 
         coVerify(exactly = 0) { shopRepo.getShopDrinks(any()) }
     }
 
     /** Re-entering the screen must not re-fetch a menu that is already resolved. */
     @Test
-    fun loadDrinkImages_only_fetches_once() = runTest {
+    fun loadShopContext_only_fetches_once() = runTest {
         coEvery { shopRepo.getShopDrinks(3) } returns flowOf(UIResource.Success(shopDrinks()))
 
-        vm.loadDrinkImages(3)
-        vm.loadDrinkImages(3)
+        vm.loadShopContext(3)
+        vm.loadShopContext(3)
 
         coVerify(exactly = 1) { shopRepo.getShopDrinks(3) }
+        coVerify(exactly = 1) { shopRepo.getShopDetail(3) }
+    }
+
+    /** The cart tab has no shop up front, so the name has to come from the shop endpoint. */
+    @Test
+    fun loadShopContext_resolves_the_shop_name() = runTest {
+        coEvery { shopRepo.getShopDetail(3) } returns
+            flowOf(UIResource.Success(shopData("Hoopla Central")))
+
+        vm.loadShopContext(3)
+
+        assertEquals("Hoopla Central", vm.shopNameFlow.value)
+    }
+
+    @Test
+    fun loadShopContext_ignores_a_blank_shop_name() = runTest {
+        coEvery { shopRepo.getShopDetail(3) } returns flowOf(UIResource.Success(shopData("  ")))
+
+        vm.loadShopContext(3)
+
+        assertNull(vm.shopNameFlow.value)
+    }
+
+    /** A cart still works without knowing the cafe's name, so a failure stays silent. */
+    @Test
+    fun loadShopContext_leaves_the_name_null_when_the_shop_fails() = runTest {
+        coEvery { shopRepo.getShopDetail(any()) } returns
+            flowOf(UIResource.Error(ConflictException("nope", 409)))
+
+        vm.loadShopContext(3)
+
+        assertNull(vm.shopNameFlow.value)
+    }
+
+    /** The tab calls this again once the cart names a different shop. */
+    @Test
+    fun loadShopContext_refetches_for_a_different_shop() = runTest {
+        vm.loadShopContext(3)
+        vm.loadShopContext(4)
+
+        coVerify(exactly = 1) { shopRepo.getShopDetail(3) }
+        coVerify(exactly = 1) { shopRepo.getShopDetail(4) }
     }
 
     // --- one-shot actions -------------------------------------------------
@@ -339,6 +391,12 @@ class CartVMTest {
         subtotal = 55_000.0,
         promoDiscount = 0.0,
         total = 55_000.0
+    )
+
+    private fun shopData(name: String?) = ShopData(
+        id = 3, partnerId = 9, name = name, pictureUrl = null, canAcceptOrders = true,
+        location = null, phoneNumbers = null, workingHours = null, pictures = null,
+        drinks = null, urls = null
     )
 
     private fun shopDrinks() = ShopDrinksData(
