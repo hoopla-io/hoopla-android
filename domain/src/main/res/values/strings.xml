@@ -266,7 +266,6 @@
     <string name="cart_browse_menu">Перейти в меню</string>
     <string name="cart_item_removed">Позиция убрана</string>
     <string name="cart_undo">Вернуть</string>
-    <string name="cart_view">В корзину</string>
     <plurals name="cart_items_count">
         <item quantity="one">%1$d позиция</item>
         <item quantity="few">%1$d позиции</item>

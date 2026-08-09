@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import coil3.load
 import com.google.android.material.chip.Chip
 import kotlinx.coroutines.flow.collectLatest
@@ -25,7 +24,6 @@ import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
 import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.formatRating
-import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToCall
 import uz.alphazet.domain.utils.setTextColorRes
@@ -65,12 +63,6 @@ class ShopDetailActivity : BaseActivity() {
     private var isClickable = true
     private var canAcceptOrders = false
     private var shareUrl: String? = null
-
-    /**
-     * Last cart the server stated. Held because the bar depends on it *and* on this shop's
-     * state, which arrive from two different requests in no fixed order.
-     */
-    private var cartSummary: CartData? = null
 
     /** Handed to the order flow so checkout can constrain the pickup-time picker. */
     private var workingHours: ArrayList<ShopData.WorkHour> = arrayListOf()
@@ -118,7 +110,6 @@ class ShopDetailActivity : BaseActivity() {
         }
 
         binding.cartAction.setOnClickListener { openCart() }
-        binding.cartBar.setOnClickListener { openCart() }
 
         launch { cartViewModel.cartFlow.collectLatest(::collectCartSummary) }
 
@@ -206,51 +197,22 @@ class ShopDetailActivity : BaseActivity() {
     }
 
     /**
-     * Drives both cart affordances. The toolbar icon appears whenever anything is in the cart —
-     * including a cart belonging to a different cafe, which is worth surfacing before the
-     * customer adds something here and hits the cross-shop conflict.
-     *
-     * The bottom bar is narrower: it speaks for the order being built at *this* shop, so it
-     * stays hidden for someone else's cart rather than pricing this menu with another's total.
+     * Badges the toolbar action with the number of drinks waiting, wherever the cart was built —
+     * a cart belonging to another cafe is exactly what is worth seeing before adding a drink
+     * here and hitting the cross-shop conflict. The cart tab is the fuller way in; this is the
+     * shortcut for someone already deep in a menu.
      */
     private fun collectCartSummary(t: UIResource<CartData>) = t.collect(
         // A background refresh: it must not spin the screen, and a failure must not toast
         // over a shop the customer is reading.
         onLoading = null,
-        // The bar quotes a sum of money, so a refresh that failed must drop it rather than keep
-        // pricing a cart that may since have been emptied.
-        onError = { cartSummary = null; renderCartAffordances() }
+        onError = { binding.cartAction.gone() }
     ) { data ->
-        cartSummary = data
-        renderCartAffordances()
-    }
-
-    /**
-     * The badge counts drinks across the whole cart, wherever it was built. The bar is narrower
-     * still: it is the order being assembled *here*, so it also waits on the shop actually being
-     * able to take one — offering checkout beside a "not accepting orders" badge would be a
-     * promise this screen has already refused for every drink on it.
-     */
-    private fun renderCartAffordances() {
-        val data = cartSummary
         val count = data?.items.orEmpty().sumOf { it.quantity ?: 0 }
-
         binding.cartAction.isVisible = count > 0
         binding.cartBadge.isVisible = count > 0
         binding.cartBadge.text = count.toString()
-
-        val showBar = count > 0 && data?.shopId == shopId && canAcceptOrders && isClickable
-        binding.cartBar.isVisible = showBar
-        if (showBar) {
-            binding.cartBarCount.text =
-                resources.getQuantityString(R.plurals.cart_items_count, count, count)
-            binding.cartBarTotal.text = (data?.total ?: 0.0).formatToPrice().plus(" UZS")
-        }
-        // Keep the last drinks reachable above the floating bar.
-        binding.nestedScroll.updatePadding(bottom = if (showBar) CART_BAR_INSET_DP.dpToPx() else 0)
     }
-
-    private fun Int.dpToPx(): Int = (this * resources.displayMetrics.density).toInt()
 
     private fun openCart() {
         val intent1 = Intent(this, CartActivity::class.java)
@@ -263,8 +225,6 @@ class ShopDetailActivity : BaseActivity() {
 
     private fun collectData(t: UIResource<ShopData>) = t.collect { data ->
         canAcceptOrders = data?.canAcceptOrders == true
-        // The bar is gated on this, and the cart may already have arrived.
-        renderCartAffordances()
 
         // Share action: shown once the shop (and its shareUrl) has loaded.
         shareUrl = data?.shareUrl
@@ -461,8 +421,6 @@ class ShopDetailActivity : BaseActivity() {
         val isOpen = isNowWorking(todayWorkHour?.openAt, todayWorkHour?.closeAt)
 
         isClickable = isOpen
-        // Outside working hours the bar has to go the same way the drink taps do.
-        renderCartAffordances()
 
         // Show inline working hours below shop name
         if (todayWorkHour != null) {
@@ -512,9 +470,6 @@ class ShopDetailActivity : BaseActivity() {
     }
 
     companion object {
-        /** Room under the menu for the floating cart bar: its height plus its margins. */
-        private const val CART_BAR_INSET_DP = 96
-
         const val SHOP_ID = "shop_id"
         const val SHOP_NAME = "shop_name"
         const val DISTANCE = "distance"

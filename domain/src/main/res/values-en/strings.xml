@@ -262,7 +262,6 @@
     <string name="cart_browse_menu">Browse the menu</string>
     <string name="cart_item_removed">Item removed</string>
     <string name="cart_undo">Undo</string>
-    <string name="cart_view">View cart</string>
     <plurals name="cart_items_count">
         <item quantity="one">%1$d item</item>
         <item quantity="other">%1$d items</item>
