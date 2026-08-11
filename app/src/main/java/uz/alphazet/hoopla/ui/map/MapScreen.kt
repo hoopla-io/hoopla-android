@@ -172,14 +172,17 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
 
         // Shop rating: "★ 4.7". Hidden only if the field is somehow absent.
         val rating = shop.rating
-        cardRating.isVisible = rating != null
+        cardRatingGroup.isVisible = rating != null
         if (rating != null) cardRating.text = rating.formatRating()
 
-        val hasDistance = shop.distance != null
-        cardDistance.isVisible = hasDistance
-        if (hasDistance) {
-            cardDistance.text = requireContext().formatDistance(shop.distance ?: 0.0)
+        val distance = shop.distance
+        cardDistanceGroup.isVisible = distance != null
+        if (distance != null) {
+            cardDistance.text = requireContext().formatDistance(distance)
         }
+
+        // The whole meta row goes away when neither value is known.
+        cardMeta.isVisible = rating != null || distance != null
 
         // Shop is paused only when explicitly not accepting orders.
         val paused = shop.acceptingOrders == false

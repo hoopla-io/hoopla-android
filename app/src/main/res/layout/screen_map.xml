@@ -97,37 +97,75 @@
                 app:layout_constraintTop_toTopOf="@id/card_image"
                 tools:text="Safia Coffee" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/card_rating"
-                android:layout_width="wrap_content"
+            <!-- Rating and distance share one row so a hidden rating can't displace the distance. -->
+            <LinearLayout
+                android:id="@+id/card_meta"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:drawablePadding="3dp"
-                android:fontFamily="@font/inter_medium"
                 android:gravity="center_vertical"
-                android:textColor="@color/black_400"
-                android:textSize="14sp"
-                app:drawableStartCompat="@drawable/star_rating"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@id/card_name"
-                app:layout_constraintTop_toBottomOf="@id/card_name"
-                tools:text="4.7" />
+                app:layout_constraintTop_toBottomOf="@id/card_name">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/card_distance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:drawablePadding="4dp"
-                android:fontFamily="@font/inter_regular"
-                android:gravity="center_vertical"
-                android:textColor="@color/grey_400"
-                android:textSize="14sp"
-                app:drawableStartCompat="@drawable/ic_location"
-                app:drawableTint="@color/grey_400"
-                app:layout_constraintBottom_toBottomOf="@id/card_rating"
-                app:layout_constraintStart_toEndOf="@id/card_rating"
-                app:layout_constraintTop_toTopOf="@id/card_rating"
-                tools:text="1.2 км" />
+                <LinearLayout
+                    android:id="@+id/card_rating_group"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/star_rating" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/card_rating"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:fontFamily="@font/inter_medium"
+                        android:singleLine="true"
+                        android:textColor="@color/black_400"
+                        android:textSize="14sp"
+                        tools:text="4.7" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/card_distance_group"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_location"
+                        app:tint="@color/grey_400" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/card_distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:ellipsize="end"
+                        android:fontFamily="@font/inter_regular"
+                        android:singleLine="true"
+                        android:textColor="@color/grey_400"
+                        android:textSize="14sp"
+                        tools:text="1.2 км" />
+
+                </LinearLayout>
+
+            </LinearLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/card_paused_badge"
@@ -143,7 +181,7 @@
                 android:textSize="12sp"
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@id/card_name"
-                app:layout_constraintTop_toBottomOf="@id/card_rating"
+                app:layout_constraintTop_toBottomOf="@id/card_meta"
                 tools:visibility="visible" />
 
             <androidx.constraintlayout.widget.Barrier
@@ -151,7 +189,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:barrierDirection="bottom"
-                app:constraint_referenced_ids="card_image,card_rating,card_paused_badge" />
+                app:constraint_referenced_ids="card_image,card_meta,card_paused_badge" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/card_order"
