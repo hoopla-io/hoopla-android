@@ -209,6 +209,13 @@
     <string name="active_orders">Faol buyurtmalar</string>
     <string name="current_order">Joriy buyurtma</string>
 
+    <!-- Active order card on the home screen -->
+    <string name="order_number_value">Buyurtma №%1$d</string>
+    <string name="order_status_accepted">Buyurtma qabul qilindi</string>
+    <string name="order_status_preparing">Tayyorlanmoqda</string>
+    <string name="order_status_ready">Olishga tayyor</string>
+    <string name="ordered_at_value">Buyurtma %1$s da</string>
+
     <string name="test_mode_enabled">Test rejimi yoqildi</string>
     <string name="test_mode_disabled">Test rejimi o\'chirildi</string>
     <string name="share">Ulashish</string>

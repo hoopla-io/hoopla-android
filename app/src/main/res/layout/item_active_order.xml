@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  The home card for an order that is still in flight. It answers the four questions a customer
+  has while waiting, top to bottom: which order, how far along, what/where/when, what to do next.
+  The whole card opens the order details; the button carries the one action the current stage
+  actually calls for (pay, or show the pickup QR).
+-->
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
+    android:layout_marginHorizontal="6dp"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="8dp"
     android:foreground="?attr/selectableItemBackground"
@@ -16,55 +22,69 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:paddingHorizontal="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="16dp">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/title"
+            android:id="@+id/order_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/inter_bold"
+            android:fontFamily="@font/inter_medium"
+            android:letterSpacing="0.06"
             android:maxLines="1"
-            android:text="@string/current_order"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="@id/status"
-            app:layout_constraintEnd_toStartOf="@id/status"
+            android:textAllCaps="true"
+            android:textColor="#B3FFFFFF"
+            android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@id/status_pill"
+            app:layout_constraintEnd_toStartOf="@id/status_pill"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/status" />
+            app:layout_constraintTop_toTopOf="@id/status_pill"
+            tools:text="Заказ №1043" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/status"
+        <LinearLayout
+            android:id="@+id/status_pill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
             android:background="@drawable/bg_active_order_status"
-            android:fontFamily="@font/inter_regular"
-            android:paddingHorizontal="14dp"
-            android:paddingVertical="6dp"
-            android:textColor="@color/white"
-            android:textSize="13sp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Preparing" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <View
-            android:id="@+id/divider"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginTop="12dp"
-            android:background="#33FFFFFF"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/status" />
+            <View
+                android:id="@+id/status_dot"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:background="@drawable/bg_active_order_dot" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:fontFamily="@font/inter_medium"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                tools:text="Готовится" />
+
+        </LinearLayout>
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/image"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
-            android:layout_marginTop="12dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="14dp"
+            android:background="#1AFFFFFF"
+            android:contentDescription="@null"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintTop_toBottomOf="@id/status_pill"
             app:shapeAppearanceOverlay="@style/ImageAppearanceCorner10"
             tools:src="@drawable/ic_coffee_cup" />
 
@@ -72,46 +92,98 @@
             android:id="@+id/drink_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_bold"
             android:maxLines="1"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@id/subtitle"
-            app:layout_constraintEnd_toStartOf="@id/arrow"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/image"
             app:layout_constraintTop_toTopOf="@id/image"
             app:layout_constraintVertical_chainStyle="packed"
-            tools:text="Latte 500 ml" />
+            tools:text="Латте 500 мл" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/subtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="2dp"
             android:ellipsize="end"
             android:fontFamily="@font/inter_regular"
             android:maxLines="1"
             android:textColor="#CCFFFFFF"
             android:textSize="13sp"
             app:layout_constraintBottom_toBottomOf="@id/image"
-            app:layout_constraintEnd_toStartOf="@id/arrow"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/image"
             app:layout_constraintTop_toBottomOf="@id/drink_name"
-            tools:text="Union Cafe" />
+            tools:text="Union Cafe · Получение: 17:30" />
 
-        <ImageView
-            android:id="@+id/arrow"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:background="@drawable/bg_circle_stroke_white"
-            android:contentDescription="@null"
-            android:padding="9dp"
-            android:src="@drawable/ic_chevron_right"
-            app:layout_constraintBottom_toBottomOf="@id/image"
+        <!-- Paid → preparing → ready. Decorative: the pill above already names the stage. -->
+        <LinearLayout
+            android:id="@+id/progress"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="16dp"
+            android:importantForAccessibility="no"
+            android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/image" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image">
+
+            <View
+                android:id="@+id/step1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/bg_active_order_step_on" />
+
+            <View
+                android:id="@+id/step2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_active_order_step_on" />
+
+            <View
+                android:id="@+id/step3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="6dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_active_order_step_off" />
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/action"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/inter_bold"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:letterSpacing="0"
+            android:stateListAnimator="@null"
+            android:textAllCaps="false"
+            android:textColor="@color/primary"
+            android:textSize="14sp"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="14dp"
+            app:icon="@drawable/ic_qr_code"
+            app:iconGravity="textStart"
+            app:iconPadding="8dp"
+            app:iconSize="18dp"
+            app:iconTint="@color/primary"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/progress"
+            app:rippleColor="#1A862631"
+            tools:text="Получить заказ" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

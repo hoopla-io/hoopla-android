@@ -14,6 +14,8 @@ import android.view.animation.DecelerateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
+import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -49,7 +51,9 @@ import uz.alphazet.hoopla.databinding.ScreenHomeBinding
 import uz.alphazet.hoopla.ui.MainActivity
 import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
 import uz.alphazet.hoopla.ui.orders.ActiveOrderAdapter
+import uz.alphazet.hoopla.ui.orders.ActiveOrderStage
 import uz.alphazet.hoopla.ui.orders.OrderInfoScreen
+import uz.alphazet.hoopla.ui.orders.OrderQrCodeBD.Companion.showOrderQrCodeBD
 import uz.alphazet.hoopla.ui.search.SearchScreen
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DISTANCE
@@ -144,6 +148,8 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         binding.categoriesRv.adapter = categoryAdapter
         binding.storiesRv.adapter = storyAdapter
         binding.activeOrdersRv.adapter = activeOrderAdapter
+        // Horizontal carousel: one full-width order card per swipe
+        PagerSnapHelper().attachToRecyclerView(binding.activeOrdersRv)
 //        binding.loyaltyRv.adapter = loyaltyAdapter
 
 //        launch {
@@ -155,11 +161,8 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         viewModel.getCategories()
         viewModel.getStories()
 
-        activeOrderAdapter.setOnItemClickListener { order ->
-            val intent = Intent(requireActivity(), OrderInfoScreen::class.java)
-            intent.putExtra(Constants.ID, order.id ?: -1)
-            orderInfoLauncher.launch(intent)
-        }
+        activeOrderAdapter.setOnItemClickListener(::openOrderInfo)
+        activeOrderAdapter.setOnActionClickListener(::onActiveOrderAction)
 
         categoryAdapter.setOnItemClickListener { category ->
             val newId = if (selectedCategoryId == category.id) null else category.id
@@ -345,11 +348,52 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         t.collect(onLoading = {}, onError = {}) { data ->
             if (!data.isNullOrEmpty()) {
                 activeOrderAdapter.submitList(data)
+                applyActiveOrderPeek(data.size > 1)
                 binding.activeOrdersRv.visible()
             } else {
                 binding.activeOrdersRv.gone()
             }
         }
+
+    private fun openOrderInfo(order: OrderItemData) {
+        val intent = Intent(requireActivity(), OrderInfoScreen::class.java)
+        intent.putExtra(Constants.ID, order.id ?: -1)
+        orderInfoLauncher.launch(intent)
+    }
+
+    /**
+     * The one thing the order's current stage asks of the customer: pay for it, or show the QR
+     * that hands it over. Anything else — a cancelled or failed order — has no single next step,
+     * so it opens the details where the reason and the retry live.
+     */
+    private fun onActiveOrderAction(order: OrderItemData) {
+        when (ActiveOrderStage.of(order.orderStatus)) {
+            ActiveOrderStage.AwaitingPayment -> {
+                val checkoutUrl = order.checkoutUrl
+                // A payment link can expire or never arrive; the details screen can still cancel
+                // the order or start the payment again, so it is the safe place to land.
+                if (checkoutUrl.isNullOrBlank()) openOrderInfo(order)
+                else requireActivity().intentToBrowser(checkoutUrl)
+            }
+
+            ActiveOrderStage.NeedsAttention -> openOrderInfo(order)
+
+            else -> order.id?.let { showOrderQrCodeBD(it) } ?: openOrderInfo(order)
+        }
+    }
+
+    /**
+     * The cards are match_parent wide, so their width is the list width minus its horizontal
+     * padding. [PagerSnapHelper] centers on the list bounds (padding is not clipped), so widening
+     * the padding shrinks every card and lets the neighbouring order peek in on both sides — the
+     * hint that the carousel is swipeable. With a single order there is nothing to peek at, so the
+     * card keeps the full width the rest of the screen uses.
+     */
+    private fun applyActiveOrderPeek(peek: Boolean) {
+        val density = resources.displayMetrics.density
+        val padding = ((if (peek) PEEK_PADDING_DP else NO_PEEK_PADDING_DP) * density).toInt()
+        binding.activeOrdersRv.updatePadding(left = padding, right = padding)
+    }
 
     private fun collectPendingFeedback(t: UIResource<FeedbackDetail>) = t.collect { data ->
         if (data != null) {
@@ -544,6 +588,11 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
         const val MIN_DISTANCE_CHANGE_FOR_UPDATES = 10f // 10 meters
         const val MIN_TIME_BW_UPDATES = 3 * 1000L // 3 sec
+
+        // Horizontal padding of the active-order carousel: matches the 16dp screen margin once the
+        // card's own 6dp margin is added, or widens to let the next card peek in.
+        private const val NO_PEEK_PADDING_DP = 10f
+        private const val PEEK_PADDING_DP = 30f
 
         // Fallback when device GPS is off: Tashkent center
         // (same coords used by MapScreen / SearchScreen).

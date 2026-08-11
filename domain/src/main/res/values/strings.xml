@@ -213,6 +213,13 @@
     <string name="active_orders">Активные заказы</string>
     <string name="current_order">Текущий заказ</string>
 
+    <!-- Active order card on the home screen -->
+    <string name="order_number_value">Заказ №%1$d</string>
+    <string name="order_status_accepted">Заказ принят</string>
+    <string name="order_status_preparing">Готовится</string>
+    <string name="order_status_ready">Готов к получению</string>
+    <string name="ordered_at_value">Заказ в %1$s</string>
+
     <string name="test_mode_enabled">Тестовый режим включён</string>
     <string name="test_mode_disabled">Тестовый режим выключен</string>
     <string name="share">Поделиться</string>
