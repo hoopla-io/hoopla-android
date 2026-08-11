@@ -54,49 +54,7 @@
                 app:layout_collapseMode="pin"
                 app:navigationContentDescription="@string/back"
                 app:navigationIcon="@drawable/ic_arrow_left_back"
-                app:titleTextColor="@color/white">
-
-                <!--
-                    Cart entry point. A menu item cannot carry a count badge, so this is a
-                    custom Toolbar child using the same FrameLayout + TextView badge the home
-                    screen uses for notifications. It sits to the left of the share action.
-                -->
-                <FrameLayout
-                    android:id="@+id/cart_action"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="4dp"
-                    android:visibility="gone"
-                    tools:visibility="visible">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:contentDescription="@string/cart_open"
-                        android:padding="8dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/ic_cart"
-                        app:tint="@color/white" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/cart_badge"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_gravity="top|end"
-                        android:background="@drawable/bg_notification_badge"
-                        android:fontFamily="@font/inter_bold"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:textSize="10sp"
-                        android:visibility="gone"
-                        tools:text="2"
-                        tools:visibility="visible" />
-
-                </FrameLayout>
-
-            </androidx.appcompat.widget.Toolbar>
+                app:titleTextColor="@color/white" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 

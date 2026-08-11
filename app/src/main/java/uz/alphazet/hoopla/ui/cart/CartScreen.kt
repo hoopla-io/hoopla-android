@@ -3,8 +3,6 @@ package uz.alphazet.hoopla.ui.cart
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.os.bundleOf
-import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -35,11 +33,8 @@ import uz.alphazet.hoopla.databinding.ScreenCartBinding
 import uz.alphazet.hoopla.ui.MainActivity
 import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.cart.InputCartPromoBD.Companion.showInputCartPromoBD
-import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
 import uz.alphazet.hoopla.ui.order.SelectCashbackSummaBD.Companion.showSelectCashbackSummaBD
 import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_ID
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_NAME
 
 /**
  * The server-side cart for one shop.
@@ -49,29 +44,20 @@ import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_NAME
  * the cart the server returns. That is deliberate: the server owns the totals and is the only
  * thing that can price a promocode.
  *
- * It lives in two places. As the Cart tab it is a top-level destination, so it carries no back
- * arrow and leans on [MainActivity] for the status bar and for where to go next. Pushed over a
- * shop's menu by [CartActivity] it behaves like an ordinary screen: back arrow, own status bar,
- * and it finishes with a result when an order is placed.
+ * It is a top-level destination — the Cart tab — so it carries no back arrow and leans on
+ * [MainActivity] for the status bar and for where to go next.
  */
 class CartScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_cart) {
 
     private val binding by viewBinding(ScreenCartBinding::bind)
     private val viewModel: CartVM by viewModel()
 
-    /** The activity hosting the cart tab, or null when this instance was pushed over a shop. */
     private val tabHost: MainActivity? get() = activity as? MainActivity
 
     /**
-     * The cart response carries no shop name, so the screen that opened the cart passes its own
-     * along with the id it belongs to. The cart is per customer and may have been built at a
-     * different cafe, so the name is only used once [CartData.shopId] confirms it matches. The
-     * tab has no shop to speak for, so both stay unset there.
+     * The cafe's name, which the cart response does not carry. Resolved from the shop the cart
+     * itself names, so this screen needs nothing handed to it.
      */
-    private val shopId by lazy { arguments?.getInt(SHOP_ID, -1) ?: -1 }
-    private val shopName by lazy { arguments?.getString(SHOP_NAME) }
-
-    /** The cafe's name as the shop endpoint stated it, once resolved. */
     private var fetchedShopName: String? = null
 
     private val adapter = CartItemAdapter()
@@ -166,29 +152,12 @@ class CartScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_cart) {
         }
 
         // The cart itself is loaded by onResume, which runs on the way in as well as on the
-        // way back — fetching here too would just double every launch.
+        // way back — fetching here too would just double every launch. The shop follows from
+        // whichever one the cart turns out to belong to.
         viewModel.getUser()
-        // Known up front only when pushed from a shop; the tab waits for the cart to name it.
-        viewModel.loadShopContext(shopId)
     }
 
-    /**
-     * A tab has no screen to go back to and sits under the host's status bar; a pushed cart owns
-     * both. Everything else about the screen is identical.
-     */
     private fun setUpChrome() {
-        val isTab = tabHost != null
-
-        binding.statusBarView.isVisible = !isTab
-        if (isTab) {
-            binding.toolbar.navigationIcon = null
-        } else {
-            binding.toolbar.setNavigationOnClickListener { activity?.finish() }
-            // The fragment inflates after the host applied insets, so ask for another pass —
-            // BaseActivity sizes whichever status_bar_view it can find.
-            ViewCompat.requestApplyInsets(binding.root)
-        }
-
         binding.toolbar.inflateMenu(uz.alphazet.hoopla.R.menu.menu_cart)
         binding.toolbar.menu.findItem(uz.alphazet.hoopla.R.id.action_clear_cart)?.isVisible = false
         binding.toolbar.setOnMenuItemClickListener { item ->
@@ -249,25 +218,15 @@ class CartScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_cart) {
 
     // ------------------------------------------------------------------ navigation
 
-    /** Where "browse the menu" goes: back to the shop, or to Home when this is the tab. */
+    /** An empty cart is a dead end, so it offers the way back to somewhere with drinks. */
     private fun leaveForMenu() {
-        val tab = tabHost
-        if (tab != null) tab.navigateToHomeScreen() else activity?.finish()
+        tabHost?.navigateToHomeScreen()
     }
 
-    /**
-     * An order now exists. A pushed cart reports it upwards the way the single-item flow does;
-     * the tab has nothing to report to, so it goes where the order can be watched.
-     */
+    /** An order now exists; the cart is spent, so hand the customer to where they can watch it. */
     private fun onOrderPlaced() {
-        val tab = tabHost
-        if (tab != null) {
-            viewModel.getCart()
-            tab.navigateToOrdersScreen()
-        } else {
-            activity?.setResult(RESULT_ORDER_CREATED)
-            activity?.finish()
-        }
+        viewModel.getCart()
+        tabHost?.navigateToOrdersScreen()
     }
 
     // ------------------------------------------------------------------ rendering
@@ -542,18 +501,9 @@ class CartScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_cart) {
         }
     }
 
-    /**
-     * Which cafe the cart is for. The name handed over by the shop screen shows immediately when
-     * it is the same shop, so the header does not flash empty; the fetched one then takes over
-     * and is the only source that can be right for a cart built somewhere else.
-     */
-    private fun currentShopName(): String? = fetchedShopName
-        ?: shopName?.takeIf { shopId != -1 && cart?.shopId == shopId }
-
     private fun renderShopName() {
-        val name = currentShopName()
-        binding.shopName.text = name
-        binding.shopName.isVisible = !name.isNullOrBlank()
+        binding.shopName.text = fetchedShopName
+        binding.shopName.isVisible = !fetchedShopName.isNullOrBlank()
     }
 
     private fun collectUserData(t: UIResource<UserData>) = t.collect { data ->
@@ -764,7 +714,7 @@ class CartScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_cart) {
 
         showMessageDF(
             getString(R.string.order_received_),
-            currentShopName()?.let { getString(R.string.cart_order_received_message, it) }.orEmpty(),
+            fetchedShopName?.let { getString(R.string.cart_order_received_message, it) }.orEmpty(),
             "OK"
         ) {
             onOrderPlaced()
@@ -812,20 +762,15 @@ class CartScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_cart) {
         binding.swipeRefresh.isRefreshing = false
     }
 
-    companion object {
+    private companion object {
         /**
          * Long enough to swallow a burst of taps on the stepper, short enough that the summary
          * catches up while the customer is still looking at the line they changed.
          */
-        private const val QUANTITY_DEBOUNCE_MS = 500L
+        const val QUANTITY_DEBOUNCE_MS = 500L
 
         /** Fade for a summary that has not caught up with an un-sent edit yet. */
-        private const val PROVISIONAL_ALPHA = 0.45f
-
-        /** For the cart pushed over a shop's menu; the tab uses the no-arg constructor. */
-        fun newInstance(shopId: Int, shopName: String?) = CartScreen().apply {
-            arguments = bundleOf(SHOP_ID to shopId, SHOP_NAME to shopName)
-        }
+        const val PROVISIONAL_ALPHA = 0.45f
     }
 
 }

@@ -239,7 +239,6 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Savat</string>
-    <string name="cart_open">Savatni ochish</string>
     <string name="cart_empty_title">Savat bo\'sh</string>
     <string name="cart_empty_message">Buyurtmani boshlash uchun menyudan ichimlik qo\'shing</string>
     <string name="cart_clear">Savatni tozalash</string>

@@ -239,7 +239,6 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Cart</string>
-    <string name="cart_open">Open cart</string>
     <string name="cart_empty_title">Your cart is empty</string>
     <string name="cart_empty_message">Add a drink from the menu to start an order</string>
     <string name="cart_clear">Clear cart</string>

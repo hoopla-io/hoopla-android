@@ -243,7 +243,6 @@
 
     <!-- Shopping cart -->
     <string name="cart_title">Корзина</string>
-    <string name="cart_open">Открыть корзину</string>
     <string name="cart_empty_title">Корзина пуста</string>
     <string name="cart_empty_message">Добавьте напиток из меню, чтобы начать заказ</string>
     <string name="cart_clear">Очистить корзину</string>
