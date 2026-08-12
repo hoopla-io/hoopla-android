@@ -11,6 +11,7 @@ import uz.alphazet.data.models.UserData
 import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.domain.ui.BaseActivity
 import uz.alphazet.domain.ui.BaseBottomSheetDF
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
@@ -189,6 +190,30 @@ class SelectCashbackSummaBD(
                     onSummaSelected
                 ).show(
                     supportFragmentManager,
+                    TAG
+                )
+            }
+        }
+
+        fun BaseFragment.showSelectCashbackSummaBD(
+            orderData: OrderDetails?,
+            userData: UserData?,
+            maxLimitSumma: Double,
+            usingCashbackSumma: Double,
+            onDismissed: () -> Unit = {},
+            onSummaSelected: (Double) -> Unit = {}
+        ) {
+            val current = childFragmentManager.findFragmentByTag(TAG)
+            if (current == null) {
+                SelectCashbackSummaBD(
+                    orderData,
+                    userData,
+                    maxLimitSumma,
+                    usingCashbackSumma,
+                    onDismissed,
+                    onSummaSelected
+                ).show(
+                    childFragmentManager,
                     TAG
                 )
             }

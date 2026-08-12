@@ -2,10 +2,9 @@ package uz.alphazet.hoopla.ui.shop_details
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import coil3.load
 import com.google.android.material.chip.Chip
@@ -17,42 +16,32 @@ import uz.alphazet.data.models.ShopCategoryData
 import uz.alphazet.data.models.ShopData
 import uz.alphazet.data.models.ShopDrinksData
 import uz.alphazet.domain.R
-import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
-import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.formatRating
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToCall
 import uz.alphazet.domain.utils.setTextColorRes
 import uz.alphazet.domain.utils.visible
-import uz.alphazet.hoopla.databinding.ActivityShopDetailBinding
+import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.databinding.ItemDrinkCategorySectionBinding
-import uz.alphazet.hoopla.ui.order.OrderActivity
-import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
+import uz.alphazet.hoopla.databinding.ScreenShopDetailBinding
+import uz.alphazet.hoopla.ui.navigateTo
+import uz.alphazet.hoopla.ui.order.OrderScreen
+import uz.alphazet.hoopla.ui.popScreen
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import kotlin.math.abs
 
-class ShopDetailActivity : BaseActivity() {
+class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_detail) {
 
-    private lateinit var binding: ActivityShopDetailBinding
+    private val binding by viewBinding(ScreenShopDetailBinding::bind)
     private val viewModel: ShopVM by viewModel()
 
-    private val shopId by lazy {
-        val uri = intent.data
-        if (uri != null) {
-            val i = uri.pathSegments.indexOfFirst { it.equals("shop") }
-            if (i != -1) {
-                val id = uri.pathSegments.getOrNull(i + 1)?.toIntOrNull()
-                id ?: intent.getIntExtra(SHOP_ID, -1)
-            } else
-                intent.getIntExtra(SHOP_ID, -1)
-        } else
-            intent.getIntExtra(SHOP_ID, -1)
-    }
+    private val shopId by lazy { arguments?.getInt(SHOP_ID, -1) ?: -1 }
     private val imagesAdapter = ImagesAdapter()
     private val workTimeAdapter = WorkTimeAdapter()
 
@@ -72,25 +61,11 @@ class ShopDetailActivity : BaseActivity() {
     // prevent chip listener from triggering scroll while we update chip from scroll
     private var isSyncingChip = false
 
-    private val orderListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            when (result.resultCode) {
-                RESULT_ORDER_CREATED -> {
-                    setResult(RESULT_ORDER_CREATED)
-                    finish()
-                }
-            }
-        }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityShopDetailBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun initialize() {
         binding.imageViewPager.adapter = imagesAdapter
         binding.workTimeRv.adapter = workTimeAdapter
 
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { popScreen() }
 
         binding.toolbar.inflateMenu(uz.alphazet.hoopla.R.menu.menu_shop_detail)
         binding.toolbar.menu.findItem(uz.alphazet.hoopla.R.id.action_share)?.isVisible = false
@@ -109,7 +84,7 @@ class ShopDetailActivity : BaseActivity() {
 
         imagesAdapter.setOnItemClickListenerWithPosition { _, position ->
             StfalconImageViewer.Builder(
-                this, imagesAdapter.currentList
+                requireContext(), imagesAdapter.currentList
             ) { view, image ->
                 view.load(image.pictureUrl)
             }.withStartPosition(position).show()
@@ -177,8 +152,6 @@ class ShopDetailActivity : BaseActivity() {
         }
     }
 
-    override fun updateStatusBarViewHeight() {}
-
     private fun collectData(t: UIResource<ShopData>) = t.collect { data ->
         canAcceptOrders = data?.canAcceptOrders == true
 
@@ -243,7 +216,7 @@ class ShopDetailActivity : BaseActivity() {
         val phoneNumber = data?.phoneNumbers?.firstOrNull()
         if (phoneNumber != null) {
             binding.btnCall.setOnClickListener {
-                intentToCall(phoneNumber.phoneNumber?.formatPhoneNumber() ?: "")
+                requireContext().intentToCall(phoneNumber.phoneNumber?.formatPhoneNumber() ?: "")
             }
         }
     }
@@ -280,7 +253,7 @@ class ShopDetailActivity : BaseActivity() {
         val categoryNames = nonEmptyCategories.map {
             it.name ?: getString(R.string.drinks_)
         }
-        val inflater = LayoutInflater.from(this)
+        val inflater = LayoutInflater.from(requireContext())
 
         // Build all sections first
         nonEmptyCategories.forEachIndexed { index, category ->
@@ -299,18 +272,24 @@ class ShopDetailActivity : BaseActivity() {
         binding.categoryScroll.visible()
 
         categoryNames.forEachIndexed { index, name ->
-            val chip = Chip(this).apply {
+            val chip = Chip(requireContext()).apply {
                 text = name
                 isCheckable = true
                 isCheckedIconVisible = false
                 chipBackgroundColor = android.content.res.ColorStateList(
                     arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-                    intArrayOf(getColor(R.color.primary), getColor(R.color.grey_200))
+                    intArrayOf(
+                        requireContext().getColor(R.color.primary),
+                        requireContext().getColor(R.color.grey_200)
+                    )
                 )
                 setTextColor(
                     android.content.res.ColorStateList(
                         arrayOf(intArrayOf(android.R.attr.state_checked), intArrayOf()),
-                        intArrayOf(getColor(R.color.white), getColor(R.color.black_300))
+                        intArrayOf(
+                            requireContext().getColor(R.color.white),
+                            requireContext().getColor(R.color.black_300)
+                        )
                     )
                 )
                 typeface = resources.getFont(R.font.inter_medium)
@@ -351,12 +330,13 @@ class ShopDetailActivity : BaseActivity() {
 
         adapter.setOnItemClickListener { drink ->
             if (canAcceptOrders && isClickable) {
-                val intent1 = Intent(this, OrderActivity::class.java)
-                intent1.putExtra(SHOP_ID, shopId)
-                intent1.putExtra(SHOP_NAME, binding.collapsingToolbar.title.toString())
-                intent1.putExtra(DRINK_DATA, drink)
-                intent1.putParcelableArrayListExtra(Constants.WORKING_HOURS, workingHours)
-                orderListener.launch(intent1)
+                navigateTo(
+                    OrderScreen.newInstance(
+                        shopId = shopId,
+                        drink = drink,
+                        workingHours = workingHours,
+                    )
+                )
             } else {
                 showMessageDF(getString(R.string.can_not_accepting_orders), "", "OK") {}
             }
@@ -427,8 +407,10 @@ class ShopDetailActivity : BaseActivity() {
 
     companion object {
         const val SHOP_ID = "shop_id"
-        const val SHOP_NAME = "shop_name"
-        const val DISTANCE = "distance"
         const val DRINK_DATA = "drink_data"
+
+        fun newInstance(shopId: Int?) = ShopDetailScreen().apply {
+            arguments = bundleOf(SHOP_ID to (shopId ?: -1))
+        }
     }
 }

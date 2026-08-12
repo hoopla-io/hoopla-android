@@ -1,10 +1,10 @@
 package uz.alphazet.hoopla.ui.order
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
@@ -17,39 +17,39 @@ import uz.alphazet.data.models.cart.CartData
 import uz.alphazet.data.models.order.ModifierGroupData
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderDetails
-import uz.alphazet.data.models.order.OrderInfoData
 import uz.alphazet.data.models.order.PaymentRequiredExceptionData
 import uz.alphazet.domain.R
 import uz.alphazet.domain.network.ConflictException
-import uz.alphazet.domain.ui.BaseActivity
-import uz.alphazet.domain.ui.showMessageDF
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatToPrice
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.visible
+import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.databinding.ScreenOrderBinding
 import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.cart.CartVM
-import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
-import uz.alphazet.hoopla.ui.profile.subscriptions.SubscriptionActivity
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DRINK_DATA
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_ID
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_NAME
+import uz.alphazet.hoopla.ui.mainActivity
+import uz.alphazet.hoopla.ui.navigateTo
+import uz.alphazet.hoopla.ui.popScreen
+import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesScreen
+import uz.alphazet.hoopla.ui.profile.subscriptions.SubscriptionsScreen
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailScreen.Companion.DRINK_DATA
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailScreen.Companion.SHOP_ID
 
-class OrderActivity : BaseActivity() {
+class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
 
-    private lateinit var binding: ScreenOrderBinding
+    private val binding by viewBinding(ScreenOrderBinding::bind)
     private val viewModel: OrderVM by viewModel()
     private val cartViewModel: CartVM by viewModel()
 
-    private val shopId by lazy { intent.getIntExtra(SHOP_ID, -1) }
-    private val shopName by lazy { intent.getStringExtra(SHOP_NAME) }
-    private val drinkData by lazy { intent.getParcelableExtra<DrinkItemData>(DRINK_DATA) }
+    private val shopId by lazy { arguments?.getInt(SHOP_ID, -1) ?: -1 }
+    private val drinkData by lazy { arguments?.getParcelable<DrinkItemData>(DRINK_DATA) }
 
     /** Passed straight through to checkout, where it constrains the pickup-time picker. */
     private val workingHours by lazy {
-        intent.getParcelableArrayListExtra<ShopData.WorkHour>(Constants.WORKING_HOURS)
+        arguments?.getParcelableArrayList<ShopData.WorkHour>(Constants.WORKING_HOURS)
     }
 
     private val sizeAdapter = SizeAdapter()
@@ -72,24 +72,7 @@ class OrderActivity : BaseActivity() {
 
         }
 
-    private val subscriptionListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-
-        }
-
-    private val checkoutListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == OrderActivity2.Companion.RESULT_ORDER_CREATED) {
-                setResult(result.resultCode)
-                finish()
-            }
-        }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ScreenOrderBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun initialize() {
         launch {
             viewModel.validateOrder(shopId, drinkData?.id ?: -1).collectLatest(::collectDetail)
         }
@@ -100,7 +83,7 @@ class OrderActivity : BaseActivity() {
         binding.syrups.adapter = syrupAdapter
         binding.modifierGroupsRv.adapter = groupAdapter
 
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { popScreen() }
 
         binding.addToCart.setOnClickListener { onAddToCartClicked() }
 
@@ -123,15 +106,6 @@ class OrderActivity : BaseActivity() {
             syrupAdapter.selectItem(item.modificationId ?: "")
             val price = calculatePrice()
             binding.order.text = price.formatToPrice().plus(" UZS")
-        }
-
-    }
-
-    override fun updateStatusBarViewHeight() {
-        launch {
-            val statusBarHeight = getStatusBarHeight()
-            binding.statusBarView.layoutParams.height = statusBarHeight
-            binding.statusBarView.requestLayout()
         }
     }
 
@@ -179,12 +153,7 @@ class OrderActivity : BaseActivity() {
             }
 
             val modifiers = groupAdapter.buildModifiers()
-            val intent1 = Intent(this, CheckoutActivity::class.java)
-            intent1.putExtra(Constants.DATA, data)
-            intent1.putExtra(Constants.MODIFIERS, modifiers)
-            intent1.putExtra(Constants.COMMENT, binding.commentInput.text?.toString()?.trim())
-            intent1.putParcelableArrayListExtra(Constants.WORKING_HOURS, workingHours)
-            checkoutListener.launch(intent1)
+            openCheckout(data, modifiers)
         }
     }
 
@@ -225,15 +194,19 @@ class OrderActivity : BaseActivity() {
 
         binding.order.setOnClickListener {
             val modifiers = buildLegacyModifiers()
-
-            val intent1 = Intent(this, CheckoutActivity::class.java)
-            intent1.putExtra(Constants.DATA, data)
-            intent1.putExtra(Constants.MODIFIERS, modifiers)
-            intent1.putExtra(Constants.COMMENT, binding.commentInput.text?.toString()?.trim())
-            intent1.putParcelableArrayListExtra(Constants.WORKING_HOURS, workingHours)
-            checkoutListener.launch(intent1)
+            openCheckout(data, modifiers)
         }
+    }
 
+    private fun openCheckout(data: OrderDetails?, modifiers: ArrayList<ModifierItemData>) {
+        navigateTo(
+            CheckoutScreen.newInstance(
+                orderData = data,
+                modifiers = modifiers,
+                comment = binding.commentInput.text?.toString()?.trim(),
+                workingHours = workingHours,
+            )
+        )
     }
 
     /** The fixed size/sugar/milk/syrup selections, as the API expects them. */
@@ -307,12 +280,20 @@ class OrderActivity : BaseActivity() {
             // A conflict is the one error that still needs the selection, to retry it after
             // clearing; anything else must not leave it armed for an unrelated 409 to pick up.
             if (throwable !is ConflictException) pendingCartModifiers = null
+            // A failed add can still follow a successful clear-and-retry, which emptied the
+            // cart server-side. Nothing else re-counts it now that this screen never leaves
+            // the host, so the badge would keep showing the drinks that were just discarded.
+            mainActivity?.refreshCartCount()
             checkErrors(throwable)
         }
-    ) {
+    ) { data ->
         binding.addToCart.isEnabled = true
         pendingCartModifiers = null
-        Toast.makeText(this, getString(R.string.cart_item_added), Toast.LENGTH_SHORT).show()
+        // The host badges the cart tab straight from this response — its own onResume refresh
+        // no longer fires now that this screen lives inside MainActivity.
+        mainActivity?.onCartUpdated(data)
+        Toast.makeText(requireContext(), getString(R.string.cart_item_added), Toast.LENGTH_SHORT)
+            .show()
     }
 
     /**
@@ -367,17 +348,6 @@ class OrderActivity : BaseActivity() {
         }
     }
 
-    private fun collectData(t: UIResource<OrderInfoData>) = t.collect { data ->
-        showMessageDF(
-            getString(R.string.order_received_),
-            getString(R.string.label_order_received_, data?.drinkName ?: "", data?.shopName ?: ""),
-            "OK"
-        ) {
-            setResult(RESULT_ORDER_CREATED)
-            finish()
-        }
-    }
-
     /** Re-prices the order button whenever a modifier-group selection changes. */
     private fun onModifierSelectionChanged() {
         binding.order.text = calculatePrice().formatToPrice().plus(" UZS")
@@ -416,24 +386,32 @@ class OrderActivity : BaseActivity() {
         code: Int
     ) {
         super.onPaymentException(errorData, message, code)
-        val intent1 = Intent(this, SubscriptionActivity::class.java)
-        subscriptionListener.launch(intent1)
+        navigateTo(SubscriptionsScreen())
     }
 
     override fun onPreconditionRequiredException(message: String?, code: Int) {
         super.onPreconditionRequiredException(message, code)
-        val intent1 = Intent(this, PaymentServicesActivity::class.java)
-        subscriptionListener.launch(intent1)
+        navigateTo(PaymentServicesScreen())
     }
 
     override fun onUnauthorizedException(message: String?, code: Int) {
         super.onUnauthorizedException(message, code)
-        val intent1 = Intent(this, AuthActivity::class.java)
+        val intent1 = Intent(requireContext(), AuthActivity::class.java)
         authListener.launch(intent1)
     }
 
     companion object {
-        const val RESULT_ORDER_CREATED = 203
+        fun newInstance(
+            shopId: Int,
+            drink: DrinkItemData?,
+            workingHours: ArrayList<ShopData.WorkHour>?,
+        ) = OrderScreen().apply {
+            arguments = bundleOf(
+                SHOP_ID to shopId,
+                DRINK_DATA to drink,
+                Constants.WORKING_HOURS to workingHours,
+            )
+        }
     }
 
 }

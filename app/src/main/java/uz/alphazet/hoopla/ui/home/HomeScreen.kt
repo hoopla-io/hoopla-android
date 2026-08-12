@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Looper
 import android.view.animation.DecelerateInterpolator
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -40,7 +39,6 @@ import uz.alphazet.data.models.ShopItemData
 import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.ui.BaseFragment
-import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.log
@@ -48,16 +46,13 @@ import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenHomeBinding
-import uz.alphazet.hoopla.ui.MainActivity
-import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
+import uz.alphazet.hoopla.ui.navigateTo
 import uz.alphazet.hoopla.ui.orders.ActiveOrderAdapter
 import uz.alphazet.hoopla.ui.orders.ActiveOrderStage
 import uz.alphazet.hoopla.ui.orders.OrderInfoScreen
 import uz.alphazet.hoopla.ui.orders.OrderQrCodeBD.Companion.showOrderQrCodeBD
 import uz.alphazet.hoopla.ui.search.SearchScreen
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DISTANCE
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_ID
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailScreen
 
 
 class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefreshListener,
@@ -88,38 +83,22 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             runLocationListener()
         }
 
-    private val shopListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            when (result.resultCode) {
-                RESULT_ORDER_CREATED -> {
-                    (requireActivity() as? MainActivity)?.navigateToOrdersScreen()
-                }
-            }
-        }
-
-    private val notificationLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            viewModel.getUser()
-        }
-
-    private val orderInfoLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            viewModel.getActiveOrders()
-        }
-
     private val storyViewerLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode != android.app.Activity.RESULT_OK) return@registerForActivityResult
             val viewedIds = result.data?.getIntArrayExtra(StoryViewerActivity.VIEWED_IDS)
-                ?: return@registerForActivityResult
-            if (viewedIds.isEmpty()) return@registerForActivityResult
-            val viewedSet = viewedIds.toHashSet()
-            val updated = storyAdapter.currentList.map { story ->
-                if (story.id != null && story.id in viewedSet && story.isSeen != true) {
-                    story.copy(isSeen = true)
-                } else story
+            if (viewedIds != null && viewedIds.isNotEmpty()) {
+                val viewedSet = viewedIds.toHashSet()
+                val updated = storyAdapter.currentList.map { story ->
+                    if (story.id != null && story.id in viewedSet && story.isSeen != true) {
+                        story.copy(isSeen = true)
+                    } else story
+                }
+                storyAdapter.submitList(updated)
             }
-            storyAdapter.submitList(updated)
+            // A partner link tapped inside a story closes the viewer and lands here.
+            val shopId = result.data?.getIntExtra(StoryViewerActivity.OPEN_SHOP_ID, -1) ?: -1
+            if (shopId > 0) navigateTo(ShopDetailScreen.newInstance(shopId))
         }
 
     private val scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->
@@ -224,10 +203,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         }
 
         adapter.setOnItemClickListener {
-            val intent = Intent(requireContext(), ShopDetailActivity::class.java)
-            intent.putExtra(SHOP_ID, it.shopId)
-            intent.putExtra(DISTANCE, it.distance)
-            shopListener.launch(intent)
+            navigateTo(ShopDetailScreen.newInstance(it.shopId))
         }
 
         binding.turnOnGPSContainer.setOnClickListener {
@@ -239,22 +215,16 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         }
 
         binding.notification.setOnClickListener {
-            val intent = Intent(requireContext(), NotificationsScreen::class.java)
-            notificationLauncher.launch(intent)
+            navigateTo(NotificationsScreen())
         }
 
         binding.search.setOnClickListener {
-            val intent = Intent(requireContext(), SearchScreen::class.java)
-            currentLocation?.let {
-                intent.putExtra(SearchScreen.EXTRA_LAT, it.latitude)
-                intent.putExtra(SearchScreen.EXTRA_LONG, it.longitude)
-            }
-            val options = ActivityOptionsCompat.makeCustomAnimation(
-                requireContext(),
-                R.anim.slide_in_right,
-                R.anim.slide_out_left
+            navigateTo(
+                SearchScreen.newInstance(
+                    currentLocation?.latitude,
+                    currentLocation?.longitude,
+                )
             )
-            shopListener.launch(intent, options)
         }
 
         animateEntrance()
@@ -356,9 +326,7 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
         }
 
     private fun openOrderInfo(order: OrderItemData) {
-        val intent = Intent(requireActivity(), OrderInfoScreen::class.java)
-        intent.putExtra(Constants.ID, order.id ?: -1)
-        orderInfoLauncher.launch(intent)
+        navigateTo(OrderInfoScreen.newInstance(order.id ?: -1))
     }
 
     /**
@@ -536,9 +504,10 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
             binding.swipeRefreshLayout.isRefreshing = false
     }
 
-    // Refresh active orders every time the home screen is shown: onResume covers the
-    // first open and returning from background; onHiddenChanged covers bottom-nav tab
-    // switches, where the fragment is shown/hidden without an onResume.
+    // Refresh active orders and the notification badge every time the home screen is shown:
+    // onResume covers the first open and returning from background; onHiddenChanged covers
+    // bottom-nav tab switches AND popping back from a pushed detail screen (order info,
+    // notifications, shop) — the paths the old activity-result callbacks used to refresh.
     override fun onResume() {
         super.onResume()
         viewModel.getActiveOrders()
@@ -546,7 +515,10 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (!hidden) viewModel.getActiveOrders()
+        if (!hidden) {
+            viewModel.getActiveOrders()
+            viewModel.getUser()
+        }
     }
 
     override fun onRefresh() {

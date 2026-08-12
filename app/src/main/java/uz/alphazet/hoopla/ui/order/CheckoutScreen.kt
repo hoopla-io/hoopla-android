@@ -1,8 +1,8 @@
 package uz.alphazet.hoopla.ui.order
 
 import android.content.Intent
-import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import coil3.load
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -15,7 +15,7 @@ import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.data.models.order.PaymentRequiredExceptionData
 import uz.alphazet.data.models.order.PromocodeData
 import uz.alphazet.domain.R
-import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.PickupTime
@@ -24,23 +24,28 @@ import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.setTextColorRes
 import uz.alphazet.domain.utils.visible
+import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.databinding.ScreenCheckoutBinding
 import uz.alphazet.hoopla.ui.auth.AuthActivity
+import uz.alphazet.hoopla.ui.mainActivity
+import uz.alphazet.hoopla.ui.navigateTo
 import uz.alphazet.hoopla.ui.order.InputPromocodeBD.Companion.showInputPromocodeBD
-import uz.alphazet.hoopla.ui.order.OrderActivity2.Companion.RESULT_ORDER_CREATED
 import uz.alphazet.hoopla.ui.order.SelectCashbackSummaBD.Companion.showSelectCashbackSummaBD
 import uz.alphazet.hoopla.ui.order.SelectPickupTimeBD.Companion.showSelectPickupTimeBD
-import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
+import uz.alphazet.hoopla.ui.popScreen
+import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesScreen
 
-class CheckoutActivity : BaseActivity() {
+class CheckoutScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_checkout) {
 
-    private lateinit var binding: ScreenCheckoutBinding
+    private val binding by viewBinding(ScreenCheckoutBinding::bind)
     private val viewModel: OrderVM by viewModel()
-    private val orderData by lazy { intent.getParcelableExtra<OrderDetails>(Constants.DATA) }
-    private val modifiers by lazy { intent.getParcelableArrayListExtra<ModifierItemData>(Constants.MODIFIERS) }
-    private val comment by lazy { intent.getStringExtra(Constants.COMMENT) }
+    private val orderData by lazy { arguments?.getParcelable<OrderDetails>(Constants.DATA) }
+    private val modifiers by lazy {
+        arguments?.getParcelableArrayList<ModifierItemData>(Constants.MODIFIERS)
+    }
+    private val comment by lazy { arguments?.getString(Constants.COMMENT) }
     private val workingHours by lazy {
-        intent.getParcelableArrayListExtra<ShopData.WorkHour>(Constants.WORKING_HOURS)
+        arguments?.getParcelableArrayList<ShopData.WorkHour>(Constants.WORKING_HOURS)
     }
 
     private val adapter = SummaInfoAdapter()
@@ -60,22 +65,12 @@ class CheckoutActivity : BaseActivity() {
 
         }
 
-    private val subscriptionListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-
-        }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ScreenCheckoutBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun initialize() {
         binding.image.load(orderData?.drink?.imageUrl)
         binding.name.text = orderData?.drink?.name
         binding.name2.text = orderData?.drink?.name
         binding.cafeName.text = getString(R.string.label_by_shop, orderData?.shop?.name)
         binding.drinkSumma.text = orderData?.drink?.amount?.formatToPrice().plus(" UZS")
-//        binding.used.text = usingCashBack.formatToPrice().plus(" UZS")
 
         binding.infoRv.adapter = adapter
 
@@ -83,7 +78,7 @@ class CheckoutActivity : BaseActivity() {
 
         binding.totalSumma.text = calculatePrice().formatToPrice().plus(" UZS")
 
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { popScreen() }
 
         binding.promoAddRow.setOnClickListener { openPromoDialog() }
         binding.promoAppliedRow.setOnClickListener { openPromoDialog() }
@@ -234,8 +229,9 @@ class CheckoutActivity : BaseActivity() {
             )
 
         showMessageDF(getString(R.string.order_received_), message, "OK") {
-            setResult(RESULT_ORDER_CREATED)
-            finish()
+            // Lands on the Orders tab with the whole shop → order → checkout stack cleared —
+            // the fragment equivalent of the old resultCode-203 relay of finish()es.
+            mainActivity?.navigateToOrdersScreen()
         }
     }
 
@@ -294,29 +290,19 @@ class CheckoutActivity : BaseActivity() {
         code: Int
     ) {
         super.onPaymentException(errorData, message, code)
-        intentToBrowser(errorData?.checkoutUrl ?: "")
-        setResult(RESULT_ORDER_CREATED)
-        finish()
+        requireContext().intentToBrowser(errorData?.checkoutUrl ?: "")
+        mainActivity?.navigateToOrdersScreen()
     }
 
     override fun onPreconditionRequiredException(message: String?, code: Int) {
         super.onPreconditionRequiredException(message, code)
-        val intent1 = Intent(this, PaymentServicesActivity::class.java)
-        subscriptionListener.launch(intent1)
+        navigateTo(PaymentServicesScreen())
     }
 
     override fun onUnauthorizedException(message: String?, code: Int) {
         super.onUnauthorizedException(message, code)
-        val intent1 = Intent(this, AuthActivity::class.java)
+        val intent1 = Intent(requireContext(), AuthActivity::class.java)
         authListener.launch(intent1)
-    }
-
-    override fun updateStatusBarViewHeight() {
-        launch {
-            val statusBarHeight = getStatusBarHeight()
-            binding.statusBarView.layoutParams.height = statusBarHeight
-            binding.statusBarView.requestLayout()
-        }
     }
 
     private fun calculatePrice(): Double {
@@ -350,9 +336,8 @@ class CheckoutActivity : BaseActivity() {
     }
 
     /**
-     * Shows how much cashback this order earns: [CheckoutActivity]'s payable total
-     * multiplied by the shop's [OrderDetails.cashbackPercent]. Hidden when the shop
-     * gives no cashback.
+     * Shows how much cashback this order earns: the payable total multiplied by the shop's
+     * [OrderDetails.cashbackPercent]. Hidden when the shop gives no cashback.
      */
     private fun updateEarnCashback(total: Double) {
         val percent = orderData?.cashbackPercent ?: 0f
@@ -375,6 +360,22 @@ class CheckoutActivity : BaseActivity() {
 
     override fun hideLoading() {
         binding.order.revertAnimation()
+    }
+
+    companion object {
+        fun newInstance(
+            orderData: OrderDetails?,
+            modifiers: ArrayList<ModifierItemData>,
+            comment: String?,
+            workingHours: ArrayList<ShopData.WorkHour>?,
+        ) = CheckoutScreen().apply {
+            arguments = bundleOf(
+                Constants.DATA to orderData,
+                Constants.MODIFIERS to modifiers,
+                Constants.COMMENT to comment,
+                Constants.WORKING_HOURS to workingHours,
+            )
+        }
     }
 
 }

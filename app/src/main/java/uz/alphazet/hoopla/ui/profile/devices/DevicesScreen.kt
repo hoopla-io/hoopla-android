@@ -1,33 +1,31 @@
 package uz.alphazet.hoopla.ui.profile.devices
 
-import android.os.Bundle
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DeviceSessionData
-import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.visible
+import uz.alphazet.domain.viewbinding.viewBinding
+import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenDevicesBinding
+import uz.alphazet.hoopla.ui.popScreen
 
-class DevicesActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
+class DevicesScreen : BaseFragment(R.layout.screen_devices), SwipeRefreshLayout.OnRefreshListener {
 
-    private lateinit var binding: ScreenDevicesBinding
+    private val binding by viewBinding(ScreenDevicesBinding::bind)
     private val viewModel: DevicesVM by viewModel()
 
     private val adapter = DeviceAdapter()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ScreenDevicesBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun initialize() {
         binding.deviceRv.adapter = adapter
         binding.swipeRefreshLayout.setOnRefreshListener(this)
 
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { popScreen() }
 
         adapter.setOnRevokeClickListener { device ->
             val id = device.id ?: return@setOnRevokeClickListener

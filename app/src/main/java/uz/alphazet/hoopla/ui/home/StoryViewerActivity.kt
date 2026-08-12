@@ -26,6 +26,9 @@ class StoryViewerActivity : BaseActivity(), StoryGroupFragment.Host {
     private var storyIds: IntArray = intArrayOf()
     private val viewedGroupIds = linkedSetOf<Int>()
 
+    /** Shop the customer tapped inside a story; reported back for the launcher to open. */
+    private var openShopId: Int? = null
+
     private var isDragging = false
     private var dragStartY = 0f
     private var touchSlop = 0
@@ -115,11 +118,17 @@ class StoryViewerActivity : BaseActivity(), StoryGroupFragment.Host {
     }
 
     override fun finish() {
-        if (viewedGroupIds.isNotEmpty()) {
+        if (viewedGroupIds.isNotEmpty() || openShopId != null) {
             val data = Intent().putExtra(VIEWED_IDS, viewedGroupIds.toIntArray())
+            openShopId?.let { data.putExtra(OPEN_SHOP_ID, it) }
             setResult(RESULT_OK, data)
         }
         super.finish()
+    }
+
+    override fun openShop(shopId: Int) {
+        openShopId = shopId
+        finish()
     }
 
     override fun updateStatusBarViewHeight() {}
@@ -230,6 +239,7 @@ class StoryViewerActivity : BaseActivity(), StoryGroupFragment.Host {
         const val STORY_IDS = "story_ids"
         const val START_INDEX = "start_index"
         const val VIEWED_IDS = "viewed_ids"
+        const val OPEN_SHOP_ID = "open_shop_id"
         private const val KEY_GROUP_INDEX = "current_group_index"
         private const val DRAG_SETTLE_MS = 200L
         private const val DRAG_DISMISS_FRACTION = 4f

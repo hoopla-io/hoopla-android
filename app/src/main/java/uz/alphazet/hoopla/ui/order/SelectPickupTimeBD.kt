@@ -4,6 +4,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import uz.alphazet.data.models.ShopData
 import uz.alphazet.domain.ui.BaseBottomSheetDF
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.utils.PickupSlot
 import uz.alphazet.domain.utils.PickupTime
 import uz.alphazet.domain.viewbinding.viewBinding
@@ -99,6 +100,18 @@ class SelectPickupTimeBD(
             if (current == null) {
                 SelectPickupTimeBD(workingHours, currentSelection, onPickupTimeSelected)
                     .show(supportFragmentManager, TAG)
+            }
+        }
+
+        fun BaseFragment.showSelectPickupTimeBD(
+            workingHours: List<ShopData.WorkHour?>?,
+            currentSelection: Long? = null,
+            onPickupTimeSelected: (Long?) -> Unit = {}
+        ) {
+            val current = childFragmentManager.findFragmentByTag(TAG)
+            if (current == null) {
+                SelectPickupTimeBD(workingHours, currentSelection, onPickupTimeSelected)
+                    .show(childFragmentManager, TAG)
             }
         }
     }

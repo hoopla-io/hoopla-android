@@ -1,40 +1,35 @@
 package uz.alphazet.hoopla.ui.profile
 
 import android.content.Intent
-import android.os.Bundle
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
 import kotlinx.coroutines.flow.collectLatest
-import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.UserData
-import uz.alphazet.domain.cache.AppCache
-import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.disable
 import uz.alphazet.domain.utils.enable
+import uz.alphazet.domain.viewbinding.viewBinding
+import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenEditProfileBinding
 import uz.alphazet.hoopla.ui.auth.AuthActivity
+import uz.alphazet.hoopla.ui.popScreen
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class EditProfileScreen : BaseActivity() {
+class EditProfileScreen : BaseFragment(R.layout.screen_edit_profile) {
 
-    private lateinit var binding: ScreenEditProfileBinding
+    private val binding by viewBinding(ScreenEditProfileBinding::bind)
     private val viewModel: ProfileVM by viewModel()
-    private val cache: AppCache by inject()
 
     private var oldUserData: UserData? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ScreenEditProfileBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun initialize() {
         viewModel.editMe()
         launch {
             viewModel.userDataFlow.collectLatest(::collectUserData)
@@ -43,9 +38,8 @@ class EditProfileScreen : BaseActivity() {
         binding.btSend.disable()
 
         binding.toolbar.setNavigationOnClickListener {
-            finish()
+            popScreen()
         }
-
     }
 
     private fun collectUserData(t: UIResource<UserData>) = t.collect { data ->
@@ -102,13 +96,12 @@ class EditProfileScreen : BaseActivity() {
     }
 
     private fun collectUpdateData(t: UIResource<Any>) = t.collect {
-        setResult(PROFILE_EDIT_RESULT)
-        finish()
+        popScreen()
     }
 
     private fun collectDeactivateData(t: UIResource<Any>) = t.collect {
         cache.clearTokens()
-        val intent = Intent(this, AuthActivity::class.java).apply {
+        val intent = Intent(requireContext(), AuthActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         startActivity(intent)
@@ -162,11 +155,7 @@ class EditProfileScreen : BaseActivity() {
             onChangedUserData()
         }
 
-        datePicker.show(supportFragmentManager, "BIRTHDAY_PICKER")
-    }
-
-    companion object {
-        const val PROFILE_EDIT_RESULT = 234
+        datePicker.show(childFragmentManager, "BIRTHDAY_PICKER")
     }
 
 }

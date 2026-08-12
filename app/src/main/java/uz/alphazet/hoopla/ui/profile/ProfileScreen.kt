@@ -23,11 +23,11 @@ import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenProfileBinding
 import uz.alphazet.hoopla.ui.MainActivity
 import uz.alphazet.hoopla.ui.auth.AuthActivity
-import uz.alphazet.hoopla.ui.home.HomeScreen
-import uz.alphazet.hoopla.ui.profile.devices.DevicesActivity
+import uz.alphazet.hoopla.ui.navigateTo
+import uz.alphazet.hoopla.ui.profile.devices.DevicesScreen
 import uz.alphazet.hoopla.ui.profile.giftcard.GiftCardSuccessDF.Companion.showGiftCardSuccessDF
 import uz.alphazet.hoopla.ui.profile.giftcard.RedeemGiftCardBD.Companion.showRedeemGiftCardBD
-import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
+import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesScreen
 import uz.alphazet.hoopla.ui.profile.settings.SelectLanguageBD.Companion.showSelectLanguageBD
 import uz.alphazet.hoopla.ui.profile.settings.SelectThemeBD.Companion.showSelectThemeBD
 
@@ -44,10 +44,12 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
             viewModel.getUser()
         }
 
-    private val paymentListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-
-        }
+    // Re-shown after a tab switch or after popping back from a pushed detail screen (edit
+    // profile, top-up) — the name and balance must reflect what just changed there.
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) viewModel.getUser()
+    }
 
     override fun initialize() {
 
@@ -111,8 +113,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
     override fun onClick(view: View) {
         when (view.id) {
             R.id.edit -> {
-                val intent1 = Intent(requireActivity(), EditProfileScreen::class.java)
-                authListener.launch(intent1)
+                navigateTo(EditProfileScreen())
             }
 
             R.id.gift_card -> {
@@ -123,8 +124,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
             }
 
             R.id.top_up -> {
-                val intent1 = Intent(requireActivity(), PaymentServicesActivity::class.java)
-                paymentListener.launch(intent1)
+                navigateTo(PaymentServicesScreen())
             }
 
             R.id.logout -> {
@@ -156,8 +156,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
             }
 
             R.id.devices -> {
-                val intent1 = Intent(requireActivity(), DevicesActivity::class.java)
-                startActivity(intent1)
+                navigateTo(DevicesScreen())
             }
 
             R.id.privacyPolicy -> {
@@ -194,7 +193,7 @@ class ProfileScreen : BaseFragment(R.layout.screen_profile), SwipeRefreshLayout.
     }
 
     override fun toString(): String {
-        return HomeScreen.Companion.TAG
+        return TAG
     }
 
     companion object {

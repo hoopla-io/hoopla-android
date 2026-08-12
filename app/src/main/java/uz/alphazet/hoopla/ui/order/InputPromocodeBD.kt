@@ -8,6 +8,7 @@ import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.PromocodeData
 import uz.alphazet.domain.ui.BaseBottomSheetDF
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.utils.disable
 import uz.alphazet.domain.utils.enable
 import uz.alphazet.domain.utils.gone
@@ -101,6 +102,20 @@ class InputPromocodeBD(
             if (current == null) {
                 InputPromocodeBD(shopId, drinkId, modifiers, currentCode, onPromoApplied)
                     .show(supportFragmentManager, TAG)
+            }
+        }
+
+        fun BaseFragment.showInputPromocodeBD(
+            shopId: Int,
+            drinkId: Int,
+            modifiers: ArrayList<ModifierItemData>,
+            currentCode: String? = null,
+            onPromoApplied: (PromocodeData) -> Unit = {}
+        ) {
+            val current = childFragmentManager.findFragmentByTag(TAG)
+            if (current == null) {
+                InputPromocodeBD(shopId, drinkId, modifiers, currentCode, onPromoApplied)
+                    .show(childFragmentManager, TAG)
             }
         }
     }

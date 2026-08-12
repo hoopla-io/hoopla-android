@@ -1,27 +1,23 @@
 package uz.alphazet.hoopla.ui.search
 
-import android.content.Intent
-import android.os.Bundle
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.core.widget.doAfterTextChanged
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.PartnerItemData
 import uz.alphazet.data.models.ShopItemData
-import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.hideKeyboard
 import uz.alphazet.domain.utils.showKeyboard
 import uz.alphazet.domain.utils.visible
+import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenSearchBinding
 import uz.alphazet.hoopla.ui.home.NearShopAdapter
-import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DISTANCE
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_ID
+import uz.alphazet.hoopla.ui.navigateTo
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailScreen
 
 /**
  * Two-step partner search backed by the public partner endpoints:
@@ -30,9 +26,9 @@ import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_ID
  *      GET /v1/partners/shops (nearest-first when a location is passed).
  * Tapping a shop opens its detail screen.
  */
-class SearchScreen : BaseActivity() {
+class SearchScreen : BaseFragment(R.layout.screen_search) {
 
-    private lateinit var binding: ScreenSearchBinding
+    private val binding by viewBinding(ScreenSearchBinding::bind)
     private val viewModel: SearchVM by viewModel()
 
     private val partnerAdapter = PartnerAdapter()
@@ -40,41 +36,18 @@ class SearchScreen : BaseActivity() {
 
     private var selectedPartner: PartnerItemData? = null
 
-    private val lat: Double by lazy { intent.getDoubleExtra(EXTRA_LAT, DEFAULT_LATITUDE) }
-    private val long: Double by lazy { intent.getDoubleExtra(EXTRA_LONG, DEFAULT_LONGITUDE) }
+    private val lat: Double by lazy { arguments?.getDouble(EXTRA_LAT, DEFAULT_LATITUDE) ?: DEFAULT_LATITUDE }
+    private val long: Double by lazy { arguments?.getDouble(EXTRA_LONG, DEFAULT_LONGITUDE) ?: DEFAULT_LONGITUDE }
 
-    private val shopListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            when (result.resultCode) {
-                RESULT_ORDER_CREATED -> {
-                    setResult(result.resultCode)
-                    finish()
-                }
-            }
-        }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ScreenSearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun initialize() {
         binding.toolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
-
-        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (selectedPartner != null) showPartners() else finish()
-            }
-        })
 
         partnerAdapter.setOnItemClickListener { showPartnerShops(it) }
 
         shopAdapter.setOnItemClickListener {
-            val intent = Intent(this, ShopDetailActivity::class.java)
-            intent.putExtra(SHOP_ID, it.shopId)
-            intent.putExtra(DISTANCE, it.distance)
-            shopListener.launch(intent)
+            navigateTo(ShopDetailScreen.newInstance(it.shopId))
         }
 
         binding.inputSearch.doAfterTextChanged { text ->
@@ -84,6 +57,15 @@ class SearchScreen : BaseActivity() {
         showPartners()
     }
 
+    /** Shops mode collapses back to partners mode before the screen itself pops. */
+    override fun onBackPressed(): Boolean {
+        if (selectedPartner != null) {
+            showPartners()
+            return true
+        }
+        return false
+    }
+
     private fun showPartners() {
         selectedPartner = null
         binding.toolbar.setTitle(uz.alphazet.domain.R.string.search)
@@ -91,8 +73,9 @@ class SearchScreen : BaseActivity() {
         binding.itemsRv.adapter = partnerAdapter
 
         binding.root.post {
+            if (view == null) return@post
             binding.inputSearch.requestFocus()
-            showKeyboard()
+            requireContext().showKeyboard()
         }
         loadPartners(binding.inputSearch.text?.toString())
     }
@@ -125,20 +108,6 @@ class SearchScreen : BaseActivity() {
         shopAdapter.submitList(it)
     }
 
-    override fun finish() {
-        super.finish()
-        @Suppress("DEPRECATION")
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-    }
-
-    override fun updateStatusBarViewHeight() {
-        launch {
-            val statusBarHeight = getStatusBarHeight()
-            binding.statusBarView.layoutParams.height = statusBarHeight
-            binding.statusBarView.requestLayout()
-        }
-    }
-
     companion object {
         const val EXTRA_LAT = "extra_lat"
         const val EXTRA_LONG = "extra_long"
@@ -146,5 +115,12 @@ class SearchScreen : BaseActivity() {
         // Fallback when no location is passed: Tashkent center.
         private const val DEFAULT_LATITUDE = 41.31125776157484
         private const val DEFAULT_LONGITUDE = 69.27957810360282
+
+        fun newInstance(lat: Double? = null, long: Double? = null) = SearchScreen().apply {
+            arguments = bundleOf(
+                EXTRA_LAT to (lat ?: DEFAULT_LATITUDE),
+                EXTRA_LONG to (long ?: DEFAULT_LONGITUDE),
+            )
+        }
     }
 }

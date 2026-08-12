@@ -1,56 +1,41 @@
 package uz.alphazet.hoopla.ui.home
 
-import android.content.Intent
-import android.os.Bundle
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.models.NotificationItemData
-import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.BaseFragment
+import uz.alphazet.domain.viewbinding.viewBinding
+import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenNotificationsBinding
+import uz.alphazet.hoopla.ui.navigateTo
+import uz.alphazet.hoopla.ui.popScreen
 
-class NotificationsScreen : BaseActivity() {
+class NotificationsScreen : BaseFragment(R.layout.screen_notifications) {
 
-    private lateinit var binding: ScreenNotificationsBinding
+    private val binding by viewBinding(ScreenNotificationsBinding::bind)
     private val viewModel: NotificationVM by viewModel()
 
     private val adapter = NotificationAdapter()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ScreenNotificationsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun initialize() {
         binding.notificationRv.adapter = adapter
 
-        binding.toolbar.setNavigationOnClickListener {
-            finish()
-        }
+        binding.toolbar.setNavigationOnClickListener { popScreen() }
 
         viewModel.markRead()
 
         adapter.setOnItemClickListener {
-            val intent1 = Intent(this, NotificationDetailScreen::class.java)
-            intent1.putExtra("id", it?.notificationId)
-            startActivity(intent1)
+            navigateTo(NotificationDetailScreen.newInstance(it?.notificationId ?: -1))
         }
 
         launch {
             viewModel.getNotificationsPager().collectLatest(::collectData)
         }
-
     }
 
     private suspend fun collectData(t: PagingData<NotificationItemData>) {
         adapter.submitData(t)
-    }
-
-    override fun updateStatusBarViewHeight() {
-        launch {
-            val statusBarHeight = getStatusBarHeight()
-            binding.statusBarView.layoutParams.height = statusBarHeight
-            binding.statusBarView.requestLayout()
-        }
     }
 
 }

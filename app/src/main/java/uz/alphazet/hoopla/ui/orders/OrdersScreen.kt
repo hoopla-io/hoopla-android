@@ -1,10 +1,8 @@
 package uz.alphazet.hoopla.ui.orders
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.paging.LoadState
@@ -31,13 +29,13 @@ import uz.alphazet.data.models.UserData
 import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
-import uz.alphazet.domain.utils.Constants
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenOrdersBinding
+import uz.alphazet.hoopla.ui.navigateTo
 
 class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.OnRefreshListener {
 
@@ -47,13 +45,6 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
     private val orderAdapter = OrderAdapter()
 
     private var imageViewer: StfalconImageViewer<Drawable>? = null
-
-    private val resultListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            launch {
-                viewModel.getOrderHistoryPager().collectLatest(::collectOrdersData)
-            }
-        }
 
     override fun initialize() {
 
@@ -112,11 +103,16 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
         }
 
         orderAdapter.setOnItemClickListener {
-            val intent = Intent(requireActivity(), OrderInfoScreen::class.java)
-            intent.putExtra(Constants.ID, it?.id ?: -1)
-            resultListener.launch(intent)
+            navigateTo(OrderInfoScreen.newInstance(it?.id ?: -1))
         }
 
+    }
+
+    // Re-shown after a tab switch, a fresh checkout landing here, or popping back from the
+    // order-info screen (where an order can be cancelled) — the list must reflect all three.
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) orderAdapter.refresh()
     }
 
     private fun collectQRCodeData(t: UIResource<QRCodeAccessData>) = t.collect(onLoading = {}) {

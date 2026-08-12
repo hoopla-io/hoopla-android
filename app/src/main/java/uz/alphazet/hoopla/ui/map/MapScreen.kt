@@ -2,13 +2,11 @@ package uz.alphazet.hoopla.ui.map
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AccelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import coil3.load
@@ -36,12 +34,9 @@ import uz.alphazet.domain.utils.formatRating
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenMapBinding
-import uz.alphazet.hoopla.ui.MainActivity
 import uz.alphazet.hoopla.ui.home.HomeVM
-import uz.alphazet.hoopla.ui.order.OrderActivity.Companion.RESULT_ORDER_CREATED
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.DISTANCE
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity.Companion.SHOP_ID
+import uz.alphazet.hoopla.ui.navigateTo
+import uz.alphazet.hoopla.ui.shop_details.ShopDetailScreen
 
 class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
 
@@ -60,15 +55,6 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
 
     private val defaultPoint = LatLng(41.31125776157484, 69.27957810360282)
     private val defaultZoom = 12f
-
-    private val shopListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            when (result.resultCode) {
-                RESULT_ORDER_CREATED -> {
-                    (requireActivity() as? MainActivity)?.navigateToOrdersScreen()
-                }
-            }
-        }
 
     override fun initialize() {
         binding.mapView.onCreate(null)
@@ -150,10 +136,7 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
     }
 
     private fun openShopDetail(shop: ShopItemData) {
-        val intent = Intent(requireContext(), ShopDetailActivity::class.java)
-        intent.putExtra(SHOP_ID, shop.shopId)
-        intent.putExtra(DISTANCE, shop.distance)
-        shopListener.launch(intent)
+        navigateTo(ShopDetailScreen.newInstance(shop.shopId))
     }
 
     /** Wires the info card's static click targets once; content is bound per tap. */
@@ -229,7 +212,9 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
-        binding.mapView.onResume()
+        // Hidden tabs are still resumed, so returning from background must not wake a map the
+        // customer cannot see; onHiddenChanged wakes it when they come back to this tab.
+        if (!isHidden) binding.mapView.onResume()
     }
 
     override fun onPause() {
@@ -240,6 +225,17 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
     override fun onStop() {
         binding.mapView.onStop()
         super.onStop()
+    }
+
+    /**
+     * Hiding a fragment leaves it RESUMED, so opening a shop over the map no longer pauses this
+     * screen the way starting an activity used to. Without this the map keeps its location layer
+     * and tile updates running behind whatever is on top, for as long as the customer stays there.
+     */
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (view == null) return
+        if (hidden) binding.mapView.onPause() else binding.mapView.onResume()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -260,7 +256,7 @@ class MapScreen : BaseFragment(R.layout.screen_map), OnMapReadyCallback {
 
     /**
      * A nearby shop rendered as a clusterable map item. Carries the original
-     * [ShopItemData] so a marker tap can open [ShopDetailActivity].
+     * [ShopItemData] so a marker tap can open [ShopDetailScreen].
      */
     private class ShopClusterItem(val shop: ShopItemData) : ClusterItem {
         // Paused only when explicitly false — matches the list overlay semantics.

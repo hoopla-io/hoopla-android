@@ -1,37 +1,36 @@
 package uz.alphazet.hoopla.ui.profile.subscriptions
 
-import android.content.Intent
-import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.SubscriptionItemData
-import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.formatToPrice
+import uz.alphazet.domain.viewbinding.viewBinding
+import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenSubscriptionsBinding
-import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
+import uz.alphazet.hoopla.ui.navigateTo
+import uz.alphazet.hoopla.ui.popScreen
+import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesScreen
 
-class SubscriptionActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
+class SubscriptionsScreen : BaseFragment(R.layout.screen_subscriptions),
+    SwipeRefreshLayout.OnRefreshListener {
 
-    private lateinit var binding: ScreenSubscriptionsBinding
+    private val binding by viewBinding(ScreenSubscriptionsBinding::bind)
     private val viewModel: SubscriptionVM by viewModel()
     private val adapter = SubscriptionAdapter()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ScreenSubscriptionsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun initialize() {
         binding.swipeRefreshLayout.setOnRefreshListener(this)
 
         binding.subscriptionRv.adapter = adapter
 
         binding.toolbar.setNavigationOnClickListener {
-            finish()
+            popScreen()
         }
 
         launch {
@@ -58,7 +57,6 @@ class SubscriptionActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListene
                     }
                 })
         }
-
     }
 
     private fun collectData(t: UIResource<List<SubscriptionItemData>>) = t.collect {
@@ -85,8 +83,7 @@ class SubscriptionActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListene
 
     override fun onPreconditionRequiredException(message: String?, code: Int) {
         super.onPreconditionRequiredException(message, code)
-        val intent1 = Intent(this, PaymentServicesActivity::class.java)
-        startActivity(intent1)
+        navigateTo(PaymentServicesScreen())
     }
 
     override fun showLoading() {
@@ -96,14 +93,6 @@ class SubscriptionActivity : BaseActivity(), SwipeRefreshLayout.OnRefreshListene
     override fun onRefresh() {
         launch {
             viewModel.getSubscriptions().collectLatest(::collectData)
-        }
-    }
-
-    override fun updateStatusBarViewHeight() {
-        launch {
-            val statusBarHeight = getStatusBarHeight()
-            binding.statusBarView.layoutParams.height = statusBarHeight
-            binding.statusBarView.requestLayout()
         }
     }
 

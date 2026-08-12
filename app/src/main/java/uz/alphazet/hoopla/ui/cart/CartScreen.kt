@@ -33,8 +33,9 @@ import uz.alphazet.hoopla.databinding.ScreenCartBinding
 import uz.alphazet.hoopla.ui.MainActivity
 import uz.alphazet.hoopla.ui.auth.AuthActivity
 import uz.alphazet.hoopla.ui.cart.InputCartPromoBD.Companion.showInputCartPromoBD
+import uz.alphazet.hoopla.ui.navigateTo
 import uz.alphazet.hoopla.ui.order.SelectCashbackSummaBD.Companion.showSelectCashbackSummaBD
-import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesActivity
+import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesScreen
 
 /**
  * The server-side cart for one shop.
@@ -103,11 +104,6 @@ class CartScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_cart) {
     private var mutationSeq = 0
 
     private val authListener =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-
-        }
-
-    private val subscriptionListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
 
         }
@@ -733,7 +729,7 @@ class CartScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_cart) {
 
     override fun onPreconditionRequiredException(message: String?, code: Int) {
         super.onPreconditionRequiredException(message, code)
-        subscriptionListener.launch(Intent(requireContext(), PaymentServicesActivity::class.java))
+        navigateTo(PaymentServicesScreen())
     }
 
     override fun onUnauthorizedException(message: String?, code: Int) {

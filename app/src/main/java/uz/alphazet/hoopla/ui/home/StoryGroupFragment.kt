@@ -3,7 +3,6 @@ package uz.alphazet.hoopla.ui.home
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
-import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -27,13 +26,15 @@ import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenStoryGroupBinding
-import uz.alphazet.hoopla.ui.shop_details.ShopDetailActivity
 
 class StoryGroupFragment : BaseFragment(R.layout.screen_story_group) {
 
     interface Host {
         fun goToNextGroup()
         fun goToPreviousGroup()
+
+        /** Closes the viewer and asks its launcher to open the shop's detail screen. */
+        fun openShop(shopId: Int)
     }
 
     private val binding by viewBinding(ScreenStoryGroupBinding::bind)
@@ -328,10 +329,10 @@ class StoryGroupFragment : BaseFragment(R.layout.screen_story_group) {
         when (type) {
             StoryLinkTypes.URL -> requireActivity().intentToBrowser(value)
             StoryLinkTypes.PARTNER -> {
+                // The shop screen lives inside MainActivity now, so the viewer can't show it
+                // itself — it closes and hands the id back to whoever launched it.
                 val partnerId = value.toIntOrNull() ?: return
-                val intent = Intent(requireContext(), ShopDetailActivity::class.java)
-                intent.putExtra(ShopDetailActivity.SHOP_ID, partnerId)
-                startActivity(intent)
+                (activity as? Host)?.openShop(partnerId)
             }
 
             StoryLinkTypes.DRINK -> {

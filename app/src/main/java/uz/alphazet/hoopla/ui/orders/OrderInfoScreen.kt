@@ -1,9 +1,7 @@
 package uz.alphazet.hoopla.ui.orders
 
-import android.os.Bundle
-import androidx.core.graphics.Insets
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import coil3.load
 import kotlinx.coroutines.flow.collectLatest
@@ -14,7 +12,7 @@ import uz.alphazet.data.models.order.ModifierItemData
 import uz.alphazet.data.models.order.OrderInfo
 import uz.alphazet.data.models.order.OrderStatus
 import uz.alphazet.domain.R
-import uz.alphazet.domain.ui.BaseActivity
+import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.showMessageDF
 import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.utils.Constants
@@ -26,23 +24,22 @@ import uz.alphazet.domain.utils.intentToBrowser
 import uz.alphazet.domain.utils.setTextColorRes
 import uz.alphazet.domain.utils.setTextStringRes
 import uz.alphazet.domain.utils.visible
+import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.databinding.ScreenOrderInfoBinding
 import uz.alphazet.hoopla.ui.home.FeedbackBD.Companion.showFeedbackBD
 import uz.alphazet.hoopla.ui.order.SummaInfoAdapter
 import uz.alphazet.hoopla.ui.orders.OrderQrCodeBD.Companion.showOrderQrCodeBD
+import uz.alphazet.hoopla.ui.popScreen
 
-class OrderInfoScreen : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
+class OrderInfoScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order_info),
+    SwipeRefreshLayout.OnRefreshListener {
 
-    private lateinit var binding: ScreenOrderInfoBinding
+    private val binding by viewBinding(ScreenOrderInfoBinding::bind)
     private val viewModel: OrdersVM by viewModel()
     private val adapter = SummaInfoAdapter()
-    private val orderId by lazy { intent.getIntExtra(Constants.ID, -1) }
+    private val orderId by lazy { arguments?.getInt(Constants.ID, -1) ?: -1 }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ScreenOrderInfoBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun initialize() {
         viewModel.getOrderInfo(orderId)
 
         launch {
@@ -50,7 +47,7 @@ class OrderInfoScreen : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         }
         binding.infoRv.adapter = adapter
         binding.swipeRefreshLayout.setOnRefreshListener(this)
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.setNavigationOnClickListener { popScreen() }
     }
 
     override fun onRefresh() {
@@ -184,7 +181,7 @@ class OrderInfoScreen : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
         binding.check.isVisible = !orderInfo.fiscalLink.isNullOrEmpty()
 
         binding.check.setOnClickListener {
-            intentToBrowser(orderInfo.fiscalLink ?: "")
+            requireContext().intentToBrowser(orderInfo.fiscalLink ?: "")
         }
 
         if (orderInfo.orderStatus == OrderStatus.Completed && orderInfo.hasFeedback != true) {
@@ -233,7 +230,7 @@ class OrderInfoScreen : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
                 }
             }
             binding.continuePayment.setOnClickListener {
-                intentToBrowser(orderInfo.checkoutUrl ?: "")
+                requireContext().intentToBrowser(orderInfo.checkoutUrl ?: "")
             }
         } else {
             binding.cancelOrder.gone()
@@ -257,12 +254,14 @@ class OrderInfoScreen : BaseActivity(), SwipeRefreshLayout.OnRefreshListener {
 
     private fun collectCancelOrder(t: UIResource<Any>) = t.collect {
         showMessageDF(getString(R.string.order_cancelled), "", "OK") {
-            finish()
+            popScreen()
         }
     }
 
-    override fun onApplySystemBarInsets(systemBars: Insets) {
-        binding.root.updatePadding(bottom = systemBars.bottom)
+    companion object {
+        fun newInstance(orderId: Int) = OrderInfoScreen().apply {
+            arguments = bundleOf(Constants.ID to orderId)
+        }
     }
 
 }
