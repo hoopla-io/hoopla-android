@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/grey_150">
 
     <!-- A tab, so no back arrow, and MainActivity already draws the status bar above this. -->
     <androidx.appcompat.widget.Toolbar
@@ -13,6 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/primary"
         app:layout_constraintTop_toTopOf="parent"
+        app:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:title="@string/cart_title"
         app:titleTextAppearance="@style/ToolbarTitleTextStyle"
         app:titleTextColor="@color/white" />
@@ -66,11 +67,14 @@
                 android:textSize="14sp"
                 tools:text="3 items" />
 
+            <!-- One card for the whole order; the rows inside it draw their own separators. -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/cart_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_corner16_white"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="2"
@@ -532,12 +536,13 @@
         android:id="@+id/checkout"
         style="@style/PrimaryColorButtonStyle"
         android:layout_width="match_parent"
+        android:background="@drawable/bg_corner28_primary300"
         android:text="@string/cart_checkout"
         android:textAllCaps="false"
         android:visibility="gone"
         tools:visibility="visible"
-        app:finalCornerAngle="10dp"
-        app:initialCornerAngle="10dp"
+        app:finalCornerAngle="26dp"
+        app:initialCornerAngle="26dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:spinning_bar_color="@color/white"
         app:spinning_bar_padding="6dp"

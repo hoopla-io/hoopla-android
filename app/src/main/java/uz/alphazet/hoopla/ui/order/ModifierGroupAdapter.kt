@@ -78,10 +78,12 @@ class ModifierGroupAdapter(
 
             binding.title.text = group.name?.takeIf { it.isNotBlank() } ?: group.key
 
-            val hint = ruleText(binding.root.context, group)
-            if (hint.isEmpty()) binding.hint.gone() else {
-                binding.hint.text = hint
-                binding.hint.visible()
+            binding.hint.text = badgeText(binding.root.context, group)
+
+            val rule = ruleText(binding.root.context, group)
+            if (rule.isEmpty()) binding.rule.gone() else {
+                binding.rule.text = rule
+                binding.rule.visible()
             }
 
             binding.optionsRv.layoutManager = LinearLayoutManager(binding.root.context)
@@ -90,16 +92,29 @@ class ModifierGroupAdapter(
         }
     }
 
-    private fun ruleText(context: Context, group: ModifierGroupData): String = when {
-        group.minSelect >= 1 && group.maxSelect == 1 ->
-            context.getString(uz.alphazet.domain.R.string.modifier_rule_pick_one)
+    /** Whether the group has to be answered at all — the badge beside its title. */
+    internal fun badgeText(context: Context, group: ModifierGroupData): String =
+        context.getString(
+            if (group.isRequired) uz.alphazet.domain.R.string.modifier_badge_required
+            else uz.alphazet.domain.R.string.modifier_badge_optional
+        )
 
-        group.minSelect >= 1 ->
-            context.getString(uz.alphazet.domain.R.string.modifier_rule_at_least, group.minSelect)
+    /**
+     * The part of the rule the Required/Optional badge cannot carry. "Pick one" and a plain
+     * "at least 1" say nothing the badge has not already said, so both stay empty.
+     */
+    internal fun ruleText(context: Context, group: ModifierGroupData): String {
+        val max = group.maxSelect
+        return when {
+            group.minSelect > 1 -> context.getString(
+                uz.alphazet.domain.R.string.modifier_rule_at_least, group.minSelect
+            )
 
-        group.maxSelect != null ->
-            context.getString(uz.alphazet.domain.R.string.modifier_rule_up_to, group.maxSelect)
+            max != null && max > 1 -> context.getString(
+                uz.alphazet.domain.R.string.modifier_rule_up_to, max
+            )
 
-        else -> ""
+            else -> ""
+        }
     }
 }

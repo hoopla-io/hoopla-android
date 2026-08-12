@@ -8,16 +8,24 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import coil3.load
 import com.google.android.material.chip.Chip
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DrinkItemData
 import uz.alphazet.data.models.ShopCategoryData
 import uz.alphazet.data.models.ShopData
 import uz.alphazet.data.models.ShopDrinksData
+import uz.alphazet.data.models.cart.CartData
+import uz.alphazet.data.models.order.OrderDetails
 import uz.alphazet.domain.R
+import uz.alphazet.domain.cart.CartStore
+import uz.alphazet.domain.network.ConflictException
 import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.showMessageDF
+import uz.alphazet.domain.ui.showRequestDF
 import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
 import uz.alphazet.domain.utils.formatPhoneNumber
 import uz.alphazet.domain.utils.formatRating
@@ -28,9 +36,12 @@ import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.databinding.ItemDrinkCategorySectionBinding
 import uz.alphazet.hoopla.databinding.ScreenShopDetailBinding
+import uz.alphazet.hoopla.ui.cart.CartVM
+import uz.alphazet.hoopla.ui.mainActivity
 import uz.alphazet.hoopla.ui.navigateTo
 import uz.alphazet.hoopla.ui.order.OrderScreen
 import uz.alphazet.hoopla.ui.popScreen
+import uz.alphazet.hoopla.ui.views.showTopPill
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -60,6 +71,30 @@ class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_de
 
     // prevent chip listener from triggering scroll while we update chip from scroll
     private var isSyncingChip = false
+
+    // ------------------------------------------------------------ cart on the menu
+
+    private val cartViewModel: CartVM by viewModel()
+    private val cartStore: CartStore by inject()
+
+    /** The cart as the server last stated it. */
+    private var cart: CartData? = null
+
+    /** One adapter per category section, so a cart change can reach all of them. */
+    private val drinkAdapters = mutableListOf<DrinksAdapter>()
+
+    /** cart line id -> the count the customer has stepped to but not yet sent. */
+    private val pendingQuantities = mutableMapOf<Int, Int>()
+    private val quantityJobs = mutableMapOf<Int, Job>()
+
+    /** Drinks whose "does this need options?" round-trip is still in the air. */
+    private val pendingAdds = mutableSetOf<Int>()
+
+    /** The drink a quick-add is for, kept so a 409 can retry it after clearing. */
+    private var pendingQuickAddDrink: DrinkItemData? = null
+
+    /** Orders responses so a slow earlier one cannot repaint over a newer cart. */
+    private var mutationSeq = 0
 
     override fun initialize() {
         binding.imageViewPager.adapter = imagesAdapter
@@ -96,6 +131,39 @@ class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_de
         launch {
             viewModel.getShopDrinks(shopId).collectLatest(::collectDrinks)
         }
+
+        // Any screen that edits the cart publishes here, so the menu keeps up without asking.
+        launch {
+            cartStore.cartFlow.collectLatest { data ->
+                cart = data
+                renderCartState()
+            }
+        }
+        cartViewModel.getCart()
+    }
+
+    /**
+     * Tabs and pushed screens are hidden rather than destroyed, so `onResume` does not fire on the
+     * way back from the order screen — this is where a cart edited elsewhere is picked up.
+     */
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden) flushPendingEdits() else cartViewModel.getCart()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        flushPendingEdits()
+    }
+
+    /** Commits anything the customer already sees applied but that has not been sent yet. */
+    private fun flushPendingEdits() {
+        quantityJobs.values.forEach { it.cancel() }
+        quantityJobs.clear()
+        pendingQuantities.forEach { (id, quantity) ->
+            cartViewModel.updateItemQuantityInBackground(id, quantity)
+        }
+        pendingQuantities.clear()
     }
 
     private fun setupAppBarAnimation() {
@@ -154,6 +222,9 @@ class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_de
 
     private fun collectData(t: UIResource<ShopData>) = t.collect { data ->
         canAcceptOrders = data?.canAcceptOrders == true
+        // The shop's state and its menu arrive on separate flows, so whichever lands second has
+        // to re-apply the gate to the cards already built.
+        renderCartState()
 
         // Share action: shown once the shop (and its shareUrl) has loaded.
         shareUrl = data?.shareUrl
@@ -240,6 +311,7 @@ class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_de
         binding.drinksContainer.removeAllViews()
         sectionViews.clear()
         categoryChips.clear()
+        drinkAdapters.clear()
 
         val nonEmptyCategories = categories
             ?.filter { !it.drinks.isNullOrEmpty() }
@@ -247,6 +319,7 @@ class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_de
 
         if (nonEmptyCategories.isEmpty()) {
             binding.categoryScroll.gone()
+            renderCartState()
             return
         }
 
@@ -263,6 +336,7 @@ class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_de
                 category.drinks.orEmpty()
             )
         }
+        renderCartState()
 
         if (categoryNames.size <= 1) {
             binding.categoryScroll.gone()
@@ -324,26 +398,243 @@ class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_de
         sectionBinding.categoryName.text = categoryName
 
         val adapter = DrinksAdapter()
-        adapter.isClickable = isClickable
+        adapter.isClickable = canAcceptOrders && isClickable
         sectionBinding.categoryDrinksRv.adapter = adapter
         adapter.submitList(categoryDrinks)
+        drinkAdapters.add(adapter)
 
         adapter.setOnItemClickListener { drink ->
             if (canAcceptOrders && isClickable) {
-                navigateTo(
-                    OrderScreen.newInstance(
-                        shopId = shopId,
-                        drink = drink,
-                        workingHours = workingHours,
-                    )
-                )
+                openDrink(drink)
             } else {
                 showMessageDF(getString(R.string.can_not_accepting_orders), "", "OK") {}
             }
         }
+        adapter.setOnAddClickListener(::onAddClicked)
+        adapter.setOnQuantityChangeListener(::onQuantityStepped)
 
         binding.drinksContainer.addView(sectionBinding.root)
         sectionViews.add(categoryName to sectionBinding.root)
+    }
+
+    private fun openDrink(drink: DrinkItemData) {
+        navigateTo(
+            OrderScreen.newInstance(
+                shopId = shopId,
+                drink = drink,
+                workingHours = workingHours,
+            )
+        )
+    }
+
+    // ------------------------------------------------------------ cart on the menu
+
+    /**
+     * The lines a menu card may step in place. A card carries a single stepper, so it can only
+     * stand for a drink held by exactly one line, added without modifiers — anything else is
+     * ambiguous about which line a tap means, and offers "+" instead.
+     */
+    private fun steppableLines(): Map<Int, CartLineRef> {
+        val data = cart ?: return emptyMap()
+        if (data.shopId != shopId) return emptyMap() // the cart belongs to another cafe
+        return data.items.orEmpty()
+            .groupBy { it.drinkId }
+            .mapNotNull { (drinkId, lines) ->
+                val id = drinkId ?: return@mapNotNull null
+                val line = lines.singleOrNull() ?: return@mapNotNull null
+                if (!line.modifiers.isNullOrEmpty()) return@mapNotNull null
+                val itemId = line.id ?: return@mapNotNull null
+                val quantity = pendingQuantities[itemId] ?: line.quantity ?: 0
+                if (quantity <= 0) return@mapNotNull null
+                id to CartLineRef(itemId, quantity)
+            }
+            .toMap()
+    }
+
+    private fun renderCartState() {
+        val lines = steppableLines()
+        val enabled = canAcceptOrders && isClickable
+        drinkAdapters.forEach { adapter ->
+            adapter.isClickable = enabled
+            adapter.cartLines = lines
+            adapter.pendingAdds = pendingAdds.toSet()
+        }
+        // Only once a cart has actually arrived: a null one here means "not fetched yet", and
+        // pushing that would blank a badge the host had already filled in correctly.
+        cart?.let { mainActivity?.onCartUpdated(optimisticCart()) }
+    }
+
+    /** The cart as the customer currently sees it, so the nav-bar badge agrees with the menu. */
+    private fun optimisticCart(): CartData? {
+        val data = cart ?: return null
+        if (pendingQuantities.isEmpty()) return data
+        val items = data.items.orEmpty().mapNotNull { item ->
+            val id = item.id ?: return@mapNotNull item
+            val quantity = pendingQuantities[id] ?: return@mapNotNull item
+            if (quantity <= 0) null else item.copy(quantity = quantity)
+        }
+        return data.copy(items = items)
+    }
+
+    /**
+     * The menu payload says nothing about whether a drink has modifiers, so the only way to tell
+     * a one-tap drink from one whose options have to be picked is to ask.
+     */
+    private fun onAddClicked(drink: DrinkItemData) {
+        if (!canAcceptOrders || !isClickable) {
+            showMessageDF(getString(R.string.can_not_accepting_orders), "", "OK") {}
+            return
+        }
+
+        val drinkId = drink.id ?: return
+
+        // The card can be back on "+" only because the count was stepped to zero and the removal
+        // has not gone out yet. Stepping it back up is what the customer means — adding would
+        // race that queued PATCH, which could then drop the line that was just re-added.
+        val revivableId = cart?.items.orEmpty().firstOrNull { item ->
+            item.drinkId == drinkId && item.modifiers.isNullOrEmpty() &&
+                    item.id != null && pendingQuantities[item.id] == 0
+        }?.id
+        if (revivableId != null) {
+            onQuantityStepped(CartLineRef(revivableId, 0), 1)
+            return
+        }
+
+        if (!pendingAdds.add(drinkId)) return // already asking about this one
+        renderCartState()
+
+        launch {
+            viewModel.validateOrder(shopId, drinkId).collectLatest { resource ->
+                resource.collect(
+                    onLoading = null,
+                    onError = { throwable ->
+                        finishAdd(drinkId)
+                        checkErrors(throwable)
+                    }
+                ) { details ->
+                    if (details != null && !hasAnyOption(details)) {
+                        quickAdd(drink)
+                    } else {
+                        finishAdd(drinkId)
+                        openDrink(drink)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Whether anything has to be chosen before this drink can be ordered. The legacy sections
+     * count: the order screen pre-selects the first option of each non-empty one, and those
+     * selections carry a price — quick-adding would charge for a choice never offered.
+     */
+    private fun hasAnyOption(details: OrderDetails): Boolean =
+        !details.modifierGroups.isNullOrEmpty() ||
+                !details.modifications.size.isNullOrEmpty() ||
+                !details.modifications.sugar.isNullOrEmpty() ||
+                !details.modifications.milk.isNullOrEmpty() ||
+                !details.modifications.syrup.isNullOrEmpty()
+
+    private fun quickAdd(drink: DrinkItemData) {
+        val drinkId = drink.id ?: return
+        pendingQuickAddDrink = drink
+        launch {
+            cartViewModel.addItem(shopId, drinkId, 1, arrayListOf()).collectLatest { resource ->
+                resource.collect(
+                    onLoading = null,
+                    onError = { throwable ->
+                        finishAdd(drinkId)
+                        // A conflict still needs the drink, to retry after clearing.
+                        if (throwable !is ConflictException) pendingQuickAddDrink = null
+                        checkErrors(throwable)
+                    }
+                ) { data ->
+                    finishAdd(drinkId)
+                    pendingQuickAddDrink = null
+                    cart = data
+                    renderCartState()
+                    showTopPill(R.string.cart_item_added)
+                }
+            }
+        }
+    }
+
+    private fun finishAdd(drinkId: Int) {
+        pendingAdds.remove(drinkId)
+        renderCartState()
+    }
+
+    /**
+     * Answers the tap straight away and sends the settled count once the customer stops stepping,
+     * so three quick taps are one PATCH of +3 rather than three racing ones.
+     */
+    private fun onQuantityStepped(line: CartLineRef, quantity: Int) {
+        val id = line.itemId
+        pendingQuantities[id] = quantity.coerceAtLeast(0)
+        renderCartState()
+
+        quantityJobs[id]?.cancel()
+        quantityJobs[id] = launch {
+            delay(QUANTITY_DEBOUNCE_MS)
+            val seq = ++mutationSeq
+            cartViewModel.updateItemQuantity(id, quantity).collectLatest { resource ->
+                resource.collect(
+                    onLoading = null,
+                    onError = { throwable ->
+                        // The server never took it, so the optimistic number has to go back.
+                        pendingQuantities.remove(id)
+                        renderCartState()
+                        checkErrors(throwable)
+                    }
+                ) { data ->
+                    pendingQuantities.remove(id)
+                    acceptCart(data, seq)
+                }
+            }
+        }
+    }
+
+    /** Ignores a response overtaken by a later one, so the grid cannot go backwards. */
+    private fun acceptCart(data: CartData?, seq: Int) {
+        if (seq != mutationSeq) return
+        cart = data
+        renderCartState()
+    }
+
+    /**
+     * A 409 while adding means the cart already holds another cafe's drinks. Emptying someone's
+     * cart is destructive, so it is offered rather than done, and the drink is retried afterwards.
+     */
+    override fun onConflictException(message: String?, code: Int) {
+        val drink = pendingQuickAddDrink
+        pendingQuickAddDrink = null
+
+        if (drink == null) {
+            super.onConflictException(message, code)
+            return
+        }
+
+        showRequestDF(
+            getString(R.string.cart_different_shop_title),
+            message?.takeIf { it.isNotBlank() }
+                ?: getString(R.string.cart_different_shop_message),
+            getString(R.string.cart_clear_and_add),
+            getString(R.string.cancel)
+        ) {
+            launch {
+                cartViewModel.clearCart().collectLatest { resource ->
+                    resource.collect(
+                        onLoading = null,
+                        onError = { throwable -> checkErrors(throwable) }
+                    ) {
+                        val drinkId = drink.id
+                        if (drinkId != null) pendingAdds.add(drinkId)
+                        renderCartState()
+                        quickAdd(drink)
+                    }
+                }
+            }
+        }
     }
 
     private fun setTodayWorkingTime(workingHours: List<ShopData.WorkHour?>?) {
@@ -357,6 +648,7 @@ class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_de
         val isOpen = isNowWorking(todayWorkHour?.openAt, todayWorkHour?.closeAt)
 
         isClickable = isOpen
+        renderCartState()
 
         // Show inline working hours below shop name
         if (todayWorkHour != null) {
@@ -408,6 +700,9 @@ class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_de
     companion object {
         const val SHOP_ID = "shop_id"
         const val DRINK_DATA = "drink_data"
+
+        /** How long the grid waits for the customer to settle on a count before sending it. */
+        private const val QUANTITY_DEBOUNCE_MS = 500L
 
         fun newInstance(shopId: Int?) = ShopDetailScreen().apply {
             arguments = bundleOf(SHOP_ID to (shopId ?: -1))

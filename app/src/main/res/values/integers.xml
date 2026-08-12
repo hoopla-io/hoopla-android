@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Normal screen: 3 columns -->
-    <integer name="drink_span_count">3</integer>
+    <!-- Normal screen: 2 columns. A third would leave the card too narrow for the price and the
+         quantity stepper to sit side by side. -->
+    <integer name="drink_span_count">2</integer>
 </resources>

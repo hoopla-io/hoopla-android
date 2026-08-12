@@ -45,6 +45,7 @@ import uz.alphazet.domain.network.interceptor.NetworkConnectionInterceptor
 import uz.alphazet.domain.permission.PermissionManager
 import uz.alphazet.domain.permission.PermissionManagerImpl
 import uz.alphazet.domain.repositories.AuthRepo
+import uz.alphazet.domain.cart.CartStore
 import uz.alphazet.domain.repositories.CartRepo
 import uz.alphazet.domain.repositories.CategoryRepo
 import uz.alphazet.domain.repositories.DeviceRepo
@@ -71,6 +72,8 @@ object Modules {
         single<AppCache> { AppCacheImpl(get()) }
         single<PermissionManager> { PermissionManagerImpl(androidContext()) }
         single { DeviceInfoProvider(androidContext()) }
+        // Shared on purpose: every CartVM is a factory, so this is where they agree on the cart.
+        single { CartStore() }
     }
 
     val apiModule = module {

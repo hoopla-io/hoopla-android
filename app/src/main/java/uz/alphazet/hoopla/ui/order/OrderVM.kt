@@ -25,6 +25,17 @@ class OrderVM(
 
     var defaultPrice: Double? = null
 
+    /**
+     * How many of this exact selection go into the cart. Kept here rather than on the fragment
+     * so it survives a rotation; the modifier selections themselves still live in their adapters.
+     */
+    var quantity: Int = MIN_QUANTITY
+        private set
+
+    fun stepQuantity(delta: Int) {
+        quantity = (quantity + delta).coerceIn(MIN_QUANTITY, MAX_QUANTITY)
+    }
+
     private val userDataEmitter: MutableStateFlow<UIResource<UserData>> =
         MutableStateFlow(UIResource.Loading)
     val userDataFlow: StateFlow<UIResource<UserData>> get() = userDataEmitter
@@ -79,6 +90,11 @@ class OrderVM(
         return repo.createOrderRahmat(
             shopId, drinkId, modifiers, useCashback, cashbackAmount, comment, promoCode, pickupAt
         ).shareIn(viewModelScope, SharingStarted.Lazily, 0)
+    }
+
+    companion object {
+        const val MIN_QUANTITY = 1
+        const val MAX_QUANTITY = 99
     }
 
 }

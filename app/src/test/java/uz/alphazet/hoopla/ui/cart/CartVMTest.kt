@@ -25,6 +25,7 @@ import uz.alphazet.data.models.cart.CartItemData
 import uz.alphazet.data.models.order.CheckOutInfo
 import uz.alphazet.domain.network.ConflictException
 import uz.alphazet.domain.repositories.CartRepo
+import uz.alphazet.domain.cart.CartStore
 import uz.alphazet.domain.repositories.ProfileRepo
 import uz.alphazet.domain.repositories.ShopRepo
 import uz.alphazet.hoopla.rules.MainDispatcherRule
@@ -39,7 +40,11 @@ class CartVMTest {
     private val profileRepo: ProfileRepo = mockk()
     private val shopRepo: ShopRepo = mockk()
 
-    private val vm by lazy { CartVM(cartRepo, profileRepo, shopRepo) }
+    // Real rather than mocked: it is a plain StateFlow holder, and the tests below assert on
+    // what it ends up holding.
+    private val cartStore = CartStore()
+
+    private val vm by lazy { CartVM(cartRepo, profileRepo, shopRepo, cartStore) }
 
     @Before
     fun setUp() {
@@ -107,7 +112,7 @@ class CartVMTest {
     /** Unlike OrderVM, nothing is fetched until the screen asks — there is no init block. */
     @Test
     fun constructing_the_vm_does_not_hit_the_repositories() = runTest {
-        CartVM(cartRepo, profileRepo, shopRepo)
+        CartVM(cartRepo, profileRepo, shopRepo, cartStore)
 
         coVerify(exactly = 0) { cartRepo.getCart() }
         coVerify(exactly = 0) { profileRepo.getMe() }
@@ -247,6 +252,79 @@ class CartVMTest {
         }
 
         coVerify { cartRepo.addItem(3, 5, 2, any()) }
+    }
+
+    // --- publishing into the shared store ---------------------------------
+
+    /**
+     * Every CartVM is a Koin factory, so screens only agree on the cart because each success is
+     * published here. Without it the menu grid would still show a drink as not added.
+     */
+    @Test
+    fun addItem_publishes_the_new_cart_into_the_store() = runTest {
+        val cart = sampleCart()
+        coEvery { cartRepo.addItem(any(), any(), any(), any()) } returns
+            flowOf(UIResource.Success(cart))
+
+        vm.addItem(3, 5, 1, arrayListOf()).test {
+            awaitItem()
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        assertEquals(cart, cartStore.cartFlow.value)
+    }
+
+    @Test
+    fun updateItemQuantity_publishes_the_new_cart_into_the_store() = runTest {
+        val cart = sampleCart(items = emptyList())
+        coEvery { cartRepo.updateItemQuantity(11, 0) } returns flowOf(UIResource.Success(cart))
+
+        vm.updateItemQuantity(11, 0).test {
+            awaitItem()
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        assertEquals(cart, cartStore.cartFlow.value)
+    }
+
+    @Test
+    fun getCart_publishes_the_fetched_cart_into_the_store() = runTest {
+        val cart = sampleCart()
+        coEvery { cartRepo.getCart() } returns UIResource.Success(cart)
+
+        vm.getCart()
+
+        assertEquals(cart, cartStore.cartFlow.value)
+    }
+
+    /** The clear answers with no cart, so the store is emptied rather than left on a stale one. */
+    @Test
+    fun clearCart_empties_the_store() = runTest {
+        cartStore.publish(sampleCart())
+        coEvery { cartRepo.clearCart() } returns flowOf(UIResource.Success(Any()))
+
+        vm.clearCart().test {
+            awaitItem()
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        assertNull(cartStore.cartFlow.value)
+    }
+
+    /** A failed mutation must not overwrite the cart the customer is still looking at. */
+    @Test
+    fun a_failed_mutation_leaves_the_store_untouched() = runTest {
+        val existing = sampleCart()
+        cartStore.publish(existing)
+        coEvery { cartRepo.addItem(any(), any(), any(), any()) } returns
+            flowOf(UIResource.Error(ConflictException("another shop", 409)))
+
+        vm.addItem(4, 5, 1, arrayListOf()).test {
+            awaitItem()
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        assertEquals(existing, cartStore.cartFlow.value)
     }
 
     /** The cross-shop conflict has to reach the screen intact for the retry prompt to work. */

@@ -1,43 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    One selectable modifier option. Shared by ModifierOptionAdapter (dynamic groups) and the
+    legacy ModificationAdapter, so both must be updated together when the ids here change.
+
+    Selection is carried by the row's own selected state rather than a radio/checkbox glyph:
+    single- and multi-select groups look identical, and the rule is stated by the group's
+    Required/Optional badge instead.
+-->
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="1dp"
-    android:layout_marginVertical="1dp"
-    android:foreground="@drawable/ripple_corner12"
+    android:layout_marginVertical="5dp"
+    android:background="@drawable/selector_option_row"
+    android:foreground="@drawable/ripple_corner28"
+    android:gravity="center_vertical"
+    android:minHeight="56dp"
     android:orientation="horizontal"
-    android:paddingVertical="3dp">
+    android:paddingHorizontal="16dp"
+    tools:ignore="UseCompoundDrawables">
 
-    <CheckBox
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/checkbox"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:buttonTint="@color/primary_300"
-        android:clickable="false" />
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:background="@drawable/selector_option_check"
+        android:contentDescription="@null"
+        android:padding="4dp"
+        android:scaleType="centerInside" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/size_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
         android:fontFamily="@font/inter_medium"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="12dp"
+        android:maxLines="2"
         android:textColor="@color/black_300"
-        android:textSize="16sp"
-        tools:text="Medium" />
+        android:textSize="15sp"
+        tools:text="Альтернативное молоко" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/summa"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_marginStart="12dp"
         android:fontFamily="@font/inter_medium"
-        android:gravity="end"
-        android:textColor="@color/black_300"
-        android:textSize="12sp"
-        app:layout_constraintStart_toEndOf="@id/size_name"
-        tools:text="+5000 UZS" />
+        android:maxLines="1"
+        android:textColor="@color/selector_modifier_price"
+        android:textSize="13sp"
+        tools:text="+5 000 UZS" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

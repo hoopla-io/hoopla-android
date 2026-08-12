@@ -19,24 +19,45 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:fontFamily="@font/inter_bold"
+            android:fontFamily="@font/inter_medium"
             android:gravity="start"
-            android:textColor="@color/black_300"
-            android:textSize="16sp"
-            tools:text="Choose your milk" />
+            android:letterSpacing="0.08"
+            android:textAllCaps="true"
+            android:textColor="@color/grey_400"
+            android:textSize="12sp"
+            tools:text="Milk" />
 
+        <!-- Whether the group must be answered. The finer min/max rule, when there is one, is
+             stated on its own line below. -->
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:background="@drawable/bg_corner8_grey200"
             android:fontFamily="@font/inter_medium"
             android:gravity="end"
-            android:textColor="@color/primary_300"
-            android:textSize="12sp"
-            tools:text="Pick one" />
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
+            android:textColor="@color/grey_350"
+            android:textSize="11sp"
+            tools:text="Optional" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <!-- Only for rules the Required/Optional badge cannot express, i.e. "at least 2" / "up to 3". -->
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/rule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="4dp"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/grey_400"
+        android:textSize="12sp"
+        android:visibility="gone"
+        tools:text="Up to 3"
+        tools:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/options_rv"

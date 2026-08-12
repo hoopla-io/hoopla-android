@@ -153,6 +153,8 @@
     <string name="modifier_rule_pick_one">Выберите один</string>
     <string name="modifier_rule_at_least">Минимум %d</string>
     <string name="modifier_rule_up_to">До %d</string>
+    <string name="modifier_badge_required">Обязательно</string>
+    <string name="modifier_badge_optional">Необязательно</string>
     <string name="modifier_select_at_least">Пожалуйста, выберите минимум %1$d вариант(ов) для «%2$s»</string>
     <string name="promo_title">Промокод</string>
     <string name="promo_add">Добавить промокод</string>
@@ -263,6 +265,9 @@
     <string name="cart_order_received_message">Заказ отправлен в «%1$s»</string>
     <string name="add_to_cart">В корзину</string>
     <string name="cart_item_added">Добавлено в корзину</string>
+    <string name="order_add_with_total">Добавить · %1$s</string>
+    <string name="cart_unit_price_each">%1$s за шт.</string>
+    <string name="drink_add_to_cart">Добавить в корзину</string>
     <string name="cart_different_shop_title">Корзина из другой кофейни</string>
     <string name="cart_different_shop_message">В корзине уже есть напитки из другой кофейни.
         Очистить её и добавить этот напиток?</string>

@@ -2,7 +2,6 @@ package uz.alphazet.hoopla.ui.order
 
 import android.content.Intent
 import android.view.View
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.GridLayoutManager
@@ -35,6 +34,7 @@ import uz.alphazet.hoopla.ui.navigateTo
 import uz.alphazet.hoopla.ui.popScreen
 import uz.alphazet.hoopla.ui.profile.payment.PaymentServicesScreen
 import uz.alphazet.hoopla.ui.profile.subscriptions.SubscriptionsScreen
+import uz.alphazet.hoopla.ui.views.showTopPill
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailScreen.Companion.DRINK_DATA
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailScreen.Companion.SHOP_ID
 
@@ -46,11 +46,6 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
 
     private val shopId by lazy { arguments?.getInt(SHOP_ID, -1) ?: -1 }
     private val drinkData by lazy { arguments?.getParcelable<DrinkItemData>(DRINK_DATA) }
-
-    /** Passed straight through to checkout, where it constrains the pickup-time picker. */
-    private val workingHours by lazy {
-        arguments?.getParcelableArrayList<ShopData.WorkHour>(Constants.WORKING_HOURS)
-    }
 
     private val sizeAdapter = SizeAdapter()
     private val sugarAdapter = SizeAdapter()
@@ -66,6 +61,13 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
      * apart from any other conflict, so it is read-and-cleared as soon as one arrives.
      */
     private var pendingCartModifiers: ArrayList<ModifierItemData>? = null
+
+    /**
+     * Guards the single CTA while an add is in flight. A [CircularProgressButton]'s own
+     * `isEnabled` is unreliable mid-morph, so the flag is tracked separately — and it is what
+     * stops [renderTotal] overwriting the spinner with a price.
+     */
+    private var isAdding = false
 
     private val authListener =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -85,46 +87,70 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
 
         binding.toolbar.setNavigationOnClickListener { popScreen() }
 
-        binding.addToCart.setOnClickListener { onAddToCartClicked() }
+        // One action, whichever modifier flow is running: everything is ordered via the cart.
+        binding.order.setOnClickListener { onAddToCartClicked() }
+
+        binding.qtyMinus.setOnClickListener { stepQuantity(-1) }
+        binding.qtyPlus.setOnClickListener { stepQuantity(1) }
+        renderQuantity()
 
         sizeAdapter.setOnItemClickListener { item ->
             sizeAdapter.selectItem(item.modificationId ?: "")
-            val price = calculatePrice()
-            binding.order.text = price.formatToPrice().plus(" UZS")
+            renderTotal()
         }
         sugarAdapter.setOnItemClickListener { item ->
             sugarAdapter.selectItem(item.modificationId ?: "")
-            val price = calculatePrice()
-            binding.order.text = price.formatToPrice().plus(" UZS")
+            renderTotal()
         }
         milkAdapter.setOnItemClickListener { item ->
             milkAdapter.selectItem(item.modificationId ?: "")
-            val price = calculatePrice()
-            binding.order.text = price.formatToPrice().plus(" UZS")
+            renderTotal()
         }
         syrupAdapter.setOnItemClickListener { item ->
             syrupAdapter.selectItem(item.modificationId ?: "")
-            val price = calculatePrice()
-            binding.order.text = price.formatToPrice().plus(" UZS")
+            renderTotal()
         }
+    }
+
+    private fun stepQuantity(delta: Int) {
+        viewModel.stepQuantity(delta)
+        renderQuantity()
+    }
+
+    /** The stepper floors at one — dropping a line is the cart's job, not this screen's. */
+    private fun renderQuantity() {
+        binding.qtyValue.text = viewModel.quantity.toString()
+        val canDecrease = viewModel.quantity > OrderVM.MIN_QUANTITY
+        binding.qtyMinus.isEnabled = canDecrease
+        binding.qtyMinus.alpha = if (canDecrease) 1f else DISABLED_ALPHA
+        renderTotal()
+    }
+
+    /** What this selection, at this quantity, will cost. */
+    private fun renderTotal() {
+        if (isAdding) return // the button is showing a spinner; its text is restored on revert
+        val total = calculatePrice() * viewModel.quantity
+        binding.order.text =
+            getString(R.string.order_add_with_total, total.formatToPrice().plus(" UZS"))
     }
 
     private fun collectDetail(t: UIResource<OrderDetails>) = t.collect { data ->
         binding.image.load(data?.drink?.imageUrl)
         binding.name.text = data?.drink?.name
+        binding.drinkPrice.text = (data?.drink?.amount ?: 0.0).formatToPrice().plus(" UZS")
         binding.cafeName.text = getString(R.string.label_by_shop, data?.shop?.name)
         viewModel.defaultPrice = data?.drink?.amount
 
         val groups = data?.modifierGroups
         if (data != null && !groups.isNullOrEmpty()) {
-            setupGroups(data, groups)
+            setupGroups(groups)
         } else {
             setupLegacy(data)
         }
     }
 
     /** New flow: render the named modifier groups with their min/max rules. */
-    private fun setupGroups(data: OrderDetails, groups: List<ModifierGroupData>) {
+    private fun setupGroups(groups: List<ModifierGroupData>) {
         usingGroups = true
 
         // Hide the legacy fixed sections; the dynamic group list replaces them.
@@ -137,31 +163,13 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
         binding.modifierGroupsRv.visible()
 
         groupAdapter.setGroups(groups)
-        binding.order.text = calculatePrice().formatToPrice().plus(" UZS")
-
-        binding.order.setOnClickListener {
-            val unmet = groupAdapter.firstUnsatisfiedGroup()
-            if (unmet != null) {
-                showErrorMessage(
-                    getString(
-                        R.string.modifier_select_at_least,
-                        unmet.minSelect,
-                        unmet.name?.takeIf { it.isNotBlank() } ?: unmet.key
-                    )
-                )
-                return@setOnClickListener
-            }
-
-            val modifiers = groupAdapter.buildModifiers()
-            openCheckout(data, modifiers)
-        }
+        renderTotal()
     }
 
     /** Legacy flow: the fixed size/sugar/milk/syrup sections read from the modifications map. */
     private fun setupLegacy(data: OrderDetails?) {
         usingGroups = false
         binding.modifierGroupsRv.gone()
-        binding.order.text = data?.drink?.amount?.formatToPrice().plus(" UZS")
 
         initModification(
             binding.sugarTitle,
@@ -189,24 +197,7 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
             syrupAdapter.selectItem(syrupItems.firstOrNull()?.modificationId ?: "")
         }
 
-        val price = calculatePrice()
-        binding.order.text = price.formatToPrice().plus(" UZS")
-
-        binding.order.setOnClickListener {
-            val modifiers = buildLegacyModifiers()
-            openCheckout(data, modifiers)
-        }
-    }
-
-    private fun openCheckout(data: OrderDetails?, modifiers: ArrayList<ModifierItemData>) {
-        navigateTo(
-            CheckoutScreen.newInstance(
-                orderData = data,
-                modifiers = modifiers,
-                comment = binding.commentInput.text?.toString()?.trim(),
-                workingHours = workingHours,
-            )
-        )
+        renderTotal()
     }
 
     /** The fixed size/sugar/milk/syrup selections, as the API expects them. */
@@ -265,18 +256,29 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
      * 409 would arrive after [pendingCartModifiers] had already been consumed.
      */
     private fun sendAddToCart(modifiers: ArrayList<ModifierItemData>) {
-        if (!binding.addToCart.isEnabled) return
+        if (isAdding) return
         pendingCartModifiers = modifiers
-        binding.addToCart.isEnabled = false
+        isAdding = true
+        binding.order.isEnabled = false
+        binding.order.startAnimation()
         launch {
-            cartViewModel.addItem(shopId, drinkData?.id ?: -1, 1, modifiers)
+            cartViewModel.addItem(shopId, drinkData?.id ?: -1, viewModel.quantity, modifiers)
                 .collectLatest(::collectAddToCart)
         }
     }
 
+    /** Re-arms the CTA and puts the price back where the spinner was. */
+    private fun rearmAddToCart() {
+        if (!isAdding) return
+        isAdding = false
+        binding.order.revertAnimation()
+        binding.order.isEnabled = true
+        renderTotal()
+    }
+
     private fun collectAddToCart(t: UIResource<CartData>) = t.collect(
         onError = { throwable ->
-            binding.addToCart.isEnabled = true
+            rearmAddToCart()
             // A conflict is the one error that still needs the selection, to retry it after
             // clearing; anything else must not leave it armed for an unrelated 409 to pick up.
             if (throwable !is ConflictException) pendingCartModifiers = null
@@ -287,13 +289,19 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
             checkErrors(throwable)
         }
     ) { data ->
-        binding.addToCart.isEnabled = true
+        // Reverted before leaving rather than after: the morph needs the button still attached,
+        // and it keeps the screen consistent if the pop turns out to be a no-op.
+        rearmAddToCart()
         pendingCartModifiers = null
         // The host badges the cart tab straight from this response — its own onResume refresh
         // no longer fires now that this screen lives inside MainActivity.
         mainActivity?.onCartUpdated(data)
-        Toast.makeText(requireContext(), getString(R.string.cart_item_added), Toast.LENGTH_SHORT)
-            .show()
+        // The pill hangs off the activity's content frame, not this fragment's view, so it stays
+        // up over the menu the customer lands back on.
+        showTopPill(R.string.cart_item_added)
+        // The drink is in the cart; there is nothing left to do here. Going back also puts the
+        // menu card that was just tapped in reach, now showing its stepper.
+        popScreen()
     }
 
     /**
@@ -348,9 +356,9 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
         }
     }
 
-    /** Re-prices the order button whenever a modifier-group selection changes. */
+    /** Re-prices the CTA whenever a modifier-group selection changes. */
     private fun onModifierSelectionChanged() {
-        binding.order.text = calculatePrice().formatToPrice().plus(" UZS")
+        renderTotal()
     }
 
     private fun calculatePrice(): Double {
@@ -370,14 +378,6 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
         if (syrup != null) price += syrup.modificationPrice ?: 0.0
 
         return price
-    }
-
-    override fun showLoading() {
-        binding.order.startAnimation()
-    }
-
-    override fun hideLoading() {
-        binding.order.revertAnimation()
     }
 
     override fun onPaymentException(
@@ -401,6 +401,9 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
     }
 
     companion object {
+        /** How far the stepper's minus fades once quantity is at its floor. */
+        private const val DISABLED_ALPHA = 0.35f
+
         fun newInstance(
             shopId: Int,
             drink: DrinkItemData?,

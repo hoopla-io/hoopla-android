@@ -24,8 +24,8 @@
         android:layout_height="0dp"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:paddingBottom="200dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@id/bottom_bar"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,50 +34,63 @@
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/image"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_margin="16dp"
-                android:background="@color/grey_500"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/grey_200"
+                android:contentDescription="@null"
                 android:scaleType="centerCrop"
+                app:layout_constraintDimensionRatio="H,4:3"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_percent="0.5"
-                app:shapeAppearanceOverlay="@style/ImageAppearanceCorner20" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:fontFamily="@font/inter_bold"
                 android:paddingHorizontal="16dp"
-                android:textColor="@color/black_400"
+                android:textColor="@color/black_300"
                 android:textSize="24sp"
-                app:layout_constraintBottom_toTopOf="@id/cafe_name"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/image"
-                app:layout_constraintTop_toTopOf="@id/image"
-                app:layout_constraintVertical_chainStyle="packed"
-                tools:text="Cappuccino" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/image"
+                tools:text="Green Tea" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/drink_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:fontFamily="@font/inter_bold"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/primary"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/name"
+                tools:text="500 UZS" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/cafe_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/inter_medium"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/inter_regular"
                 android:paddingHorizontal="16dp"
-                android:textColor="@color/black_400"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@id/image"
+                android:textColor="@color/grey_400"
+                android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/image"
-                app:layout_constraintTop_toBottomOf="@id/name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/drink_price"
                 tools:text="@string/label_by_shop" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@id/image">
+                app:layout_constraintTop_toBottomOf="@id/cafe_name">
 
                 <!-- Dynamic modifier groups (new). Shown when validate-order returns modifierGroups;
                      the legacy size/sugar/milk/syrup sections below are hidden in that case. -->
@@ -100,11 +113,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="@font/inter_bold"
+                    android:fontFamily="@font/inter_medium"
                     android:gravity="start"
+                    android:letterSpacing="0.08"
                     android:text="@string/drink_size_"
-                    android:textColor="@color/black_300"
-                    android:textSize="16sp" />
+                    android:textAllCaps="true"
+                    android:textColor="@color/grey_400"
+                    android:textSize="12sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/sizes"
@@ -128,11 +143,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="@font/inter_bold"
+                    android:fontFamily="@font/inter_medium"
                     android:gravity="start"
+                    android:letterSpacing="0.08"
                     android:text="@string/sugar_"
-                    android:textColor="@color/black_300"
-                    android:textSize="16sp" />
+                    android:textAllCaps="true"
+                    android:textColor="@color/grey_400"
+                    android:textSize="12sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/sugars"
@@ -157,22 +174,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="@font/inter_bold"
+                    android:fontFamily="@font/inter_medium"
                     android:gravity="start"
+                    android:letterSpacing="0.08"
                     android:text="@string/milk_"
-                    android:textColor="@color/black_300"
-                    android:textSize="16sp" />
-
-                <RadioGroup
-                    android:id="@+id/milk_types_rg"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:clipToPadding="false"
-                    android:paddingHorizontal="16dp">
-
-
-                </RadioGroup>
+                    android:textAllCaps="true"
+                    android:textColor="@color/grey_400"
+                    android:textSize="12sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/milk_types"
@@ -193,11 +201,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="16dp"
                     android:layout_marginTop="16dp"
-                    android:fontFamily="@font/inter_bold"
+                    android:fontFamily="@font/inter_medium"
                     android:gravity="start"
+                    android:letterSpacing="0.08"
                     android:text="@string/syrup_"
-                    android:textColor="@color/black_300"
-                    android:textSize="16sp" />
+                    android:textAllCaps="true"
+                    android:textColor="@color/grey_400"
+                    android:textSize="12sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/syrups"
@@ -212,82 +222,97 @@
                     tools:itemCount="7"
                     tools:listitem="@layout/item_drink_modification" />
 
-                <TextView
-                    android:id="@+id/comment_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="16dp"
-                    android:fontFamily="@font/inter_bold"
-                    android:gravity="start"
-                    android:text="@string/order_comment_title"
-                    android:textColor="@color/black_300"
-                    android:textSize="16sp" />
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/comment_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/bg_input"
-                    android:fontFamily="@font/inter_regular"
-                    android:gravity="top"
-                    android:hint="@string/order_comment_hint"
-                    android:imeOptions="actionDone"
-                    android:inputType="textMultiLine|textCapSentences"
-                    android:maxLines="3"
-                    android:minLines="2"
-                    android:padding="16dp"
-                    android:textSize="15sp" />
+                <!-- The order comment lives on the cart screen now: it applies to the whole
+                     order, and add-to-cart has nowhere to send a per-drink note. -->
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:background="@drawable/bg_bottom_sheet_dialog_fragment"
-        android:elevation="2dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@id/add_to_cart" />
-
     <!--
-        Secondary action: keep building an order instead of paying for this drink on its own.
-        A plain view rather than a second CircularProgressButton so the morphing price button
-        below stays the only thing that animates.
+        The only action on this screen: everything is ordered through the cart. The stepper sets
+        how many of this exact selection go in, and the button carries what they come to.
     -->
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/add_to_cart"
-        android:layout_width="0dp"
-        android:layout_height="52dp"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="12dp"
-        android:background="@drawable/bg_corner14_width_primary300"
-        android:elevation="2dp"
-        android:fontFamily="@font/inter_medium"
-        android:gravity="center"
-        android:text="@string/add_to_cart"
-        android:textColor="@color/primary"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@id/order"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
-        android:id="@+id/order"
-        style="@style/PrimaryColorButtonStyle"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_gravity="bottom"
-        android:text="@string/order"
-        android:textAllCaps="false"
-        app:finalCornerAngle="10dp"
-        app:initialCornerAngle="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:spinning_bar_color="@color/white"
-        app:spinning_bar_padding="6dp"
-        app:spinning_bar_width="4dp" />
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="12dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/quantity_stepper"
+            android:layout_width="wrap_content"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_corner28_grey300"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="4dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/qty_minus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle_grey200"
+                android:contentDescription="@string/cart_decrease_quantity"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_minus"
+                app:tint="@color/black_300" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/qty_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:gravity="center"
+                android:minWidth="36dp"
+                android:textColor="@color/black_300"
+                android:textSize="16sp"
+                tools:text="4" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/qty_plus"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_circle_primary"
+                android:contentDescription="@string/cart_increase_quantity"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_plus"
+                app:tint="@color/white" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <!-- Deliberately not @style/PrimaryColorButtonStyle: that style hardcodes
+             match_parent plus its own margins, which a LinearLayout child cannot honour. -->
+        <com.github.leandroborgesferreira.loadingbutton.customViews.CircularProgressButton
+            android:id="@+id/order"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_corner28_primary300"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:finalCornerAngle="26dp"
+            app:initialCornerAngle="26dp"
+            app:spinning_bar_color="@color/white"
+            app:spinning_bar_padding="6dp"
+            app:spinning_bar_width="4dp"
+            tools:text="Add · 22 000 UZS" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

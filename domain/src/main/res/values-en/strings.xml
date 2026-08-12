@@ -149,6 +149,8 @@
     <string name="modifier_rule_pick_one">Pick one</string>
     <string name="modifier_rule_at_least">Choose at least %d</string>
     <string name="modifier_rule_up_to">Up to %d</string>
+    <string name="modifier_badge_required">Required</string>
+    <string name="modifier_badge_optional">Optional</string>
     <string name="modifier_select_at_least">Please select at least %1$d option(s) for \"%2$s\"</string>
     <string name="promo_title">Promocode</string>
     <string name="promo_add">Add promocode</string>
@@ -259,6 +261,9 @@
     <string name="cart_order_received_message">Your order has been sent to %1$s</string>
     <string name="add_to_cart">Add to cart</string>
     <string name="cart_item_added">Added to cart</string>
+    <string name="order_add_with_total">Add · %1$s</string>
+    <string name="cart_unit_price_each">%1$s each</string>
+    <string name="drink_add_to_cart">Add to cart</string>
     <string name="cart_different_shop_title">Cart from another cafe</string>
     <string name="cart_different_shop_message">Your cart already has drinks from another cafe.
         Clear it and add this drink?</string>

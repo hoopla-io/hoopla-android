@@ -6,6 +6,8 @@ import uz.alphazet.data.models.order.OrderDetails.ModificationItem
 import uz.alphazet.domain.rv.BaseAdapter
 import uz.alphazet.domain.rv.BaseVH
 import uz.alphazet.domain.utils.formatToPrice
+import uz.alphazet.domain.utils.gone
+import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ItemDrinkModificationBinding
 
@@ -38,10 +40,24 @@ class ModificationAdapter : BaseAdapter<ModificationItem>() {
         override fun bind(position: Int) {
             val itemData = getItem(absoluteAdapterPosition) ?: return
 
-            binding.checkbox.isChecked = itemData.modificationId.equals(selectedItemId)
+            // Same selectable pill row as the dynamic groups use — see item_drink_modification.xml.
+            val isOn = itemData.modificationId.equals(selectedItemId)
+            binding.root.isSelected = isOn
+            binding.checkbox.isSelected = isOn
+            binding.checkbox.setImageResource(
+                if (isOn) uz.alphazet.domain.R.drawable.ic_check_small else 0
+            )
+            binding.summa.isSelected = isOn
 
             binding.sizeName.text = itemData.modificationName
-            binding.summa.text = "+${itemData.modificationPrice?.formatToPrice()} UZS"
+
+            val delta = itemData.modificationPrice ?: 0.0
+            if (delta > 0.0) {
+                binding.summa.visible()
+                binding.summa.text = "+${delta.formatToPrice()} UZS"
+            } else {
+                binding.summa.gone()
+            }
         }
     }
 

@@ -44,37 +44,112 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/price"
         android:layout_width="0dp"
-        android:layout_height="28dp"
-        android:layout_marginBottom="4dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="6dp"
         android:fontFamily="@font/inter_bold"
         android:gravity="start|center_vertical"
         android:maxLines="1"
         android:paddingHorizontal="10dp"
         android:textAllCaps="false"
-        android:textColor="@color/black"
-        app:autoSizeMaxTextSize="18sp"
-        app:autoSizeMinTextSize="11sp"
+        android:textColor="@color/primary"
+        app:autoSizeMaxTextSize="16sp"
+        app:autoSizeMinTextSize="10sp"
         app:autoSizeStepGranularity="1sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/order"
+        app:layout_constraintEnd_toStartOf="@id/action_barrier"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/name"
-        tools:text="12 000 UZS" />
+        tools:text="23 000 UZS" />
 
+    <!--
+        Keeps the price clear of whichever control is showing. barrierAllowsGoneWidgets must stay
+        false: the default would let the barrier collapse onto the hidden one.
+    -->
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/action_barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierAllowsGoneWidgets="false"
+        app:barrierDirection="start"
+        app:constraint_referenced_ids="add,stepper" />
+
+    <!-- Shown when this drink is not in the cart, or is in it more than once. -->
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/order"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:id="@+id/add"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_margin="8dp"
-        android:background="@drawable/bg_corner14_primary300"
-        android:backgroundTint="@color/primary"
+        android:background="@drawable/bg_circle_primary"
+        android:contentDescription="@string/drink_add_to_cart"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:padding="7dp"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_arrow_right_black300"
+        android:src="@drawable/ic_plus"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="@color/white" />
+
+    <!-- Covers the round-trip that decides whether this drink needs its options picked. -->
+    <ProgressBar
+        android:id="@+id/add_progress"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:indeterminateTint="@color/primary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/add"
+        app:layout_constraintEnd_toEndOf="@id/add"
+        app:layout_constraintStart_toStartOf="@id/add"
+        app:layout_constraintTop_toTopOf="@id/add"
+        tools:visibility="visible" />
+
+    <!-- Shown only when exactly one uncustomised cart line holds this drink. -->
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/stepper"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/bg_corner18_grey200"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name"
-        app:tint="@color/white" />
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/minus"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cart_decrease_quantity"
+            android:padding="7dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_minus"
+            app:tint="@color/black_300" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:minWidth="20dp"
+            android:textColor="@color/black_300"
+            android:textSize="14sp"
+            tools:text="1" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/plus"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cart_increase_quantity"
+            android:padding="7dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_plus"
+            app:tint="@color/primary" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

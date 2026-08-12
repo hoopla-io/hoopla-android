@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    One cart line. Rows sit flush inside the screen's single white card and are told apart by a
+    hairline rather than by each carrying its own card.
+-->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="6dp"
-    android:background="@drawable/bg_corner14_grey200"
-    android:backgroundTint="@color/grey_300"
+    android:paddingHorizontal="16dp"
     android:paddingVertical="14dp">
+
+    <!-- Separates this line from the one above; hidden on the first row. -->
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginBottom="14dp"
+        android:background="@color/grey_250"
+        app:layout_constraintBottom_toTopOf="@id/image_card"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/image_card"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:layout_marginStart="12dp"
         app:cardBackgroundColor="@color/grey_200"
         app:cardCornerRadius="12dp"
         app:cardElevation="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -44,10 +54,23 @@
         android:maxLines="2"
         android:textColor="@color/black_300"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@id/remove"
+        app:layout_constraintEnd_toStartOf="@id/lineTotal"
         app:layout_constraintStart_toEndOf="@id/image_card"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Cappuccino" />
+        app:layout_constraintTop_toTopOf="@id/image_card"
+        tools:text="Green Tea" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/lineTotal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:fontFamily="@font/inter_bold"
+        android:maxLines="1"
+        android:textColor="@color/black_300"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@id/name"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="22 000 UZS" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/modifiers"
@@ -59,83 +82,69 @@
         android:textColor="@color/grey_400"
         android:textSize="13sp"
         android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@id/remove"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image_card"
         app:layout_constraintTop_toBottomOf="@id/name"
-        tools:text="Oat milk, Large"
+        tools:text="Ice, Альтернативное молоко, Ванильный"
         tools:visibility="visible" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/remove"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginEnd="12dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="@string/cart_remove_item"
-        android:padding="6dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_trash"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/name"
-        app:tint="@color/error_300" />
-
+    <!-- The effective per-unit price, modifiers included, so this times the count is the total. -->
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/lineTotal"
+        android:id="@+id/unit_price"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="10dp"
-        android:fontFamily="@font/inter_medium"
-        android:textColor="@color/black_300"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/stepper"
-        app:layout_constraintHorizontal_bias="0"
+        android:layout_marginTop="2dp"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/grey_400"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image_card"
         app:layout_constraintTop_toBottomOf="@id/modifiers"
-        tools:text="50 000 UZS" />
+        tools:text="5 500 UZS each" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/stepper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/bg_corner14_grey200"
+        android:background="@drawable/bg_corner18_grey200"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/modifiers">
+        app:layout_constraintTop_toBottomOf="@id/unit_price">
 
+        <!-- Doubles as delete: at one, stepping down drops the line. -->
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/minus"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cart_decrease_quantity"
-            android:padding="6dp"
+            android:padding="9dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_minus"
             app:tint="@color/black_300" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/quantity"
-            android:layout_width="32dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/inter_medium"
             android:gravity="center"
+            android:minWidth="28dp"
             android:textColor="@color/black_300"
             android:textSize="16sp"
-            tools:text="2" />
+            tools:text="4" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/plus"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="36dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cart_increase_quantity"
-            android:padding="6dp"
+            android:padding="9dp"
             android:scaleType="centerInside"
             android:src="@drawable/ic_plus"
             app:tint="@color/black_300" />

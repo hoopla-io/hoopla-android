@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A modifier's surcharge: quiet until the option is actually chosen. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:color="@color/primary"
+        android:state_selected="true" />
+    <item android:color="@color/grey_400" />
+</selector>

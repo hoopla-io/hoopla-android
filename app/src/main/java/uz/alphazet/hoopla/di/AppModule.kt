@@ -24,7 +24,7 @@ object AppModule {
         factory { ProfileVM(get()) }
         factory { DevicesVM(get(), get()) }
         factory { GiftCardVM(get()) }
-        factory { ShopVM(get()) }
+        factory { ShopVM(get(), get()) }
         factory { OrderVM(get(), get()) }
         factory { OrdersVM(get(), get(), get()) }
         factory { SubscriptionVM(get()) }
@@ -32,7 +32,7 @@ object AppModule {
         factory { NotificationVM(get(), get(), get()) }
         factory { StoryViewerVM(get()) }
         factory { SearchVM(get()) }
-        factory { CartVM(get(), get(), get()) }
+        factory { CartVM(get(), get(), get(), get()) }
     }
 
 }

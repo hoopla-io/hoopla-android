@@ -1,13 +1,14 @@
 package uz.alphazet.hoopla.ui.order
 
 import android.annotation.SuppressLint
-import android.util.TypedValue
 import android.view.View
 import uz.alphazet.data.models.order.ModifierGroupData
 import uz.alphazet.data.models.order.OrderDetails.ModificationItem
 import uz.alphazet.domain.rv.BaseAdapter
 import uz.alphazet.domain.rv.BaseVH
 import uz.alphazet.domain.utils.formatToPrice
+import uz.alphazet.domain.utils.gone
+import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ItemDrinkModificationBinding
 
@@ -92,23 +93,25 @@ class ModifierOptionAdapter(
         override fun bind(position: Int) {
             val item = getItem(absoluteAdapterPosition) ?: return
 
-            applyIndicator()
-            binding.checkbox.isChecked = item.modificationId in selectedIds
-            binding.sizeName.text = item.modificationName
-            binding.summa.text = "+${item.modificationPrice?.formatToPrice()} UZS"
-        }
+            // One circle for both selection modes — single vs multi is stated by the group's
+            // Required/Optional badge now, not by a radio-vs-checkbox glyph.
+            val isOn = item.modificationId in selectedIds
+            binding.root.isSelected = isOn
+            binding.checkbox.isSelected = isOn
+            binding.checkbox.setImageResource(
+                if (isOn) uz.alphazet.domain.R.drawable.ic_check_small else 0
+            )
+            binding.summa.isSelected = isOn
 
-        /** Radio glyph for single-select groups, checkbox glyph for multi-select. */
-        private fun applyIndicator() {
-            val attr = if (group.isSingleSelect)
-                android.R.attr.listChoiceIndicatorSingle
-            else
-                android.R.attr.listChoiceIndicatorMultiple
-            val typedValue = TypedValue()
-            if (binding.root.context.theme.resolveAttribute(attr, typedValue, true) &&
-                typedValue.resourceId != 0
-            ) {
-                binding.checkbox.setButtonDrawable(typedValue.resourceId)
+            binding.sizeName.text = item.modificationName
+
+            // An option that costs nothing says nothing, rather than "+0 UZS".
+            val delta = item.modificationPrice ?: 0.0
+            if (delta > 0.0) {
+                binding.summa.visible()
+                binding.summa.text = "+${delta.formatToPrice()} UZS"
+            } else {
+                binding.summa.gone()
             }
         }
     }

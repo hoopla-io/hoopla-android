@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Background of one modifier option row. Selection is carried by the row's own selected state
+    rather than a radio/checkbox glyph, so single- and multi-select groups look identical.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@drawable/bg_corner28_white_stroke_primary"
+        android:state_selected="true" />
+    <item android:drawable="@drawable/bg_corner28_white_stroke_grey" />
+</selector>

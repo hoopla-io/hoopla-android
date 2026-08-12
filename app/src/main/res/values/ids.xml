@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Key for the pending hide callback TopPillToast stashes on the pill it is showing. -->
+    <item name="top_pill_hide_runnable" type="id" />
+</resources>

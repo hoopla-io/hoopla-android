@@ -1,7 +1,10 @@
 package uz.alphazet.hoopla.ui.cart
 
+import android.content.res.ColorStateList
 import android.view.View
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
 import coil3.load
@@ -113,27 +116,58 @@ class CartItemAdapter : BaseAdapter<CartItemData>() {
                 binding.modifiers.text = modifiers.joinToString(", ")
             }
 
+            // Rows sit flush in one card, so only the joins between them are drawn.
+            binding.divider.isVisible = absoluteAdapterPosition > 0
+
             val quantity = item.quantity ?: 0
             binding.quantity.text = quantity.toString()
             binding.lineTotal.text = (item.lineTotal ?: 0.0).formatToPrice().plus(" UZS")
+
+            // What one of these costs with its modifiers, so this times the count is the total.
+            binding.unitPrice.text = binding.root.context.getString(
+                uz.alphazet.domain.R.string.cart_unit_price_each,
+                (item.unitPrice ?: 0.0).formatToPrice().plus(" UZS")
+            )
+
+            bindMinusAsRemoveAtOne(quantity)
 
             // The listeners re-read the row rather than closing over `item`/`quantity`: a tap
             // arriving after the list was rebound would otherwise step from a stale count.
             binding.minus.setOnClickListener {
                 val current = currentItem() ?: return@setOnClickListener
-                // Stepping below one is how a line is dropped, so the server is told 0 rather
-                // than being sent an invalid quantity.
-                onQuantityChangeListener
-                    ?.invoke(current, ((current.quantity ?: 0) - 1).coerceAtLeast(0))
+                // The last one down drops the line, which is the route that offers an undo.
+                if ((current.quantity ?: 0) <= 1) onRemoveClickListener?.invoke(current)
+                else onQuantityChangeListener?.invoke(current, (current.quantity ?: 0) - 1)
             }
             binding.plus.setOnClickListener {
                 val current = currentItem() ?: return@setOnClickListener
                 onQuantityChangeListener?.invoke(current, (current.quantity ?: 0) + 1)
             }
-            binding.remove.setOnClickListener {
-                val current = currentItem() ?: return@setOnClickListener
-                onRemoveClickListener?.invoke(current)
-            }
+        }
+
+        /**
+         * The minus control doubles as delete. There is no view state for "quantity is one", so
+         * the glyph, its tint and its label are swapped here rather than in a selector.
+         */
+        private fun bindMinusAsRemoveAtOne(quantity: Int) {
+            val removing = quantity <= 1
+            val context = binding.root.context
+
+            binding.minus.setImageResource(
+                if (removing) uz.alphazet.domain.R.drawable.ic_trash
+                else uz.alphazet.domain.R.drawable.ic_minus
+            )
+            binding.minus.imageTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    context,
+                    if (removing) uz.alphazet.domain.R.color.error_300
+                    else uz.alphazet.domain.R.color.black_300
+                )
+            )
+            binding.minus.contentDescription = context.getString(
+                if (removing) uz.alphazet.domain.R.string.cart_remove_item
+                else uz.alphazet.domain.R.string.cart_decrease_quantity
+            )
         }
     }
 

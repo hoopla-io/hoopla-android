@@ -73,6 +73,9 @@
     <color name="error_400">#983A37</color>
     <color name="error_500">#843330</color>
 
+    <!-- The palette had no green; used by the "added to cart" confirmation. -->
+    <color name="success_300">#2FBF71</color>
+
 
     <color name="purple_10">#F7EEFC</color>
     <color name="purple_20">#EFDCF8</color>
