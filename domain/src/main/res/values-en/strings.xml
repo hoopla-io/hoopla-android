@@ -208,4 +208,9 @@
     <string name="last_active">Last active: %1$s</string>
     <string name="active_orders">Active orders</string>
     <string name="current_order">Current order</string>
+
+    <!-- Order status push notifications -->
+    <string name="order_status_channel_name">Order status</string>
+    <string name="order_status_notification_default_title">Order status updated</string>
+    <string name="order_status_notification_default_body">Your order status changed to: %1$s</string>
 </resources>

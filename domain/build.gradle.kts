@@ -115,6 +115,7 @@ dependencies {
     api(platform("com.google.firebase:firebase-bom:32.7.0"))
     api("com.google.firebase:firebase-analytics")
     api("com.google.firebase:firebase-crashlytics")
+    api("com.google.firebase:firebase-messaging")
 
     api(libs.play.services.maps)
     api(libs.android.maps.utils)

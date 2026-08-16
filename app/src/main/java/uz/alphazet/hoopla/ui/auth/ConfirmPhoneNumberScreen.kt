@@ -147,6 +147,8 @@ class ConfirmPhoneNumberScreen : BaseFragment(R.layout.screen_confirm_phone_numb
         cache.refreshToken = confirmData?.jwt?.refreshToken
         cache.tokenExpireAt = confirmData?.jwt?.expireAt ?: 0L
 
+        viewModel.registerPushToken()
+
         // Fetch profile to check whether the user still needs to enter a name.
         profileViewModel.getUser()
 //        replaceScreen(Screens.bottomNav())
