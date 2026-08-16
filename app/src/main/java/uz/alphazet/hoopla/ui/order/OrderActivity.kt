@@ -118,6 +118,15 @@ class OrderActivity : BaseActivity() {
     private fun collectDetail(t: UIResource<OrderDetails>) = t.collect { data ->
         binding.image.load(data?.drink?.imageUrl)
         binding.name.text = data?.drink?.name
+
+        val description = data?.drink?.description
+        if (description.isNullOrBlank()) {
+            binding.description.gone()
+        } else {
+            binding.description.text = description
+            binding.description.visible()
+        }
+
         binding.cafeName.text = getString(R.string.label_by_shop, data?.shop?.name)
         viewModel.defaultPrice = data?.drink?.amount
 

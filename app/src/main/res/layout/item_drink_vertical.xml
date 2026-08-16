@@ -42,6 +42,25 @@
         tools:text="Cappuccino" />
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="start"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:paddingHorizontal="10dp"
+        android:textColor="@color/grey_400"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/image"
+        app:layout_constraintStart_toStartOf="@id/image"
+        app:layout_constraintTop_toBottomOf="@id/name"
+        tools:text="Espresso with steamed milk"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/price"
         android:layout_width="0dp"
         android:layout_height="28dp"
@@ -59,7 +78,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/order"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/name"
+        app:layout_constraintTop_toBottomOf="@id/description"
         tools:text="12 000 UZS" />
 
     <androidx.appcompat.widget.AppCompatImageView
