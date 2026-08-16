@@ -18,9 +18,9 @@ import uz.alphazet.hoopla.ui.shop_details.ShopVM
 object AppModule {
 
     val viewModelModule = module {
-        factory { AuthVM(get()) }
+        factory { AuthVM(get(), get(), get()) }
         factory { HomeVM(get(), get(), get(), get(), get()) }
-        factory { ProfileVM(get()) }
+        factory { ProfileVM(get(), get(), get()) }
         factory { DevicesVM(get(), get()) }
         factory { GiftCardVM(get()) }
         factory { ShopVM(get()) }

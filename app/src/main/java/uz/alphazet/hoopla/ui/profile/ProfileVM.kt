@@ -8,11 +8,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.shareIn
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.UserData
+import uz.alphazet.domain.cache.AppCache
 import uz.alphazet.domain.repositories.ProfileRepo
+import uz.alphazet.domain.repositories.PushTokenRepo
 import uz.alphazet.domain.ui.BaseVM
 import uz.alphazet.domain.ui.load
+import uz.alphazet.domain.utils.log
 
-class ProfileVM(private val repo: ProfileRepo) : BaseVM() {
+class ProfileVM(
+    private val repo: ProfileRepo,
+    private val pushTokenRepo: PushTokenRepo,
+    private val appCache: AppCache
+) : BaseVM() {
 
     private val userDataEmitter: MutableStateFlow<UIResource<UserData>> =
         MutableStateFlow(UIResource.Loading)
@@ -36,8 +43,22 @@ class ProfileVM(private val repo: ProfileRepo) : BaseVM() {
     }
 
     suspend fun logout(): SharedFlow<UIResource<Any>> {
+        unregisterPushTokenBestEffort()
         return repo.logout()
             .shareIn(viewModelScope, SharingStarted.Lazily, 0)
+    }
+
+    // Best-effort: tell the backend to stop sending pushes to this device's
+    // token before the session is torn down. Fire-and-forget - must not block
+    // or fail the logout flow itself.
+    private fun unregisterPushTokenBestEffort() {
+        val token = appCache.fcmToken
+        if (token.isNullOrEmpty()) return
+
+        launch {
+            runCatching { pushTokenRepo.unregisterPushToken(token) }
+                .onFailure { it.log("ProfileVM.unregisterPushToken") }
+        }
     }
 
     suspend fun deactivate(): SharedFlow<UIResource<Any>> {

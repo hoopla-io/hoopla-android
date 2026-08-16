@@ -30,6 +30,7 @@ import uz.alphazet.data.services.NotificationService
 import uz.alphazet.data.services.OrderService
 import uz.alphazet.data.services.PaymentService
 import uz.alphazet.data.services.ProfileService
+import uz.alphazet.data.services.PushTokenService
 import uz.alphazet.data.services.OrdersService
 import uz.alphazet.data.services.PartnerService
 import uz.alphazet.data.services.ShopService
@@ -54,6 +55,7 @@ import uz.alphazet.domain.repositories.OrderHistoryDataSource
 import uz.alphazet.domain.repositories.OrderRepo
 import uz.alphazet.domain.repositories.PaymentServiceRepo
 import uz.alphazet.domain.repositories.ProfileRepo
+import uz.alphazet.domain.repositories.PushTokenRepo
 import uz.alphazet.domain.repositories.OrdersRepo
 import uz.alphazet.domain.repositories.PartnerRepo
 import uz.alphazet.domain.repositories.ShopRepo
@@ -90,6 +92,7 @@ object Modules {
         single { providePartnerService(get()) }
         single { provideGiftCardService(get()) }
         single { provideDevicesService(get()) }
+        single { providePushTokenService(get()) }
     }
 
     val repositoryModule = module {
@@ -109,6 +112,7 @@ object Modules {
         factory { PartnerRepo(get()) }
         factory { GiftCardRepo(get()) }
         factory { DeviceRepo(get()) }
+        factory { PushTokenRepo(get(), get()) }
     }
 
     private fun provideAuthService(retrofit: Retrofit) = retrofit.create(AuthService::class.java)
@@ -144,6 +148,9 @@ object Modules {
 
     private fun provideDevicesService(retrofit: Retrofit) =
         retrofit.create(DevicesService::class.java)
+
+    private fun providePushTokenService(retrofit: Retrofit) =
+        retrofit.create(PushTokenService::class.java)
 
     private fun provideAppCacheSharedPreferences(
         context: Context
