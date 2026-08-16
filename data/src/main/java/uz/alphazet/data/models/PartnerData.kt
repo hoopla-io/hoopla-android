@@ -31,7 +31,8 @@ data class DrinkItemData(
     val name: String?,
     val pictureUrl: String?,
     val productPrice: Double?,
-    val categoryName: String? = null
+    val categoryName: String? = null,
+    val description: String? = null
 ) : BaseItem, Parcelable {
     override val uniqueId: String
         get() = id.toString()

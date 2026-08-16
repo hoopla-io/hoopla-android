@@ -42,7 +42,8 @@ data class OrderDetails(
         val id: Int?,
         val name: String?,
         val amount: Double?,
-        val imageUrl: String?
+        val imageUrl: String?,
+        val description: String? = null
     ) : Parcelable
 
     @Parcelize

@@ -58,12 +58,30 @@
                 android:paddingHorizontal="16dp"
                 android:textColor="@color/black_400"
                 android:textSize="24sp"
-                app:layout_constraintBottom_toTopOf="@id/cafe_name"
+                app:layout_constraintBottom_toTopOf="@id/description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/image"
                 app:layout_constraintTop_toTopOf="@id/image"
                 app:layout_constraintVertical_chainStyle="packed"
                 tools:text="Cappuccino" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_regular"
+                android:maxLines="3"
+                android:ellipsize="end"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/grey_400"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@id/cafe_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/image"
+                app:layout_constraintTop_toBottomOf="@id/name"
+                tools:text="Espresso with steamed milk"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/cafe_name"
@@ -76,7 +94,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/image"
-                app:layout_constraintTop_toBottomOf="@id/name"
+                app:layout_constraintTop_toBottomOf="@id/description"
                 tools:text="@string/label_by_shop" />
 
             <androidx.appcompat.widget.LinearLayoutCompat
