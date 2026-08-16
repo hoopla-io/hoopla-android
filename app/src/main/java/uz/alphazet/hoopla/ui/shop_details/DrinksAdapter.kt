@@ -29,6 +29,14 @@ class DrinksAdapter : BaseAdapter<DrinkItemData>() {
 
             binding.price.text = itemData.productPrice?.formatToPrice().plus(" UZS")
 
+            val ratingCount = itemData.ratingCount ?: 0
+            val ratingAvg = itemData.ratingAvg
+            if (ratingCount > 0 && ratingAvg != null) {
+                binding.rating.visibility = View.VISIBLE
+                binding.rating.text = "%.1f (%d)".format(ratingAvg, ratingCount)
+            } else {
+                binding.rating.visibility = View.GONE
+            }
         }
     }
 
