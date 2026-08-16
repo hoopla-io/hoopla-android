@@ -31,7 +31,12 @@ data class DrinkItemData(
     val name: String?,
     val pictureUrl: String?,
     val productPrice: Double?,
-    val categoryName: String? = null
+    val categoryName: String? = null,
+    // Cached chain-wide rating aggregate for this drink (see hoopla-api
+    // migration 000029). ratingAvg is null until the drink has at least one
+    // rating -- distinguish "unrated" from "rated 0" in the UI.
+    val ratingAvg: Double? = null,
+    val ratingCount: Int? = null
 ) : BaseItem, Parcelable {
     override val uniqueId: String
         get() = id.toString()
