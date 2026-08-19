@@ -1,12 +1,18 @@
 package uz.alphazet.hoopla.ui.cart
 
+import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
+import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
 import androidx.recyclerview.widget.RecyclerView
+import coil3.asImage
 import coil3.load
 import coil3.request.error
 import coil3.request.placeholder
@@ -18,6 +24,7 @@ import uz.alphazet.domain.utils.gone
 import uz.alphazet.domain.utils.visible
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ItemCartBinding
+import uz.alphazet.hoopla.databinding.ItemCartModifierBinding
 
 /**
  * One row per cart line. BaseAdapter only wires a click on the whole row, so the quantity and
@@ -94,41 +101,23 @@ class CartItemAdapter : BaseAdapter<CartItemData>() {
             // picture still reads fine, so a miss is not worth surfacing.
             val imageUrl = item.drinkId?.let { drinkImages[it] }
             if (imageUrl == null) {
-                binding.image.setImageResource(uz.alphazet.domain.R.drawable.ic_coffee_cup)
+                binding.image.setImageDrawable(placeholder(binding.root.context))
                 binding.image.setPadding(PLACEHOLDER_PADDING_PX)
                 binding.image.scaleType = ImageView.ScaleType.CENTER_INSIDE
             } else {
                 binding.image.setPadding(0)
                 binding.image.scaleType = ImageView.ScaleType.CENTER_CROP
                 binding.image.load(imageUrl) {
-                    placeholder(uz.alphazet.domain.R.drawable.ic_coffee_cup)
-                    error(uz.alphazet.domain.R.drawable.ic_coffee_cup)
+                    placeholder(placeholder(binding.root.context)?.asImage())
+                    error(placeholder(binding.root.context)?.asImage())
                 }
             }
-
-            // Every modifier the line was added with, on one line under the name. The cart
-            // response has no ids for these, so they are display-only.
-            val modifiers = item.modifiers.orEmpty().mapNotNull { it.name?.takeIf(String::isNotBlank) }
-            if (modifiers.isEmpty()) {
-                binding.modifiers.gone()
-            } else {
-                binding.modifiers.visible()
-                binding.modifiers.text = modifiers.joinToString(", ")
-            }
-
-            // Rows sit flush in one card, so only the joins between them are drawn.
-            binding.divider.isVisible = absoluteAdapterPosition > 0
 
             val quantity = item.quantity ?: 0
             binding.quantity.text = quantity.toString()
             binding.lineTotal.text = (item.lineTotal ?: 0.0).formatToPrice().plus(" UZS")
 
-            // What one of these costs with its modifiers, so this times the count is the total.
-            binding.unitPrice.text = binding.root.context.getString(
-                uz.alphazet.domain.R.string.cart_unit_price_each,
-                (item.unitPrice ?: 0.0).formatToPrice().plus(" UZS")
-            )
-
+            bindDetails(item, quantity)
             bindMinusAsRemoveAtOne(quantity)
 
             // The listeners re-read the row rather than closing over `item`/`quantity`: a tap
@@ -142,6 +131,64 @@ class CartItemAdapter : BaseAdapter<CartItemData>() {
             binding.plus.setOnClickListener {
                 val current = currentItem() ?: return@setOnClickListener
                 onQuantityChangeListener?.invoke(current, (current.quantity ?: 0) + 1)
+            }
+        }
+
+        /**
+         * What the line is made of, under its name: every modifier it was added with — the
+         * choice on the left, what it adds on the right — and then, only when the line holds
+         * more than one drink, what a single one of them costs. The price beside the stepper is
+         * the whole line, so that last figure is worth stating only when the two differ.
+         *
+         * The rows are built here because both counts vary per line. The cart response has no
+         * ids for the modifiers, so they are display-only.
+         */
+        private fun bindDetails(item: CartItemData, quantity: Int) {
+            val container = binding.details
+            val modifiers = item.modifiers.orEmpty().filter { !it.name.isNullOrBlank() }
+            val showsUnitPrice = quantity > 1
+
+            container.removeAllViews()
+            if (modifiers.isEmpty() && !showsUnitPrice) {
+                container.gone()
+                return
+            }
+            container.visible()
+
+            modifiers.forEach { modifier ->
+                // A choice that costs nothing says nothing, matching the options screen.
+                val price = modifier.price ?: 0.0
+                addDetailRow(
+                    label = modifier.name.orEmpty(),
+                    trailing = "+".plus(price.formatToPrice()).takeIf { price > 0.0 }
+                )
+            }
+
+            if (showsUnitPrice) {
+                addDetailRow(
+                    label = container.context.getString(
+                        uz.alphazet.domain.R.string.cart_unit_price_each,
+                        (item.unitPrice ?: 0.0).formatToPrice().plus(" UZS")
+                    ),
+                    trailing = null
+                )
+            }
+        }
+
+        /** Appends one line to the detail block, spaced off whatever is already in it. */
+        private fun addDetailRow(label: String, trailing: String?) {
+            val container = binding.details
+            val row = ItemCartModifierBinding.inflate(
+                LayoutInflater.from(container.context), container, true
+            )
+
+            row.modifierName.text = label
+            row.modifierPrice.isVisible = trailing != null
+            row.modifierPrice.text = trailing.orEmpty()
+
+            if (container.childCount > 1) {
+                (row.root.layoutParams as ViewGroup.MarginLayoutParams).topMargin =
+                    container.dp(DETAIL_ROW_GAP_DP)
             }
         }
 
@@ -169,11 +216,29 @@ class CartItemAdapter : BaseAdapter<CartItemData>() {
                 else uz.alphazet.domain.R.string.cart_decrease_quantity
             )
         }
+
+        private fun View.dp(value: Float): Int = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, value, resources.displayMetrics
+        ).toInt()
     }
+
+    /**
+     * The stand-in glyph, tinted. `ic_coffee_cup` is drawn in white — it only ever read against
+     * the grey tile the picture used to sit on, and the row is white now.
+     */
+    private fun placeholder(context: Context): Drawable? =
+        ContextCompat.getDrawable(context, uz.alphazet.domain.R.drawable.ic_coffee_cup)
+            ?.mutate()
+            ?.apply {
+                setTint(ContextCompat.getColor(context, uz.alphazet.domain.R.color.grey_250))
+            }
 
     private companion object {
         /** Inset for the placeholder glyph, which is an icon rather than a photo. */
         const val PLACEHOLDER_PADDING_PX = 16
+
+        /** Space between two rows of the detail block, as the design sets it. */
+        const val DETAIL_ROW_GAP_DP = 7f
     }
 
 }

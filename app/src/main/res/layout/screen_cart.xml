@@ -67,14 +67,13 @@
                 android:textSize="14sp"
                 tools:text="3 items" />
 
-            <!-- One card for the whole order; the rows inside it draw their own separators. -->
+            <!-- Every line is its own card; the gap between them comes from the row itself. -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/cart_rv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="12dp"
-                android:background="@drawable/bg_corner16_white"
                 android:nestedScrollingEnabled="false"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:itemCount="2"
@@ -86,7 +85,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="2dp"
                 android:background="@drawable/bg_corner16_grey300"
                 android:minHeight="56dp"
                 android:orientation="vertical"

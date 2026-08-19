@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One modifier line inside a cart row: what was chosen on the left, what it adds on the right.
+    Inflated per modifier by CartItemAdapter, which also spaces the rows apart.
+-->
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:baselineAligned="true"
+    android:orientation="horizontal">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/modifier_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:fontFamily="@font/inter_regular"
+        android:maxLines="2"
+        android:textColor="@color/grey_350"
+        android:textSize="14sp"
+        tools:text="Hazelnut milk" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/modifier_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:fontFamily="@font/inter_regular"
+        android:maxLines="1"
+        android:textColor="@color/grey_400"
+        android:textSize="14sp"
+        tools:text="+10 000" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
