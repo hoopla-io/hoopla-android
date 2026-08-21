@@ -5,6 +5,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.os.bundleOf
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import coil3.load
 import com.google.android.material.chip.Chip
@@ -169,8 +170,22 @@ class ShopDetailScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_shop_de
     private fun setupAppBarAnimation() {
         binding.appBar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             val totalScrollRange = appBarLayout.totalScrollRange
+            if (totalScrollRange == 0) return@addOnOffsetChangedListener
             val percentage = abs(verticalOffset).toFloat() / totalScrollRange.toFloat()
             binding.headerImage.alpha = 1f - (percentage * 0.3f)
+
+            // The info block now collapses with the header. `remaining` is how much scroll is left
+            // before it is fully collapsed, and it equals the block's own height exactly when the
+            // block reaches the toolbar — so fading it out over the stretch before that keeps it
+            // from showing through the toolbar while the content scrim is still transparent.
+            val infoHeight = binding.headerInfo.height.coerceAtLeast(1)
+            val remaining = (totalScrollRange + verticalOffset).toFloat()
+            val infoAlpha = ((remaining - infoHeight) / infoHeight).coerceIn(0f, 1f)
+            binding.headerInfo.alpha = infoAlpha
+            // Alpha alone still takes touches, so a block faded past the point of being seen would
+            // keep dialling the shop when the empty strip is tapped. INVISIBLE drops it out of
+            // touch dispatch while keeping its height, which the header's scroll range depends on.
+            binding.headerInfo.isInvisible = infoAlpha < 0.1f
         }
 
         binding.nestedScroll.setOnScrollChangeListener { _, _, scrollY, _, _ ->
