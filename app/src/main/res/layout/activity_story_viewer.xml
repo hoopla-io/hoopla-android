@@ -1,26 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Full-bleed, edge-to-edge. Each page (StoryGroupFragment) insets its own chrome. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    android:fitsSystemWindows="true">
+    android:background="@color/black">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/outer_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <ImageButton
-        android:id="@+id/btn_close"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="top|end"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="12dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:scaleType="centerInside"
-        android:src="@drawable/ic_close"
-        app:tint="@color/white" />
 </FrameLayout>

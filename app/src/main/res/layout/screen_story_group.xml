@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    One story group. The slide pager draws full-bleed under the system bars;
+    top_chrome / cta_container / state views are padded by the window insets in code.
+    Z-order (bottom → top): pager, scrims, tap zones, state views, chrome.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,14 +20,14 @@
     <View
         android:id="@+id/bottom_scrim"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
+        android:layout_height="260dp"
         android:layout_gravity="bottom"
         android:background="@drawable/bg_story_overlay_gradient" />
 
     <View
         android:id="@+id/top_scrim"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="160dp"
         android:layout_gravity="top"
         android:background="@drawable/bg_story_top_scrim" />
 
@@ -37,13 +42,60 @@
             android:id="@+id/left_zone"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:contentDescription="@string/story_previous" />
 
         <View
             android:id="@+id/right_zone"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="2"
+            android:contentDescription="@string/story_next" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loading"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="@color/white"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/error_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            tools:text="@string/story_load_failed" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/btn_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_story_retry"
+            android:fontFamily="@font/inter_medium"
+            android:gravity="center"
+            android:paddingHorizontal="22dp"
+            android:text="@string/retry"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -58,15 +110,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="12dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal" />
 
         <LinearLayout
             android:id="@+id/header_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="12dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -84,19 +137,33 @@
                     android:id="@+id/group_cover"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:importantForAccessibility="no"
                     android:scaleType="centerCrop"
                     tools:src="@drawable/ic_notification" />
             </com.google.android.material.card.MaterialCardView>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/group_title"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:ellipsize="end"
                 android:fontFamily="@font/inter_medium"
+                android:maxLines="1"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 tools:text="Story group title" />
+
+            <ImageButton
+                android:id="@+id/btn_close"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/close"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_close"
+                app:tint="@color/white" />
         </LinearLayout>
     </LinearLayout>
 
@@ -105,17 +172,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="36dp"
-        android:background="?attr/selectableItemBackground"
         android:orientation="vertical"
-        android:padding="6dp">
+        android:paddingHorizontal="20dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="28dp">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/slide_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:fontFamily="@font/inter_bold"
+            android:maxLines="2"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:visibility="gone"
@@ -127,11 +195,45 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
+            android:ellipsize="end"
             android:fontFamily="@font/inter_medium"
+            android:maxLines="4"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:visibility="gone"
             tools:text="Available at all locations"
             tools:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/btn_cta"
+            android:layout_width="wrap_content"
+            android:layout_height="44dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_story_cta"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="18dp"
+            android:paddingEnd="12dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/cta_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/inter_medium"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                tools:text="@string/story_cta_open_shop" />
+
+            <ImageView
+                android:id="@+id/cta_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="4dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_arrow_up_right"
+                app:tint="@color/black" />
+        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

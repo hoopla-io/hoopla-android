@@ -285,4 +285,13 @@
     </plurals>
     <string name="cart_checkout_with_total">Оформить заказ · %1$s</string>
 
+    <!-- Story viewer -->
+    <string name="retry">Повторить</string>
+    <string name="story_load_failed">Не удалось загрузить историю</string>
+    <string name="story_image_load_failed">Не удалось загрузить изображение</string>
+    <string name="story_cta_open_shop">Перейти в кофейню</string>
+    <string name="story_cta_learn_more">Подробнее</string>
+    <string name="story_previous">Предыдущая история</string>
+    <string name="story_next">Следующая история</string>
+
 </resources>

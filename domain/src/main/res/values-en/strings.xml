@@ -279,4 +279,13 @@
     </plurals>
     <string name="cart_checkout_with_total">Place order · %1$s</string>
 
+    <!-- Story viewer -->
+    <string name="retry">Try again</string>
+    <string name="story_load_failed">Couldn\'t load the story</string>
+    <string name="story_image_load_failed">Couldn\'t load the image</string>
+    <string name="story_cta_open_shop">Open shop</string>
+    <string name="story_cta_learn_more">Learn more</string>
+    <string name="story_previous">Previous story</string>
+    <string name="story_next">Next story</string>
+
 </resources>

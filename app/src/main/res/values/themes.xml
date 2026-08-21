@@ -19,6 +19,22 @@
          the layout paints over the fullscreen black slide area. -->
     <style name="Theme.Hoopla.StoryViewer" parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:windowBackground">@color/black</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryVariant">@color/primaryVariant</item>
+        <item name="colorSecondary">@color/primary</item>
+        <item name="colorAccent">@color/primary</item>
+        <!-- Edge-to-edge: slides draw under transparent system bars; chrome is inset in code. -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowAnimationStyle">@style/Animation.Hoopla.StoryViewer</item>
+    </style>
+
+    <style name="Animation.Hoopla.StoryViewer" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/story_open_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/story_hold</item>
+        <item name="android:activityCloseEnterAnimation">@anim/story_hold</item>
+        <item name="android:activityCloseExitAnimation">@anim/story_close_exit</item>
     </style>
 
     <!-- Full-screen dialog (e.g. gift card success). Non-floating so the

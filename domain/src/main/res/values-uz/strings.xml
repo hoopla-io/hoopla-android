@@ -279,4 +279,13 @@
     </plurals>
     <string name="cart_checkout_with_total">Buyurtma berish · %1$s</string>
 
+    <!-- Story viewer -->
+    <string name="retry">Qayta urinish</string>
+    <string name="story_load_failed">Hikoyani yuklab bo\'lmadi</string>
+    <string name="story_image_load_failed">Rasmni yuklab bo\'lmadi</string>
+    <string name="story_cta_open_shop">Kofexonaga o\'tish</string>
+    <string name="story_cta_learn_more">Batafsil</string>
+    <string name="story_previous">Oldingi hikoya</string>
+    <string name="story_next">Keyingi hikoya</string>
+
 </resources>
