@@ -24,7 +24,7 @@
             android:layout_height="0dp"
             android:background="@color/grey_200"
             android:scaleType="centerCrop"
-            app:layout_constraintDimensionRatio="H,3:2"
+            app:layout_constraintDimensionRatio="354:170"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ItemPartnerImageAppearance" />
 
