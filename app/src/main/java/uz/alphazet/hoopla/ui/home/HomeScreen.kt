@@ -51,6 +51,7 @@ import uz.alphazet.hoopla.ui.orders.ActiveOrderAdapter
 import uz.alphazet.hoopla.ui.orders.ActiveOrderStage
 import uz.alphazet.hoopla.ui.orders.OrderInfoScreen
 import uz.alphazet.hoopla.ui.orders.OrderQrCodeBD.Companion.showOrderQrCodeBD
+import uz.alphazet.hoopla.ui.partner.PartnerScreen
 import uz.alphazet.hoopla.ui.search.SearchScreen
 import uz.alphazet.hoopla.ui.shop_details.ShopDetailScreen
 
@@ -96,9 +97,16 @@ class HomeScreen : BaseFragment(R.layout.screen_home), SwipeRefreshLayout.OnRefr
                 }
                 storyAdapter.submitList(updated)
             }
-            // A partner link tapped inside a story closes the viewer and lands here.
-            val shopId = result.data?.getIntExtra(StoryViewerActivity.OPEN_SHOP_ID, -1) ?: -1
-            if (shopId > 0) navigateTo(ShopDetailScreen.newInstance(shopId))
+            // A partner link tapped inside a story closes the viewer and lands here. The
+            // brand screen is handed the fix this screen already has, when there is one.
+            val partnerId = result.data?.getIntExtra(StoryViewerActivity.OPEN_PARTNER_ID, -1) ?: -1
+            if (partnerId > 0) navigateTo(
+                PartnerScreen.newInstance(
+                    partnerId = partnerId,
+                    lat = currentLocation?.latitude,
+                    long = currentLocation?.longitude,
+                )
+            )
         }
 
     private val scanQrCodeLauncher = registerForActivityResult(ScanQRCode()) { result ->

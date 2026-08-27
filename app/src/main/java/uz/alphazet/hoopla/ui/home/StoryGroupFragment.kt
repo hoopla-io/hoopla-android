@@ -56,8 +56,8 @@ class StoryGroupFragment : BaseFragment(R.layout.screen_story_group) {
         /** @return false when there is no previous group — the caller then restarts its first slide. */
         fun goToPreviousGroup(): Boolean
 
-        /** Closes the viewer and asks its launcher to open the shop's detail screen. */
-        fun openShop(shopId: Int)
+        /** Closes the viewer and asks its launcher to open the partner's screen. */
+        fun openPartner(partnerId: Int)
 
         fun closeViewer()
 
@@ -390,7 +390,7 @@ class StoryGroupFragment : BaseFragment(R.layout.screen_story_group) {
         val value = slide.linkValue?.takeIf { it.isNotBlank() } ?: return null
         return when (slide.linkType) {
             StoryLinkTypes.PARTNER ->
-                if (value.toIntOrNull() != null) getString(DomainR.string.story_cta_open_shop) else null
+                if (value.toIntOrNull() != null) getString(DomainR.string.story_cta_open_partner) else null
 
             StoryLinkTypes.URL -> getString(DomainR.string.story_cta_learn_more)
             else -> null // DRINK: no standalone drink-detail screen yet
@@ -510,10 +510,11 @@ class StoryGroupFragment : BaseFragment(R.layout.screen_story_group) {
         when (type) {
             StoryLinkTypes.URL -> requireActivity().intentToBrowser(value)
             StoryLinkTypes.PARTNER -> {
-                // The shop screen lives inside MainActivity now, so the viewer can't show it
-                // itself — it closes and hands the id back to whoever launched it.
+                // linkValue is a partner (brand) id, not a shop id. The partner screen lives
+                // inside MainActivity, so the viewer can't show it itself — it closes and hands
+                // the id back to whoever launched it.
                 val partnerId = value.toIntOrNull() ?: return
-                host?.openShop(partnerId)
+                host?.openPartner(partnerId)
             }
 
             StoryLinkTypes.DRINK -> {

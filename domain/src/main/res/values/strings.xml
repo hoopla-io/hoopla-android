@@ -289,9 +289,21 @@
     <string name="retry">Повторить</string>
     <string name="story_load_failed">Не удалось загрузить историю</string>
     <string name="story_image_load_failed">Не удалось загрузить изображение</string>
-    <string name="story_cta_open_shop">Перейти в кофейню</string>
+    <string name="story_cta_open_partner">Смотреть кофейни</string>
     <string name="story_cta_learn_more">Подробнее</string>
     <string name="story_previous">Предыдущая история</string>
     <string name="story_next">Следующая история</string>
+
+    <!-- Partner screen -->
+    <string name="partner_title">Кофейни</string>
+    <plurals name="partner_shops_count">
+        <item quantity="one">%1$d кофейня</item>
+        <item quantity="few">%1$d кофейни</item>
+        <item quantity="many">%1$d кофеен</item>
+        <item quantity="other">%1$d кофеен</item>
+    </plurals>
+    <string name="partner_no_shops">Кофеен пока нет</string>
+    <string name="partner_no_shops_message">У этого бренда пока нет работающих кофеен</string>
+    <string name="partner_load_failed">Не удалось загрузить кофейни</string>
 
 </resources>

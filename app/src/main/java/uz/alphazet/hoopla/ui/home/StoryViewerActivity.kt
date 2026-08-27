@@ -20,7 +20,7 @@ import kotlin.math.abs
 /**
  * Full-screen story viewer: a horizontal pager of story groups (one [StoryGroupFragment] per
  * story id) with a cube transition, swipe-down-to-dismiss, and a result that tells the launcher
- * which groups were viewed and whether a shop link was tapped.
+ * which groups were viewed and whether a partner link was tapped.
  */
 class StoryViewerActivity : BaseActivity(), StoryGroupFragment.Host {
 
@@ -32,8 +32,8 @@ class StoryViewerActivity : BaseActivity(), StoryGroupFragment.Host {
     /** Groups that actually showed a slide (not merely paged past / failed to load). */
     private val viewedGroupIds = linkedSetOf<Int>()
 
-    /** Shop the customer tapped inside a story; reported back for the launcher to open. */
-    private var openShopId: Int? = null
+    /** Partner the customer tapped inside a story; reported back for the launcher to open. */
+    private var openPartnerId: Int? = null
 
     // ---- swipe-down-to-dismiss state ----
     private var touchSlop = 0
@@ -114,9 +114,9 @@ class StoryViewerActivity : BaseActivity(), StoryGroupFragment.Host {
             .firstOrNull { it.isResumed }
 
     override fun finish() {
-        if (viewedGroupIds.isNotEmpty() || openShopId != null) {
+        if (viewedGroupIds.isNotEmpty() || openPartnerId != null) {
             val data = Intent().putExtra(VIEWED_IDS, viewedGroupIds.toIntArray())
-            openShopId?.let { data.putExtra(OPEN_SHOP_ID, it) }
+            openPartnerId?.let { data.putExtra(OPEN_PARTNER_ID, it) }
             setResult(RESULT_OK, data)
         }
         super.finish()
@@ -124,8 +124,8 @@ class StoryViewerActivity : BaseActivity(), StoryGroupFragment.Host {
 
     // ---- Host ---------------------------------------------------------------------------
 
-    override fun openShop(shopId: Int) {
-        openShopId = shopId
+    override fun openPartner(partnerId: Int) {
+        openPartnerId = partnerId
         finish()
     }
 
@@ -324,7 +324,7 @@ class StoryViewerActivity : BaseActivity(), StoryGroupFragment.Host {
         const val STORY_IDS = "story_ids"
         const val START_INDEX = "start_index"
         const val VIEWED_IDS = "viewed_ids"
-        const val OPEN_SHOP_ID = "open_shop_id"
+        const val OPEN_PARTNER_ID = "open_partner_id"
         private const val KEY_GROUP_INDEX = "current_group_index"
         private const val DRAG_SETTLE_MS = 220L
         private const val DRAG_DISMISS_FRACTION = 4f

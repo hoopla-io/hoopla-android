@@ -283,9 +283,19 @@
     <string name="retry">Try again</string>
     <string name="story_load_failed">Couldn\'t load the story</string>
     <string name="story_image_load_failed">Couldn\'t load the image</string>
-    <string name="story_cta_open_shop">Open shop</string>
+    <string name="story_cta_open_partner">View coffee shops</string>
     <string name="story_cta_learn_more">Learn more</string>
     <string name="story_previous">Previous story</string>
     <string name="story_next">Next story</string>
+
+    <!-- Partner screen -->
+    <string name="partner_title">Coffee shops</string>
+    <plurals name="partner_shops_count">
+        <item quantity="one">%1$d coffee shop</item>
+        <item quantity="other">%1$d coffee shops</item>
+    </plurals>
+    <string name="partner_no_shops">No coffee shops yet</string>
+    <string name="partner_no_shops_message">This brand has no open coffee shops right now</string>
+    <string name="partner_load_failed">Couldn\'t load the coffee shops</string>
 
 </resources>

@@ -224,7 +224,7 @@
                 android:fontFamily="@font/inter_medium"
                 android:textColor="@color/black"
                 android:textSize="14sp"
-                tools:text="@string/story_cta_open_shop" />
+                tools:text="@string/story_cta_open_partner" />
 
             <ImageView
                 android:id="@+id/cta_icon"

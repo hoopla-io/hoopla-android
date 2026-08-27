@@ -283,9 +283,19 @@
     <string name="retry">Qayta urinish</string>
     <string name="story_load_failed">Hikoyani yuklab bo\'lmadi</string>
     <string name="story_image_load_failed">Rasmni yuklab bo\'lmadi</string>
-    <string name="story_cta_open_shop">Kofexonaga o\'tish</string>
+    <string name="story_cta_open_partner">Kofexonalarni ko\'rish</string>
     <string name="story_cta_learn_more">Batafsil</string>
     <string name="story_previous">Oldingi hikoya</string>
     <string name="story_next">Keyingi hikoya</string>
+
+    <!-- Partner screen -->
+    <string name="partner_title">Kofexonalar</string>
+    <!-- Uzbek has a single CLDR plural form, so "other" covers every count. -->
+    <plurals name="partner_shops_count">
+        <item quantity="other">%1$d ta kofexona</item>
+    </plurals>
+    <string name="partner_no_shops">Hozircha kofexonalar yo\'q</string>
+    <string name="partner_no_shops_message">Bu brendning hozircha ochiq kofexonalari yo\'q</string>
+    <string name="partner_load_failed">Kofexonalarni yuklab bo\'lmadi</string>
 
 </resources>
