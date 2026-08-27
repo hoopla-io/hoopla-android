@@ -9,9 +9,9 @@ import uz.alphazet.data.rv.BaseItem
  * Fields are nullable for the same reason every other model here is: Gson happily writes null
  * into a non-null Kotlin property, and a missing total should render as "0", not crash.
  *
- * The response carries no shop name and no per-item picture — only [shopId] and
- * [CartItemData.drinkId]. Screens that need those resolve them from the shop data they already
- * hold (see `CartActivity`, which is handed the shop name by the screen that opened it).
+ * The response carries no shop name — only [shopId]. Screens that need it resolve it from the
+ * shop data they already hold (see `CartActivity`, which is handed the shop name by the screen
+ * that opened it).
  */
 data class CartData(
     val id: Int?,
@@ -31,6 +31,7 @@ data class CartItemData(
     val id: Int?,
     val drinkId: Int?,
     val name: String?,
+    val imageUrl: String?,
     val quantity: Int?,
     val unitPrice: Double?,
     val lineTotal: Double?,

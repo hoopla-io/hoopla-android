@@ -357,6 +357,7 @@ class CartRepoTest {
         id = 11,
         drinkId = 5,
         name = "Cappuccino",
+        imageUrl = "https://img/cappuccino.png",
         quantity = 2,
         unitPrice = 25_000.0,
         lineTotal = 50_000.0,

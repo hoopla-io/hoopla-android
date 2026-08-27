@@ -33,42 +33,6 @@ import uz.alphazet.hoopla.databinding.ItemCartModifierBinding
  */
 class CartItemAdapter : BaseAdapter<CartItemData>() {
 
-    /**
-     * drinkId -> picture, resolved from the shop's menu because the cart response carries no
-     * images. Setting it re-binds the visible rows; unknown drinks keep the placeholder.
-     */
-    var drinkImages: Map<Int, String> = emptyMap()
-        set(value) {
-            if (field == value) return
-            field = value
-            rebindRows()
-        }
-
-    private var recyclerView: RecyclerView? = null
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-        this.recyclerView = recyclerView
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        this.recyclerView = null
-    }
-
-    /**
-     * The images arrive from their own request, which can land mid-layout — notifying then
-     * throws, so it waits for the frame to finish.
-     */
-    private fun rebindRows() {
-        val view = recyclerView
-        if (view != null && (view.isComputingLayout || view.isLayoutRequested)) {
-            view.post { notifyItemRangeChanged(0, itemCount) }
-        } else {
-            notifyItemRangeChanged(0, itemCount)
-        }
-    }
-
     /** Reports the quantity the line should have; 0 means "remove this line". */
     private var onQuantityChangeListener: ((CartItemData, Int) -> Unit)? = null
     private var onRemoveClickListener: ((CartItemData) -> Unit)? = null
@@ -97,9 +61,9 @@ class CartItemAdapter : BaseAdapter<CartItemData>() {
 
             binding.name.text = item.name
 
-            // The placeholder stays for drinks the menu did not resolve — a cart row without a
-            // picture still reads fine, so a miss is not worth surfacing.
-            val imageUrl = item.drinkId?.let { drinkImages[it] }
+            // The placeholder stays for a drink the cart hands back without a picture — a row
+            // without one still reads fine, so a miss is not worth surfacing.
+            val imageUrl = item.imageUrl?.takeIf { it.isNotBlank() }
             if (imageUrl == null) {
                 binding.image.setImageDrawable(placeholder(binding.root.context))
                 binding.image.setPadding(PLACEHOLDER_PADDING_PX)

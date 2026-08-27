@@ -14,10 +14,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import uz.alphazet.data.UIResource
-import uz.alphazet.data.models.DrinkItemData
-import uz.alphazet.data.models.ShopCategoryData
 import uz.alphazet.data.models.ShopData
-import uz.alphazet.data.models.ShopDrinksData
 import uz.alphazet.data.models.UserData
 import uz.alphazet.data.models.cart.CartCountData
 import uz.alphazet.data.models.cart.CartData
@@ -48,9 +45,8 @@ class CartVMTest {
 
     @Before
     fun setUp() {
-        // loadShopContext always asks for both; tests that care override their half.
+        // loadShopContext always asks for the shop; tests that care override it.
         coEvery { shopRepo.getShopDetail(any()) } returns flowOf(UIResource.Success(null))
-        coEvery { shopRepo.getShopDrinks(any()) } returns flowOf(UIResource.Success(null))
     }
 
     // --- getCart (StateFlow-backed screen state) --------------------------
@@ -116,74 +112,24 @@ class CartVMTest {
 
         coVerify(exactly = 0) { cartRepo.getCart() }
         coVerify(exactly = 0) { profileRepo.getMe() }
-        coVerify(exactly = 0) { shopRepo.getShopDrinks(any()) }
+        coVerify(exactly = 0) { shopRepo.getShopDetail(any()) }
     }
 
-    // --- drink images (resolved from the shop menu) -----------------------
-
-    @Test
-    fun loadShopContext_maps_drinkId_to_picture() = runTest {
-        coEvery { shopRepo.getShopDrinks(3) } returns flowOf(UIResource.Success(shopDrinks()))
-
-        vm.loadShopContext(3)
-
-        assertEquals(
-            mapOf(5 to "https://img/latte.png", 7 to "https://img/raf.png"),
-            vm.drinkImagesFlow.value
-        )
-    }
-
-    /** Drinks with no picture must not become null entries the adapter has to guard. */
-    @Test
-    fun loadShopContext_skips_drinks_without_a_picture() = runTest {
-        coEvery { shopRepo.getShopDrinks(3) } returns flowOf(
-            UIResource.Success(
-                ShopDrinksData(
-                    listOf(
-                        ShopCategoryData(
-                            1, "Coffee",
-                            listOf(
-                                DrinkItemData(5, "Latte", null, 25_000.0),
-                                DrinkItemData(6, "Blank", "  ", 25_000.0)
-                            )
-                        )
-                    )
-                )
-            )
-        )
-
-        vm.loadShopContext(3)
-
-        assertTrue(vm.drinkImagesFlow.value.isEmpty())
-    }
-
-    /** A cart without pictures is still usable, so a menu failure must stay silent. */
-    @Test
-    fun loadShopContext_leaves_the_map_empty_when_the_menu_fails() = runTest {
-        coEvery { shopRepo.getShopDrinks(any()) } returns
-            flowOf(UIResource.Error(ConflictException("nope", 409)))
-
-        vm.loadShopContext(3)
-
-        assertTrue(vm.drinkImagesFlow.value.isEmpty())
-    }
+    // --- shop context (resolved from the shop endpoint) -------------------
 
     @Test
     fun loadShopContext_ignores_an_unknown_shop() = runTest {
         vm.loadShopContext(-1)
 
-        coVerify(exactly = 0) { shopRepo.getShopDrinks(any()) }
+        coVerify(exactly = 0) { shopRepo.getShopDetail(any()) }
     }
 
-    /** Re-entering the screen must not re-fetch a menu that is already resolved. */
+    /** Re-entering the screen must not re-fetch a shop that is already resolved. */
     @Test
     fun loadShopContext_only_fetches_once() = runTest {
-        coEvery { shopRepo.getShopDrinks(3) } returns flowOf(UIResource.Success(shopDrinks()))
-
         vm.loadShopContext(3)
         vm.loadShopContext(3)
 
-        coVerify(exactly = 1) { shopRepo.getShopDrinks(3) }
         coVerify(exactly = 1) { shopRepo.getShopDetail(3) }
     }
 
@@ -477,26 +423,11 @@ class CartVMTest {
         drinks = null, urls = null
     )
 
-    private fun shopDrinks() = ShopDrinksData(
-        listOf(
-            ShopCategoryData(
-                1, "Coffee",
-                listOf(
-                    DrinkItemData(5, "Latte", "https://img/latte.png", 25_000.0),
-                    DrinkItemData(6, "No picture", null, 22_000.0)
-                )
-            ),
-            ShopCategoryData(
-                2, "Specials",
-                listOf(DrinkItemData(7, "Raf", "https://img/raf.png", 30_000.0))
-            )
-        )
-    )
-
     private fun sampleItem() = CartItemData(
         id = 11,
         drinkId = 5,
         name = "Cappuccino",
+        imageUrl = "https://img/cappuccino.png",
         quantity = 2,
         unitPrice = 25_000.0,
         lineTotal = 50_000.0,

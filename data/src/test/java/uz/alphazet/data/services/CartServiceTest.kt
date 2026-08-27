@@ -36,7 +36,8 @@ class CartServiceTest {
             "id": 1, "shopId": 3, "partnerId": 9, "status": "active",
             "promoCode": null, "comment": null,
             "items": [
-              { "id": 11, "drinkId": 5, "name": "Cappuccino", "quantity": 2,
+              { "id": 11, "drinkId": 5, "name": "Cappuccino",
+                "imageUrl": "https://img/cappuccino.png", "quantity": 2,
                 "unitPrice": 25000.0, "lineTotal": 50000.0,
                 "modifiers": [ { "name": "Oat milk", "price": 5000.0 } ] }
             ],
@@ -65,6 +66,7 @@ class CartServiceTest {
         val item = cart.items!!.first()
         assertEquals(11, item.id)
         assertEquals("Cappuccino", item.name)
+        assertEquals("https://img/cappuccino.png", item.imageUrl)
         assertEquals(2, item.quantity)
         assertEquals(50000.0, item.lineTotal!!, 0.0)
         assertEquals("Oat milk", item.modifiers!!.first().name)

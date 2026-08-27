@@ -41,15 +41,7 @@ class CartVM(
         MutableStateFlow(UIResource.Loading)
     val cartFlow: StateFlow<UIResource<CartData>> get() = cartEmitter
 
-    /**
-     * drinkId -> picture, built from the shop's menu. The cart response carries no images, so
-     * they are resolved from the same menu the customer ordered from. Failure is silent: a cart
-     * without pictures is still a usable cart.
-     */
-    private val drinkImagesEmitter: MutableStateFlow<Map<Int, String>> = MutableStateFlow(emptyMap())
-    val drinkImagesFlow: StateFlow<Map<Int, String>> get() = drinkImagesEmitter
-
-    /** The cafe the cart belongs to. Also absent from the cart response. */
+    /** The cafe the cart belongs to, which the cart response does not name. */
     private val shopNameEmitter: MutableStateFlow<String?> = MutableStateFlow(null)
     val shopNameFlow: StateFlow<String?> get() = shopNameEmitter
 
@@ -57,23 +49,13 @@ class CartVM(
     private var loadedShopId: Int? = null
 
     /**
-     * Fills in what the cart response leaves out — which cafe this is and what the drinks look
-     * like — from the shop the cart belongs to. Callers that do not know the shop up front (the
-     * cart tab) can call this again once the cart names it.
+     * Fills in the one thing the cart response leaves out — which cafe this is — from the shop
+     * the cart belongs to. Callers that do not know the shop up front (the cart tab) can call
+     * this again once the cart names it. Failure is silent: a cart still works unnamed.
      */
     fun loadShopContext(shopId: Int) {
         if (shopId <= 0 || loadedShopId == shopId) return
         loadedShopId = shopId
-
-        launch {
-            val drinks = (shopRepo.getShopDrinks(shopId).firstOrNull() as? UIResource.Success)
-                ?.data?.categories?.flatMap { it?.drinks.orEmpty() }.orEmpty()
-            drinkImagesEmitter.value = drinks.mapNotNull { drink ->
-                val id = drink.id ?: return@mapNotNull null
-                val url = drink.pictureUrl?.takeIf { it.isNotBlank() } ?: return@mapNotNull null
-                id to url
-            }.toMap()
-        }
 
         launch {
             val shop = (shopRepo.getShopDetail(shopId).firstOrNull() as? UIResource.Success)?.data

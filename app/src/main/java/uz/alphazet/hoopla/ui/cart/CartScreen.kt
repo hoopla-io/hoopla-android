@@ -139,7 +139,6 @@ class CartScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_cart) {
 
         launch { viewModel.cartFlow.collectLatest(::collectCart) }
         launch { viewModel.userDataFlow.collectLatest(::collectUserData) }
-        launch { viewModel.drinkImagesFlow.collectLatest { adapter.drinkImages = it } }
         launch {
             viewModel.shopNameFlow.collectLatest { name ->
                 fetchedShopName = name

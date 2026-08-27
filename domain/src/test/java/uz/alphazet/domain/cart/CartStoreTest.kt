@@ -26,6 +26,7 @@ class CartStoreTest {
                 id = 1,
                 drinkId = 42,
                 name = "Green Tea",
+                imageUrl = null,
                 quantity = quantity,
                 unitPrice = 5500.0,
                 lineTotal = 5500.0 * quantity,
