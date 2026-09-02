@@ -42,7 +42,9 @@ data class OrderDetails(
         val id: Int?,
         val name: String?,
         val amount: Double?,
-        val imageUrl: String?
+        val imageUrl: String?,
+        // NEW — the drink's blurb, as validate-order now returns it. Older responses omit it.
+        val description: String? = null
     ) : Parcelable
 
     @Parcelize

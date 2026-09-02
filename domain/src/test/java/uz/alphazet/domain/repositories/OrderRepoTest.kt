@@ -472,7 +472,13 @@ class OrderRepoTest {
 
     private fun sampleOrderDetails(): OrderDetails = OrderDetails(
         modifications = OrderDetails.Modification(null, null, null, null),
-        drink = OrderDetails.Drink(id = 123, name = "Latte", amount = 15_000.0, imageUrl = null),
+        drink = OrderDetails.Drink(
+            id = 123,
+            name = "Latte",
+            amount = 15_000.0,
+            imageUrl = null,
+            description = "House blend"
+        ),
         shop = OrderDetails.Shop(id = 7, name = "Hoopla"),
         validatedAt = "now",
         validatedAtUnix = 1,

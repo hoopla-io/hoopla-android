@@ -89,7 +89,7 @@ class OrderVMTest {
 
     @Test
     fun validateOrder_returns_order_details() = runTest {
-        val drink = OrderDetails.Drink(5, "Latte", 25000.0, null)
+        val drink = OrderDetails.Drink(5, "Latte", 25000.0, null, "Espresso with steamed milk")
         val shop = OrderDetails.Shop(3, "Hoopla")
         val mod = OrderDetails.Modification(emptyList(), emptyList(), emptyList(), emptyList())
         val details = OrderDetails(mod, drink, shop, null, null, null)
@@ -101,6 +101,7 @@ class OrderVMTest {
             val result = awaitItem()
             assertTrue(result is UIResource.Success)
             assertEquals("Latte", (result as UIResource.Success).data?.drink?.name)
+            assertEquals("Espresso with steamed milk", result.data?.drink?.description)
             cancelAndIgnoreRemainingEvents()
         }
     }

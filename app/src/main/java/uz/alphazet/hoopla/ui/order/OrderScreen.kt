@@ -139,6 +139,15 @@ class OrderScreen : BaseFragment(uz.alphazet.hoopla.R.layout.screen_order) {
         binding.name.text = data?.drink?.name
         binding.drinkPrice.text = (data?.drink?.amount ?: 0.0).formatToPrice().plus(" UZS")
         binding.cafeName.text = getString(R.string.label_by_shop, data?.shop?.name)
+        // Not every drink carries a blurb, and this runs once per emission — so the empty case
+        // has to put the view back, not just skip it.
+        val description = data?.drink?.description
+        if (description.isNullOrBlank()) {
+            binding.drinkDescription.gone()
+        } else {
+            binding.drinkDescription.text = description
+            binding.drinkDescription.visible()
+        }
         viewModel.defaultPrice = data?.drink?.amount
 
         val groups = data?.modifierGroups

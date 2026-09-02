@@ -8,6 +8,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -44,7 +45,7 @@ class OrderServiceTest {
                       "milk": [],
                       "syrup": []
                     },
-                    "drink": {"id": 5, "name": "Latte", "amount": 25000.0, "imageUrl": "https://img/latte.png"},
+                    "drink": {"id": 5, "name": "Latte", "amount": 25000.0, "imageUrl": "https://img/latte.png", "description": "Espresso with steamed milk"},
                     "shop": {"id": 3, "name": "Hoopla Central"},
                     "validatedAt": "2026-01-01T10:00:00Z",
                     "validatedAtUnix": 1735725600
@@ -67,12 +68,43 @@ class OrderServiceTest {
         assertNotNull(details)
         assertEquals("Latte", details!!.drink?.name)
         assertEquals(25000.0, details.drink!!.amount!!, 0.0)
+        assertEquals("Espresso with steamed milk", details.drink!!.description)
         assertEquals("Hoopla Central", details.shop?.name)
         val sizes = details.modifications.size
         assertNotNull(sizes)
         assertEquals(1, sizes!!.size)
         assertEquals("Large", sizes[0]?.modificationName)
         assertEquals(1000.0, sizes[0]?.modificationPrice!!, 0.0)
+    }
+
+    /**
+     * Gson ignores the Kotlin default for an absent key, so a drink that predates the
+     * description field lands as null rather than failing to parse.
+     */
+    @Test
+    fun validateOrder_leaves_drink_description_null_when_the_key_is_absent() = runTest {
+        server.enqueue(
+            mockOk(
+                """
+                {
+                  "data": {
+                    "modifications": {"size": [], "sugar": [], "milk": [], "syrup": []},
+                    "drink": {"id": 5, "name": "Latte", "amount": 25000.0, "imageUrl": null},
+                    "shop": {"id": 3, "name": "Hoopla Central"},
+                    "validatedAt": null,
+                    "validatedAtUnix": null
+                  },
+                  "message": "ok", "status": true, "code": 200, "meta": null
+                }
+                """.trimIndent()
+            )
+        )
+
+        val details = service.validateOrder(jsonBody("""{"shopId":3,"drinkId":5}""")).body()?.data
+
+        assertNotNull(details)
+        assertEquals("Latte", details!!.drink?.name)
+        assertNull(details.drink?.description)
     }
 
     @Test

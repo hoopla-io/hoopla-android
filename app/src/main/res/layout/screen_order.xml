@@ -86,11 +86,29 @@
                 app:layout_constraintTop_toBottomOf="@id/drink_price"
                 tools:text="@string/label_by_shop" />
 
+            <!-- The drink's blurb, as validate-order returns it. Older responses omit it, so
+                 the view starts gone and only appears once there is something to show. -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/drink_description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/inter_regular"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/grey_400"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cafe_name"
+                tools:text="Rich espresso with steamed milk and a thin layer of foam"
+                tools:visibility="visible" />
+
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@id/cafe_name">
+                app:layout_constraintTop_toBottomOf="@id/drink_description">
 
                 <!-- Dynamic modifier groups (new). Shown when validate-order returns modifierGroups;
                      the legacy size/sugar/milk/syrup sections below are hidden in that case. -->
