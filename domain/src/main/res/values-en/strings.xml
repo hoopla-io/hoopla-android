@@ -298,4 +298,5 @@
     <string name="partner_no_shops_message">This brand has no open coffee shops right now</string>
     <string name="partner_load_failed">Couldn\'t load the coffee shops</string>
 
+    <string name="ordered">Ordered</string>
 </resources>

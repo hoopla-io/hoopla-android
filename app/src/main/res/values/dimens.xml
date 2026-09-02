@@ -2,4 +2,6 @@
 <resources>
     <dimen name="indicator_dot">6dp</dimen>
     <dimen name="indicator_bar">24dp</dimen>
+    <!-- Space between two drink rows inside an order-history card. -->
+    <dimen name="order_history_drink_gap">10dp</dimen>
 </resources>

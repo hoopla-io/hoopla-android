@@ -298,4 +298,5 @@
     <string name="partner_no_shops_message">Bu brendning hozircha ochiq kofexonalari yo\'q</string>
     <string name="partner_load_failed">Kofexonalarni yuklab bo\'lmadi</string>
 
+    <string name="ordered">Buyurtma qilingan</string>
 </resources>

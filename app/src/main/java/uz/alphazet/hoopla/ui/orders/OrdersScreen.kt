@@ -24,9 +24,10 @@ import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DailyDrinksStatData
+import uz.alphazet.data.models.FeedbackDetail
 import uz.alphazet.data.models.QRCodeAccessData
 import uz.alphazet.data.models.UserData
-import uz.alphazet.data.models.order.OrderItemData
+import uz.alphazet.data.models.order.OrderHistoryItemData
 import uz.alphazet.domain.ui.BaseFragment
 import uz.alphazet.domain.ui.views.imageviewer.StfalconImageViewer
 import uz.alphazet.domain.utils.formatPhoneNumber
@@ -35,6 +36,7 @@ import uz.alphazet.domain.utils.visible
 import uz.alphazet.domain.viewbinding.viewBinding
 import uz.alphazet.hoopla.R
 import uz.alphazet.hoopla.databinding.ScreenOrdersBinding
+import uz.alphazet.hoopla.ui.home.FeedbackBD.Companion.showFeedbackBD
 import uz.alphazet.hoopla.ui.navigateTo
 
 class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.OnRefreshListener {
@@ -42,7 +44,7 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
     private val binding by viewBinding(ScreenOrdersBinding::bind)
     private val viewModel: OrdersVM by viewModel()
 
-    private val orderAdapter = OrderAdapter()
+    private val orderAdapter = OrderHistoryAdapter()
 
     private var imageViewer: StfalconImageViewer<Drawable>? = null
 
@@ -106,6 +108,12 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
             navigateTo(OrderInfoScreen.newInstance(it?.id ?: -1))
         }
 
+        // The rated order must lose its button, and only the server knows it has: reload
+        // rather than patch the row, so the card and `hasFeedback` cannot drift apart.
+        orderAdapter.setOnRateClickListener { order ->
+            showFeedbackBD(order.toFeedbackDetail()) { orderAdapter.refresh() }
+        }
+
     }
 
     // Re-shown after a tab switch, a fresh checkout landing here, or popping back from the
@@ -152,9 +160,29 @@ class OrdersScreen : BaseFragment(R.layout.screen_orders), SwipeRefreshLayout.On
         binding.progress.progress = it?.used ?: 0
     }
 
-    private suspend fun collectOrdersData(t: PagingData<OrderItemData>) {
+    private suspend fun collectOrdersData(t: PagingData<OrderHistoryItemData>) {
         orderAdapter.submitData(t)
     }
+
+    /**
+     * The rating sheet is written against a single-drink order, so a multi-drink one is
+     * summarised into it: every drink's name, the order's total, and the first picture there
+     * is. The feedback itself is filed against the order id either way.
+     */
+    private fun OrderHistoryItemData.toFeedbackDetail() = FeedbackDetail(
+        cashbackEarned = cashbackEarned,
+        cashbackUsed = null,
+        drinkName = drinks.orEmpty().mapNotNull { it.drinkName }.joinToString(", ")
+            .ifBlank { null },
+        id = id,
+        orderStatus = commonStatus,
+        partnerName = shopName,
+        productPrice = totalPrice,
+        purchasedAt = purchasedAt,
+        purchasedAtUnix = purchasedAtUnix,
+        shopName = shopName,
+        drinkImage = drinks.orEmpty().firstNotNullOfOrNull { it.drinkImageUrl }
+    )
 
     private fun generateQRCodeImage(data: String): Drawable {
         val options = QrVectorOptions.Builder()

@@ -185,7 +185,7 @@
             android:paddingTop="6dp"
             android:paddingBottom="110dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_order" />
+            tools:listitem="@layout/item_order_history" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

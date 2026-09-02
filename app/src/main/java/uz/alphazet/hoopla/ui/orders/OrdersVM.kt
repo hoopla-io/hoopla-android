@@ -14,8 +14,8 @@ import uz.alphazet.data.UIResource
 import uz.alphazet.data.models.DailyDrinksStatData
 import uz.alphazet.data.models.QRCodeAccessData
 import uz.alphazet.data.models.UserData
+import uz.alphazet.data.models.order.OrderHistoryItemData
 import uz.alphazet.data.models.order.OrderInfo
-import uz.alphazet.data.models.order.OrderItemData
 import uz.alphazet.domain.repositories.OrderHistoryDataSource
 import uz.alphazet.domain.repositories.ProfileRepo
 import uz.alphazet.domain.repositories.OrdersRepo
@@ -70,7 +70,7 @@ class OrdersVM(
         }
     }
 
-    fun getOrderHistoryPager(): SharedFlow<PagingData<OrderItemData>> =
+    fun getOrderHistoryPager(): SharedFlow<PagingData<OrderHistoryItemData>> =
         Pager(
             PagingConfig(10, initialLoadSize = 10),
             pagingSourceFactory = { dataSource.create() }

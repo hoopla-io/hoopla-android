@@ -306,4 +306,5 @@
     <string name="partner_no_shops_message">У этого бренда пока нет работающих кофеен</string>
     <string name="partner_load_failed">Не удалось загрузить кофейни</string>
 
+    <string name="ordered">Заказан</string>
 </resources>

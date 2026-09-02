@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    One drink inside a history card: its picture, its name, what it cost.
+    Inflated per drink by OrderHistoryAdapter, which also spaces the rows apart.
+-->
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/drink_image"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="@color/grey_200"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        app:shapeAppearance="@style/ImageAppearanceCorner10" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/drink_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:fontFamily="@font/inter_regular"
+        android:maxLines="2"
+        android:textColor="@color/black_300"
+        android:textSize="14sp"
+        tools:text="Green Tea" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/drink_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:fontFamily="@font/inter_regular"
+        android:maxLines="1"
+        android:textColor="@color/grey_400"
+        android:textSize="14sp"
+        tools:text="500 UZS" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>

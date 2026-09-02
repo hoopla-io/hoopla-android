@@ -7,6 +7,7 @@ import retrofit2.http.Query
 import uz.alphazet.data.BaseResponse
 import uz.alphazet.data.models.DailyDrinksStatData
 import uz.alphazet.data.models.QRCodeAccessData
+import uz.alphazet.data.models.order.OrderHistoryItemData
 import uz.alphazet.data.models.order.OrderInfo
 import uz.alphazet.data.models.order.OrderItemData
 
@@ -20,6 +21,16 @@ interface OrdersService {
         @Query("page") page: Int,
         @Query("itemsPerPage") itemsPerPage: Int
     ): BaseResponse<List<OrderItemData>>
+
+    /**
+     * The order history proper: one entry per order, with its drinks nested inside.
+     * Paginated the same way as [getOrders], which it replaces on the history screen.
+     */
+    @GET("v1/user/orders/history")
+    suspend fun getOrderHistory(
+        @Query("page") page: Int,
+        @Query("itemsPerPage") itemsPerPage: Int
+    ): BaseResponse<List<OrderHistoryItemData>>
 
     @GET("v1/user/orders/active")
     suspend fun getActiveOrders(): BaseResponse<List<OrderItemData>>
