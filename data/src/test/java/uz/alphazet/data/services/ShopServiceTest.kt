@@ -133,4 +133,49 @@ class ShopServiceTest {
         assertFalse(response.isSuccessful)
         assertEquals(404, response.code())
     }
+
+    /**
+     * The detail toolbar's share action is gated on this field, so a shop that comes back
+     * without one has to stay null rather than fall back to an empty string.
+     */
+    @Test
+    fun getShopDetail_parses_share_url_and_leaves_it_null_when_absent() = runTest {
+        server.enqueue(
+            mockOk(
+                """
+                {
+                  "data": {
+                    "id": 3, "partnerId": 1, "name": "Hoopla Central",
+                    "canAcceptOrders": true, "location": null,
+                    "phoneNumbers": [], "workingHours": [],
+                    "pictures": [], "drinks": [], "urls": [],
+                    "shareUrl": "https://hoopla.uz/s/3"
+                  },
+                  "message": "ok", "status": true, "code": 200, "meta": null
+                }
+                """.trimIndent()
+            )
+        )
+        server.enqueue(
+            mockOk(
+                """
+                {
+                  "data": {
+                    "id": 4, "partnerId": 1, "name": "No Link",
+                    "canAcceptOrders": true, "location": null,
+                    "phoneNumbers": [], "workingHours": [],
+                    "pictures": [], "drinks": [], "urls": []
+                  },
+                  "message": "ok", "status": true, "code": 200, "meta": null
+                }
+                """.trimIndent()
+            )
+        )
+
+        assertEquals(
+            "https://hoopla.uz/s/3",
+            service.getShopDetail(shopId = 3).body()?.data?.shareUrl
+        )
+        assertNull(service.getShopDetail(shopId = 4).body()?.data?.shareUrl)
+    }
 }
